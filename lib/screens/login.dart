@@ -54,12 +54,11 @@ class _MyLogInPageState extends State<MyLogInPage> {
                   width: 300,
                   padding: const EdgeInsets.only(bottom: 8),
                   alignment: Alignment.topLeft,
-                  child: const Text('Welcome!',
-                  style: TextStyle(
-                    fontFamily: 'Libre',
-                    fontSize: 20,
-                    color: Colors.teal
-                  ),)),
+                  child: const Text(
+                    'Welcome!',
+                    style: TextStyle(
+                        fontFamily: 'Libre', fontSize: 20, color: Colors.teal),
+                  )),
               Column(
                 children: [
                   SizedBox(
@@ -152,12 +151,14 @@ class _MyLogInPageState extends State<MyLogInPage> {
                   Container(
                     width: 300,
                     alignment: Alignment.topRight,
-                    child: TextButton(onPressed: () {
-                      
-                    },
-                     child: const Text('forget password?',
-                     textAlign: TextAlign.left,
-                    style: TextStyle(color: Colors.blue),),),
+                    child: TextButton(
+                      onPressed: () {},
+                      child: const Text(
+                        'forget password?',
+                        textAlign: TextAlign.left,
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                    ),
                   ),
                   const SizedBox(
                     height: 30,
