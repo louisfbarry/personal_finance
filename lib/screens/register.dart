@@ -41,6 +41,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   void dispose() {
     mytime.cancel();
+    //test
     super.dispose();
   }
 
