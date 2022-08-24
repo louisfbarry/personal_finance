@@ -324,31 +324,6 @@ class _RegisterPageState extends State<RegisterPage> {
                               ),
                             ),
                           )),
-                // Container(
-                //     alignment: Alignment.center,
-                //     margin: const EdgeInsets.all(20),
-                //     child: Row(
-                //       mainAxisAlignment: MainAxisAlignment.center,
-                //       children: [
-                //         const Text(
-                //           'Already have an account?',
-                //           style: TextStyle(color: Colors.black),
-                //         ),
-                //         TextButton(
-                //             onPressed: () {
-                //               setState(() {
-                //                 Navigator.pushNamed(context, '/login');
-                //               });
-                //             },
-                //             child: const Text(
-                //               'Sign In',
-                //               style: TextStyle(
-                //                   fontWeight: FontWeight.w600,
-                //                   fontSize: 15,
-                //                   color: Color.fromARGB(255, 8, 254, 4)),
-                //             ))
-                //       ],
-                //     ))
               ],
             ),
           ),

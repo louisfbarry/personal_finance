@@ -1,7 +1,9 @@
+import 'package:finance/screens/changePw.dart';
 import 'package:finance/screens/home.dart';
 import 'package:finance/screens/leadingpage.dart';
 import 'package:finance/screens/login.dart';
 import 'package:finance/screens/register.dart';
+import 'package:finance/screens/resetPw.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -27,7 +29,9 @@ class MyApp extends StatelessWidget {
         '/': (context) => const FrontScreen(),
         '/login': (context) => const MyLogInPage(),
         '/register': (context) => const RegisterPage(),
+        '/reset' :(context) => const ResetPassword(),
         '/main': (context) => const Mainpage(),
+        '/changepassword':(context) => const ChangePw(),
       },
     );
   }

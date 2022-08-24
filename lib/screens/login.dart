@@ -152,7 +152,9 @@ class _MyLogInPageState extends State<MyLogInPage> {
                     width: 300,
                     alignment: Alignment.topRight,
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/reset');
+                      },
                       child: const Text(
                         'forget password?',
                         textAlign: TextAlign.left,
@@ -167,6 +169,7 @@ class _MyLogInPageState extends State<MyLogInPage> {
                       onPressed: () async {
                         final prefs = await SharedPreferences.getInstance();
                         final String? username = prefs.getString('UserID');
+                        prefs.setString('password', passwordcontroller.text);
                         setState(() {
                           submitted = true;
                           print('$username');
