@@ -2,6 +2,8 @@ import 'package:finance/screens/budget.dart';
 import 'package:finance/screens/dashboard.dart';
 import 'package:finance/screens/saving.dart';
 import 'package:finance/screens/setting.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
@@ -19,6 +21,24 @@ class _MainpageState extends State<Mainpage> {
 
   final screens = [Dashboard(), Saving(), Budget(), Setting()];
 
+  void loginCheck() {
+    FirebaseAuth.instance.authStateChanges().listen((user) {
+      if (user == null) {
+        print('User is currently signed out!');
+        Navigator.pushNamed(context, '/login');
+      } else {
+        print('User is signed in!');
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    loginCheck();
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,12 +50,15 @@ class _MainpageState extends State<Mainpage> {
       // BAR 1
       bottomNavigationBar: NavigationBarTheme(
         data: NavigationBarThemeData(
-            // indicatorColor: Colors.transparent,
-            labelTextStyle: MaterialStateProperty.all(
-                TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: Colors.grey[900])),
-                ),
+          indicatorColor: Colors.transparent,
+          labelTextStyle: MaterialStateProperty.all(TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey[900])),
+        ),
         child: NavigationBar(
-          height: 70,
+          height: 60,
+          backgroundColor: Color.fromRGBO(193, 214, 233, 1),
           labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
           selectedIndex: currentIndex,
           onDestinationSelected: (index) {

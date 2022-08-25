@@ -38,6 +38,7 @@ dependencies:
   firebase_auth: ^3.6.4
   shared_preferences: ^2.0.15
   form_field_validator: ^1.1.0
+  pie_chart: ^5.3.2
 
 dev_dependencies:
   flutter_test:
