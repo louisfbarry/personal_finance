@@ -39,6 +39,7 @@ dependencies:
   shared_preferences: ^2.0.15
   form_field_validator: ^1.1.0
   pie_chart: ^5.3.2
+  percent_indicator: ^4.2.2
 
 dev_dependencies:
   flutter_test:

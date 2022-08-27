@@ -5,6 +5,8 @@ import 'package:finance/screens/leadingpage.dart';
 import 'package:finance/screens/login.dart';
 import 'package:finance/screens/register.dart';
 import 'package:finance/screens/resetPw.dart';
+import 'package:finance/screens/saving_details.dart';
+import 'package:finance/screens/saving_history.dart';
 import 'package:finance/screens/savingadding.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -52,7 +54,9 @@ class MyApp extends StatelessWidget {
         '/main': (context) => const Mainpage(),
         '/changepassword': (context) => const ChangePw(),
         '/income': (context) => const IncomePage(),
-        '/savingadding': (context) => const AddSaving()
+        '/savingadding': (context) => const AddSaving(),
+        '/savingDetails' : (context) => SavingDetails(),
+        '/savingHistory' : (context) => const SavingHistory()
       },
     );
   }

@@ -22,7 +22,7 @@ class _AddSavingState extends State<AddSaving> {
           title: const Text(
             "Add Target",
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 15,
             ),
           ),
           centerTitle: true,
