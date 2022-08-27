@@ -1,3 +1,4 @@
+import 'package:finance/api/firebaseservice.dart';
 import 'package:finance/screens/budget.dart';
 import 'package:finance/screens/dashboard.dart';
 import 'package:finance/screens/saving.dart';
@@ -42,10 +43,11 @@ class _MainpageState extends State<Mainpage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: currentIndex,
-        children: screens,
-      ),
+      // body: IndexedStack(
+      //   index: currentIndex,
+      //   children: screens,
+      // ),
+      body: screens[currentIndex],
 
       // BAR 1
       bottomNavigationBar: NavigationBarTheme(

@@ -1,5 +1,8 @@
+import 'package:finance/screens/Income.dart';
 import 'package:flutter/material.dart';
 import 'package:pie_chart/pie_chart.dart';
+
+import '../api/firebaseservice.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -13,6 +16,17 @@ class _DashboardState extends State<Dashboard> {
     "Outcome": 10000,
     "Saving": 20000,
   };
+
+
+
+
+  @override
+  void initState() {
+    API().addCollection();
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -169,7 +183,13 @@ class _DashboardState extends State<Dashboard> {
                 // ),
                 GestureDetector(
                   onTap: () {
-                    Navigator.pushNamed(context, '/income');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) => IncomePage(
+                        ),
+                      ),
+                    );
                   },
                   child: Padding(
                     padding: const EdgeInsets.symmetric(

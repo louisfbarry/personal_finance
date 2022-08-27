@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      initialRoute: '/main',
+      initialRoute: '/login',
       routes: {
         '/': (context) => const FrontScreen(),
         '/login': (context) => const MyLogInPage(),
@@ -51,7 +51,6 @@ class MyApp extends StatelessWidget {
         '/reset': (context) => const ResetPassword(),
         '/main': (context) => const Mainpage(),
         '/changepassword': (context) => const ChangePw(),
-        '/income': (context) => const IncomePage(),
         '/savingadding': (context) => const AddSaving()
       },
     );
