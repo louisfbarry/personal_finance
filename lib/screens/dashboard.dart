@@ -146,7 +146,7 @@ class _DashboardState extends State<Dashboard> {
                                     backgroundColor: Colors.indigo[200])),
                             const SizedBox(
                               width: 5,
-                            ),
+                            ), 
                             const Text("Income")
                           ],
                         ),
@@ -205,9 +205,9 @@ class _DashboardState extends State<Dashboard> {
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    SizedBox(width: 160, height: 100, child: Card()),
-                    SizedBox(width: 160, height: 100, child: Card()),
+                  children: [
+                    SizedBox(width: (MediaQuery.of(context).size.width / 2) - 20, height: 100, child: Card()),
+                    SizedBox(width: (MediaQuery.of(context).size.width / 2) - 20, height: 100, child: Card()),
                     // SizedBox(width: 100, height: 100, child: Card()),
                   ],
                 ),
@@ -224,9 +224,9 @@ class _DashboardState extends State<Dashboard> {
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    SizedBox(width: 160, height: 100, child: Card()),
-                    SizedBox(width: 160, height: 100, child: Card()),
+                  children: [
+                    SizedBox(width: (MediaQuery.of(context).size.width / 2) - 20, height: 100, child: Card()),
+                    SizedBox(width: (MediaQuery.of(context).size.width / 2) - 20, height: 100, child: Card()),
                   ],
                 )
               ],

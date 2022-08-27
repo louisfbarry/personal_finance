@@ -5,6 +5,8 @@ import 'package:finance/screens/leadingpage.dart';
 import 'package:finance/screens/login.dart';
 import 'package:finance/screens/register.dart';
 import 'package:finance/screens/resetPw.dart';
+import 'package:finance/screens/saving_details.dart';
+import 'package:finance/screens/saving_history.dart';
 import 'package:finance/screens/savingadding.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -51,7 +53,12 @@ class MyApp extends StatelessWidget {
         '/reset': (context) => const ResetPassword(),
         '/main': (context) => const Mainpage(),
         '/changepassword': (context) => const ChangePw(),
-        '/savingadding': (context) => const AddSaving()
+        '/savingadding': (context) => const AddSaving(),
+        '/income': (context) => const IncomePage(),
+        // ignore: equal_keys_in_map
+        '/savingadding': (context) => const AddSaving(),
+        '/savingDetails': (context) => SavingDetails(),
+        '/savingHistory': (context) => const SavingHistory()
       },
     );
   }
