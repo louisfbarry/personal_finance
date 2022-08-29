@@ -4,6 +4,8 @@ import 'package:finance/screens/incomeDetail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 
 import '../api/firebaseservice.dart';
 
@@ -29,10 +31,64 @@ class _IncomePageState extends State<IncomePage> {
       .collection('Salary')
       .snapshots();
 
-  double total = 0;
+  // ignore: non_constant_identifier_names
+  double investTotal = 0;
+  double salaryTotal = 0;
+  double uncategoTotal = 0;
+  Future<List<dynamic>>? invest;
+  Future<List<dynamic>>? salary;
+  Future<List<dynamic>>? uncatego;
+
+  valuecalculate() async {
+    invest = incomecategovalue('Investment');
+    await invest!.then((value) {
+      for (var i = 0; i < value.length; i++) {
+        setState(() {
+          investTotal += value[i];
+        });
+      }
+    });
+
+    salary = incomecategovalue('Salary');
+    await salary!.then((value) {
+      for (var i = 0; i < value.length; i++) {
+        setState(() {
+          salaryTotal += value[i];
+        });
+      }
+    });
+
+    uncatego = incomecategovalue('Uncategorized');
+    await uncatego!.then((value) {
+      for (var i = 0; i < value.length; i++) {
+        setState(() {
+          uncategoTotal += value[i];
+        });
+      }
+    });
+
+    List<IncomeData> getIncomeChartData() {
+      List<IncomeData> IncomeChartData = [
+        IncomeData("Salary", salaryTotal.toInt()),
+        IncomeData("Investment", investTotal.toInt()),
+        IncomeData("Uncategorized", uncategoTotal.toInt())
+      ];
+
+      return IncomeChartData;
+    }
+
+    _IncomeChart = getIncomeChartData();
+  }
+
+  List<IncomeData>? _IncomeChart;
 
   @override
   void initState() {
+    valuecalculate();
+    // setState(() {
+    //   _IncomeChart = getIncomeChartData();
+    // });
+
     // TODO: implement initState
     super.initState();
   }
@@ -72,8 +128,36 @@ class _IncomePageState extends State<IncomePage> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
+            SizedBox(
+              width: MediaQuery.of(context).size.width - 30,
+              height: 200,
+              child: Card(
+                child: Padding(
+                  padding: EdgeInsets.all(5),
+                  child: SfCircularChart(
+                    legend: Legend(
+                        isVisible: true, position: LegendPosition.bottom),
+                    tooltipBehavior: TooltipBehavior(enable: true),
+                    series: <CircularSeries>[
+                      PieSeries<IncomeData, String>(
+                        dataSource: _IncomeChart,
+                        xValueMapper: (IncomeData data, _) => data.IncomeType,
+                        yValueMapper: (IncomeData data, _) => data.IncomeValue,
+                        dataLabelSettings: DataLabelSettings(
+                            isVisible: true,
+                            showZeroValue: true,
+                            overflowMode: OverflowMode.trim,
+                            showCumulativeValues: true,
+                            labelPosition: ChartDataLabelPosition.outside),
+                        enableTooltip: true,
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
             Container(
-                color: Color.fromARGB(142, 33, 149, 243),
+                color: const Color.fromARGB(142, 33, 149, 243),
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height * 0.4,
                 child: Column(
@@ -81,41 +165,19 @@ class _IncomePageState extends State<IncomePage> {
                     Expanded(
                       child: Row(
                         children: [
-                          categoValue(_investStream, 'Investment'),
                           Container(
-                            color: Colors.green,
-                            height: 100,
-                            width: 200,
-                            child: StreamBuilder<QuerySnapshot>(
-                              stream: _salaryStream,
-                              builder: (BuildContext context,
-                                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                                total = 0;
-                                value = [];
-                                if (snapshot.hasError) {
-                                  return const Text('Something went wrong');
-                                }
-
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return const Text("Loading");
-                                }
-
-                                if (snapshot.hasData) {
-                                  snapshot.data!.docs
-                                      .map((DocumentSnapshot document) {
-                                    Map<String, dynamic> data = document.data()!
-                                        as Map<String, dynamic>;
-                                    total += data['amount'];
-                                    value.add(data['amount']);
-                                    print(total);
-                                  }).toList();
-                                }
-                                print(value);
-                                return Text('$total');
-                              },
-                            ),
+                            color: Colors.amber,
+                            child: Text('invest total : $investTotal /'),
                           ),
+                          Container(
+                            color: Colors.amber,
+                            child: Text('salary total : $salaryTotal /'),
+                          ),
+                          Container(
+                            color: Colors.amber,
+                            child: Text('uncatego total : $uncategoTotal'),
+                          ),
+                          // categoValue(_investStream),
                         ],
                       ),
                     ),
@@ -136,12 +198,18 @@ class _IncomePageState extends State<IncomePage> {
                       child: SelectCard(choice: choices[index]),
                     );
                   })),
-            )
+            ),
           ],
         ),
       )),
     );
   }
+}
+
+class IncomeData {
+  String IncomeType;
+  int IncomeValue;
+  IncomeData(this.IncomeType, this.IncomeValue);
 }
 
 class SelectCard extends StatelessWidget {

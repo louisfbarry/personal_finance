@@ -43,6 +43,7 @@ dependencies:
   cloud_firestore: ^3.4.6
 
   percent_indicator: ^4.2.2
+  syncfusion_flutter_charts: ^20.2.45
 
 
 dev_dependencies:

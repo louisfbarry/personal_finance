@@ -1,4 +1,5 @@
 import 'package:finance/api/math.dart';
+import 'package:finance/screens/Income.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -55,6 +56,13 @@ class _IncomeAddingState extends State<IncomeAdding> {
                       style: TextStyle(color: Colors.black),
                     ),
                   ),
+                  DropdownMenuItem(
+                    value: 'Uncategorized',
+                    child: Text(
+                      '   Uncategorized',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
                 ],
                 onChanged: (newValue) {
                   setState(() {
@@ -67,9 +75,14 @@ class _IncomeAddingState extends State<IncomeAdding> {
                     print('$dropdownValue and ${amountcontroller.text}');
 
                     if (_formKey.currentState!.validate()) {
-                      
                       API().incomeadding(
                           dropdownValue, double.parse(amountcontroller.text));
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (BuildContext context) => const IncomePage(),
+                        ),
+                      );
                     } else {
                       print('wrong');
                     }

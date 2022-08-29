@@ -8,7 +8,6 @@ var firestore = FirebaseFirestore.instance;
 final currentuser = FirebaseAuth.instance.currentUser;
 CollectionReference user = firestore.collection('${currentuser!.email}');
 
-
 class API {
   Future addCollection() async {
     user.doc('Income').set({'Created At': DateTime.now()});
@@ -26,6 +25,8 @@ class API {
       ' created At': DateTime.now()
     });
   }
+
+  
 }
 
 class Choice {
