@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import '../api./firebaseservice.dart';
+import '../model/firebaseservice.dart';
 
 CollectionReference user = firestore.collection('${currentuser!.email}');
 
@@ -45,11 +45,27 @@ CollectionReference user = firestore.collection('${currentuser!.email}');
 // }
 
 Future<List> incomecategovalue(String catego) async {
-  List<int> list = [];
-  await user.doc('Income').collection(catego).get().then((snapshot) {
+  List<int> list = [0];
+  await user.doc('Income').collection('income-data').get().then((snapshot) {
     snapshot.docs.map((DocumentSnapshot document) {
       Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-      list.add(data['amount']);
+      if (data['category'] == catego) {
+        list.add(data['amount']);
+      }
+    }).toList();
+  });
+  print(list);
+  return list;
+}
+
+Future<List> outcomecategovalue(String catego) async {
+  List<int> list = [0];
+  await user.doc('outcome').collection('outcome-data').get().then((snapshot) {
+    snapshot.docs.map((DocumentSnapshot document) {
+      Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+      if (data['category'] == catego) {
+        list.add(data['amount']);
+      }
     }).toList();
   });
   print(list);

@@ -1,4 +1,5 @@
-import 'package:finance/api/firebaseservice.dart';
+import 'package:finance/model/firebaseservice.dart';
+import 'package:finance/screens/addValue.dart';
 import 'package:finance/screens/budget.dart';
 import 'package:finance/screens/dashboard.dart';
 import 'package:finance/screens/saving.dart';
@@ -21,7 +22,7 @@ class Mainpage extends StatefulWidget {
 class _MainpageState extends State<Mainpage> {
   int currentIndex = 0;
 
-  final screens = [Dashboard(), Saving(), Budget(), Setting()];
+  final screens = [Dashboard(), Saving(), AddValue(), Budget(), Setting()];
 
   void loginCheck() {
     FirebaseAuth.instance.authStateChanges().listen((user) {
@@ -87,6 +88,10 @@ class _MainpageState extends State<Mainpage> {
                   icon: Icon(Icons.savings_outlined),
                   selectedIcon: Icon(Icons.savings),
                   label: "Saving"),
+              NavigationDestination(
+                  icon: Icon(Icons.add_outlined),
+                  selectedIcon: Icon(Icons.add),
+                  label: "Add Value"),
               NavigationDestination(
                   icon: Icon(Icons.money_outlined),
                   selectedIcon: Icon(Icons.money),

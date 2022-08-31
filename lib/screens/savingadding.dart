@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import '../model/firebaseservice.dart';
 
 class AddSaving extends StatefulWidget {
-  const AddSaving({Key? key}) : super(key: key);
+  final bool isEdit;
+  final String? title;
+  final int? targetPrice;
+  final String? id;
+  const AddSaving(
+      {Key? key, required this.isEdit, this.title, this.targetPrice, this.id})
+      : super(key: key);
   @override
   State<AddSaving> createState() => _AddSavingState();
 }
@@ -12,6 +20,25 @@ class _AddSavingState extends State<AddSaving> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController titleController = TextEditingController();
   TextEditingController priceController = TextEditingController();
+
+  getOldValue() {
+    if (widget.isEdit == true) {
+      titleController = TextEditingController(text: widget.title);
+      priceController =
+          TextEditingController(text: widget.targetPrice.toString());
+    } else {
+      titleController = TextEditingController();
+      priceController = TextEditingController();
+    }
+  }
+
+  @override
+  void initState() {
+    getOldValue();
+    // titleController = new TextEditingController(text: "ok");
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -19,12 +46,19 @@ class _AddSavingState extends State<AddSaving> {
       child: Scaffold(
         backgroundColor: Colors.grey[100],
         appBar: AppBar(
-          title: const Text(
-            "Add Target",
-            style: TextStyle(
-              fontSize: 15,
-            ),
-          ),
+          title: widget.isEdit
+              ? const Text(
+                  "Edit Target",
+                  style: TextStyle(
+                    fontSize: 15,
+                  ),
+                )
+              : const Text(
+                  "Add Target",
+                  style: TextStyle(
+                    fontSize: 15,
+                  ),
+                ),
           centerTitle: true,
           elevation: 0.0,
           backgroundColor: Colors.blueAccent,
@@ -33,9 +67,6 @@ class _AddSavingState extends State<AddSaving> {
             style: TextStyle(color: Colors.grey[900]),
             child: Form(
               key: _formKey,
-              autovalidateMode: _submitted
-                  ? AutovalidateMode.onUserInteraction
-                  : AutovalidateMode.disabled,
               child: SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -61,6 +92,10 @@ class _AddSavingState extends State<AddSaving> {
                             ),
                           ),
                           TextFormField(
+                            // initialValue: "Tv",
+                            autovalidateMode: _submitted
+                                ? AutovalidateMode.onUserInteraction
+                                : AutovalidateMode.disabled,
                             controller: titleController,
                             // style: TextStyle(color: Colors.grey[800]),
                             validator: (value) {
@@ -87,6 +122,12 @@ class _AddSavingState extends State<AddSaving> {
                             ),
                           ),
                           TextFormField(
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            autovalidateMode: _submitted
+                                ? AutovalidateMode.onUserInteraction
+                                : AutovalidateMode.disabled,
                             keyboardType: TextInputType.number,
                             controller: priceController,
                             validator: (value) {
@@ -110,11 +151,28 @@ class _AddSavingState extends State<AddSaving> {
                                 style: ElevatedButton.styleFrom(
                                     elevation: 0, primary: Colors.blueAccent),
                                 onPressed: () {
+                                  final savingValidate =
+                                      _formKey.currentState!.validate();
                                   FocusScope.of(context).unfocus();
                                   setState(() {
                                     _submitted = true;
                                   });
-                                  print(_submitted);
+
+                                  if (savingValidate) {
+                                    if (widget.isEdit == true) {
+                                      API().updateSaving(
+                                          "${widget.id}",
+                                          titleController.text,
+                                          int.parse(priceController.text));
+                                      Navigator.pop(context);
+                                    } else {
+                                      API().savingadding(titleController.text,
+                                          int.parse(priceController.text), 0);
+                                      // Navigator.pushReplacementNamed(
+                                      //     context, "/saving");
+                                      Navigator.pop(context);
+                                    }
+                                  }
                                 },
                                 child: (isLoading)
                                     ? const SizedBox(

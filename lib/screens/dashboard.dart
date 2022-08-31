@@ -1,8 +1,10 @@
 import 'package:finance/screens/Income.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:pie_chart/pie_chart.dart';
 
-import '../api/firebaseservice.dart';
+import '../model/firebaseservice.dart';
+import '../components/categobadge.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -16,9 +18,6 @@ class _DashboardState extends State<Dashboard> {
     "Outcome": 10000,
     "Saving": 20000,
   };
-
-
-
 
   @override
   void initState() {
@@ -61,6 +60,7 @@ class _DashboardState extends State<Dashboard> {
                           const SizedBox(
                             height: 10,
                           ),
+                          
                           Text(
                             "100000",
                             style: TextStyle(
@@ -146,7 +146,7 @@ class _DashboardState extends State<Dashboard> {
                                     backgroundColor: Colors.indigo[200])),
                             const SizedBox(
                               width: 5,
-                            ), 
+                            ),
                             const Text("Income")
                           ],
                         ),
@@ -186,8 +186,7 @@ class _DashboardState extends State<Dashboard> {
                     Navigator.push(
                       context,
                       MaterialPageRoute<void>(
-                        builder: (BuildContext context) => IncomePage(
-                        ),
+                        builder: (BuildContext context) => IncomePage(),
                       ),
                     );
                   },
@@ -203,13 +202,18 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(width: (MediaQuery.of(context).size.width / 2) - 20, height: 100, child: Card()),
-                    SizedBox(width: (MediaQuery.of(context).size.width / 2) - 20, height: 100, child: Card()),
-                    // SizedBox(width: 100, height: 100, child: Card()),
-                  ],
+                SizedBox(
+                  width: (MediaQuery.of(context).size.width),
+                  height: 150,
+                  child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      primary: false,
+                      padding: const EdgeInsets.all(6),
+                      children: List.generate(choices.length, (index) {
+                        return Center(
+                          child: SelectCard(choice: choices[index]),
+                        );
+                      })),
                 ),
                 Padding(
                   padding:
@@ -225,8 +229,10 @@ class _DashboardState extends State<Dashboard> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(width: (MediaQuery.of(context).size.width / 2) - 20, height: 100, child: Card()),
-                    SizedBox(width: (MediaQuery.of(context).size.width / 2) - 20, height: 100, child: Card()),
+                    SizedBox(
+                        width: (MediaQuery.of(context).size.width / 2) - 20,
+                        height: 100,
+                        child: const Card()),
                   ],
                 )
               ],
@@ -234,6 +240,49 @@ class _DashboardState extends State<Dashboard> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class SelectCard extends StatelessWidget {
+  const SelectCard({Key? key, required this.choice}) : super(key: key);
+  final Choice choice;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      // onTap: () {
+      //   Navigator.push(
+      //       context,
+      //       MaterialPageRoute<void>(
+      //         builder: (BuildContext context) =>
+      //             IncomeCategoDetail(userstream: choice.userstream),
+      //       ));
+      // },
+      child: Card(
+          elevation: 7,
+          color: choice.color,
+          child: Center(
+            child: SizedBox(
+              height: 150,
+              width: 150,
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                        child:
+                            Icon(choice.icon, size: 40.0, color: Colors.black)),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Text(
+                        choice.title,
+                        style:
+                            const TextStyle(fontFamily: 'Libre', fontSize: 12),
+                      ),
+                    ),
+                  ]),
+            ),
+          )),
     );
   }
 }
