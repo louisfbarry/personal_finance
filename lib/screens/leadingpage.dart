@@ -1,3 +1,8 @@
+import 'package:finance/model/bioauth.dart';
+import 'package:finance/screens/home.dart';
+import 'package:finance/screens/login.dart';
+import 'package:finance/screens/passCode.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class FrontScreen extends StatefulWidget {
@@ -8,67 +13,111 @@ class FrontScreen extends StatefulWidget {
 }
 
 class _FrontScreenState extends State<FrontScreen> {
+  bool showBiometrics = false;
+
+  isBiometricAvailable() async {
+    showBiometrics = await BiometricHelper().authenticate();
+    if (showBiometrics == false) {
+      // ignore: use_build_context_synchronously
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const MyPasscode(),
+        ),
+      );
+    } else {
+      // ignore: use_build_context_synchronously
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const Mainpage(),
+          ));
+    }
+    print(">>>>> $showBiometrics");
+    setState(() {});
+  }
+
+  void loginCheck() {
+    FirebaseAuth.instance.authStateChanges().listen((user) {
+      if (user == null) {
+        print('User is currently signed out!');
+        Navigator.pushNamed(context, '/login');
+      } else {
+        print('User is signed in!');
+        isBiometricAvailable();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              height: 250,
-              width: 300,
-              decoration: const BoxDecoration(
-                  // borderRadius: BorderRadius.all(Radius.circular(20)),
-                  // color: Colors.amber,
-                  image: DecorationImage(
-                      image: AssetImage('images/Removal-478.png'))),
-            ),
-            const Text('Eagle Finance',
-                style: TextStyle(
-                    fontSize: 27,
-                    fontFamily: 'Libre',
-                    color: Color.fromARGB(255, 0, 0, 0),
-                    shadows: <Shadow>[
-                      Shadow(
-                        offset: Offset(3.0, 3.0),
-                        blurRadius: 5.0,
-                        color: Color.fromARGB(209, 9, 237, 24),
-                      ),
-                    ])),
-            const SizedBox(
-              height: 100,
-            ),
-            IntrinsicWidth(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        Navigator.pushNamed(context, '/login');
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                      primary: const Color.fromARGB(209, 9, 237, 24),
-                      padding: const EdgeInsets.symmetric(horizontal: 60),
-                      elevation: 10,
+    return SafeArea(
+      child: Scaffold(
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Center(
+                    child: Image.asset(
+                      'images/landing.png',
+                      width: 240,
+                      height: 240,
                     ),
-                    child: const Padding(
-                        padding: EdgeInsets.all(10.0),
-                        child: Text('Get Started ',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                            ))),
                   ),
-                ],
-              ),
-            )
-          ],
+                ),
+                Text("Personal Finance",
+                      style: TextStyle(
+                          fontSize: 23, fontWeight: FontWeight.bold, color: Colors.grey[800])),
+                Text(
+                  "Find ways to get more income and saving",
+                  style: TextStyle(
+                      color: Colors.grey[700],
+                      fontSize: 13,
+                      letterSpacing: 0.7),
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                SizedBox(
+                    width: double.infinity,
+                    height: 45,
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            elevation: 0, primary: Colors.blueAccent),
+                        onPressed: () {
+                          setState(() {
+                            loginCheck();
+                          });
+                        },
+                        child: const Text(
+                          "Login",
+                          style: TextStyle(color: Colors.white),
+                        ))),
+                const SizedBox(
+                  height: 15,
+                ),
+                SizedBox(
+                    width: double.infinity,
+                    height: 45,
+                    child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                            primary: Colors.blueAccent,
+                            side: const BorderSide(
+                                width: 1, color: Colors.blueAccent)),
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/register');
+                        },
+                        child: const Text("Register"))),
+                const SizedBox(
+                  height: 25,
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

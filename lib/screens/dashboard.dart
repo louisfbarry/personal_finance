@@ -29,7 +29,7 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: const Color.fromARGB(255, 238, 250, 255),
       // backgroundColor: const Color.fromRGBO(193, 214, 233, 1),
       body: SafeArea(
         child: SingleChildScrollView(

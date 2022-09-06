@@ -7,8 +7,14 @@ class AddSaving extends StatefulWidget {
   final String? title;
   final int? targetPrice;
   final String? id;
+  final int? addPrice;
   const AddSaving(
-      {Key? key, required this.isEdit, this.title, this.targetPrice, this.id})
+      {Key? key,
+      required this.isEdit,
+      this.title,
+      this.targetPrice,
+      this.id,
+      this.addPrice})
       : super(key: key);
   @override
   State<AddSaving> createState() => _AddSavingState();
@@ -130,9 +136,15 @@ class _AddSavingState extends State<AddSaving> {
                                 : AutovalidateMode.disabled,
                             keyboardType: TextInputType.number,
                             controller: priceController,
+                            // 1/9
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return "Target price required";
+                              } else if (value == "0") {
+                                return "Please enter price";
+                              } else if (widget.isEdit == true &&
+                                  widget.addPrice! > int.parse(value)) {
+                                return "Your target price is less than your added price";
                               }
                               return null;
                             },
@@ -159,12 +171,19 @@ class _AddSavingState extends State<AddSaving> {
                                   });
 
                                   if (savingValidate) {
+                                    // 1/9
                                     if (widget.isEdit == true) {
-                                      API().updateSaving(
-                                          "${widget.id}",
-                                          titleController.text,
-                                          int.parse(priceController.text));
-                                      Navigator.pop(context);
+                                      if (widget.addPrice! >
+                                          int.parse(priceController.text)) {
+                                        print(
+                                            "Your add price is over your target price");
+                                      } else {
+                                        API().updateSaving(
+                                            "${widget.id}",
+                                            titleController.text,
+                                            int.parse(priceController.text));
+                                        Navigator.pop(context);
+                                      }
                                     } else {
                                       API().savingadding(titleController.text,
                                           int.parse(priceController.text), 0);

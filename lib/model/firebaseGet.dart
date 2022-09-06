@@ -46,7 +46,12 @@ CollectionReference user = firestore.collection('${currentuser!.email}');
 
 Future<List> incomecategovalue(String catego) async {
   List<int> list = [0];
-  await user.doc('Income').collection('income-data').get().then((snapshot) {
+  await user
+      .doc('Income')
+      .collection('income-data')
+      .orderBy('created At')
+      .get()
+      .then((snapshot) {
     snapshot.docs.map((DocumentSnapshot document) {
       Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
       if (data['category'] == catego) {

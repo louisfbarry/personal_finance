@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import '../components/snackbar.dart';
 
 class ResetPassword extends StatefulWidget {
   const ResetPassword({Key? key}) : super(key: key);
@@ -13,7 +14,7 @@ class ResetPassword extends StatefulWidget {
 class _ResetPasswordState extends State<ResetPassword> {
   final emialValidator = MultiValidator([
     RequiredValidator(errorText: 'Email is required'),
-    EmailValidator(errorText: 'enter a valid email address'),
+    EmailValidator(errorText: 'Enter a valid email address'),
   ]);
 
   final auth = FirebaseAuth.instance;
@@ -23,87 +24,92 @@ class _ResetPasswordState extends State<ResetPassword> {
   bool submitted = false;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Center(
-      child: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 80,
-              width: 300,
-              child: TextFormField(
-                controller: usernamecontroller,
-                autovalidateMode: submitted
-                    ? AutovalidateMode.always
-                    : AutovalidateMode.disabled,
-                validator: emialValidator,
-                decoration: InputDecoration(
-                  errorBorder: OutlineInputBorder(
-                    borderSide:
-                        const BorderSide(width: 1, color: Colors.redAccent),
-                    borderRadius: BorderRadius.circular(10.0),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+          body: DefaultTextStyle(
+        style: TextStyle(color: Colors.grey[900]),
+        child: Center(
+          child: Form(
+            key: _formKey,
+            child: Padding(
+              padding: const EdgeInsets.all(13.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Forget Password",
+                      style: TextStyle(
+                          fontSize: 23,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[800])),
+                  const SizedBox(
+                    height: 3,
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                        width: 1, color: Color.fromARGB(157, 9, 237, 176)),
-                    borderRadius: BorderRadius.circular(10.0),
+                  Text(
+                    "Enter your email we will send reset password link",
+                    style: TextStyle(
+                        color: Colors.grey[700],
+                        fontSize: 12,
+                        letterSpacing: 0.3),
                   ),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                          width: 2, color: Color.fromARGB(157, 9, 237, 176)),
-                      borderRadius: BorderRadius.circular(10)),
-                  focusedErrorBorder: OutlineInputBorder(
-                      borderSide:
-                          const BorderSide(width: 1, color: Colors.redAccent),
-                      borderRadius: BorderRadius.circular(10)),
-                  hintText: 'Enter Your Email Account',
-                ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  TextFormField(
+                    controller: usernamecontroller,
+                    autovalidateMode: submitted
+                        ? AutovalidateMode.always
+                        : AutovalidateMode.disabled,
+                    validator: emialValidator,
+                    decoration: const InputDecoration(
+                      hintText: "Enter your email",
+                      hintStyle: TextStyle(fontSize: 12),
+                    ),
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    alignment: Alignment.topRight,
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(context, '/login');
+                      },
+                      child: const Text(
+                        'go back to login',
+                        textAlign: TextAlign.left,
+                        style: TextStyle(color: Colors.blue, fontSize: 12),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          elevation: 0, primary: Colors.blueAccent),
+                      onPressed: () async {
+                        FocusScope.of(context).unfocus();
+                        if (_formKey.currentState!.validate()) {
+                          auth.sendPasswordResetEmail(
+                              email: usernamecontroller.text);
+                          showSnackbar(
+                              context,
+                              "We have sent reset password link in your email",
+                              4,
+                              Colors.green[300]);
+                          Navigator.pushReplacementNamed(context, '/login');
+                        }
+                      },
+                      child: const Text(
+                        'Send Request',
+                      ),
+                    ),
+                  )
+                ],
               ),
             ),
-            ElevatedButton(
-              onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  auth.sendPasswordResetEmail(email: usernamecontroller.text);
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Container(
-                        alignment: Alignment.center,
-                        height: 30,
-                        child: const Text(
-                          ' We have sent  Passwordreset email. ',
-                          style: TextStyle(
-                              fontFamily: 'Libre',
-                              fontSize: 15,
-                              color: Colors.black),
-                        ),
-                      ),
-                      backgroundColor: Colors.teal,
-                      duration: const Duration(seconds: 2)));
-                  Navigator.pushReplacementNamed(context, '/login');
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                primary: const Color.fromARGB(157, 9, 237, 176),
-                padding: const EdgeInsets.only(left: 100, right: 100),
-                elevation: 15,
-              ),
-              child: const Padding(
-                padding: EdgeInsets.all(10.0),
-                child: Text(
-                  'Send Request',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontFamily: 'Libre',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 15,
-                  ),
-                ),
-              ),
-            )
-          ],
+          ),
         ),
-      ),
-    ));
+      )),
+    );
   }
 }

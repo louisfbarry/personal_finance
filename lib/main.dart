@@ -3,11 +3,13 @@ import 'package:finance/screens/changePw.dart';
 import 'package:finance/screens/home.dart';
 import 'package:finance/screens/leadingpage.dart';
 import 'package:finance/screens/login.dart';
+import 'package:finance/screens/passCode.dart';
 import 'package:finance/screens/register.dart';
 import 'package:finance/screens/resetPw.dart';
 import 'package:finance/screens/saving_details.dart';
 import 'package:finance/screens/saving_money_adding_history.dart';
 import 'package:finance/screens/savingadding.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -20,8 +22,15 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +54,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      initialRoute: '/login',
+      initialRoute: '/',
       routes: {
         '/': (context) => const FrontScreen(),
         '/login': (context) => const MyLogInPage(),
@@ -55,9 +64,10 @@ class MyApp extends StatelessWidget {
         '/changepassword': (context) => const ChangePw(),
         // '/savingadding': (context) => const AddSaving(),
         '/income': (context) => const IncomePage(),
+        '/passcode': (context) => const MyPasscode(),
         // ignore: equal_keys_in_map
         // '/savingadding': (context) => const AddSaving(),
-        '/savingDetails': (context) => SavingDetails(),
+        // '/savingDetails': (context) => SavingDetails(),
         '/savingHistory': (context) => const SavingHistory()
       },
     );

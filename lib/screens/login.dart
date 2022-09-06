@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+
+import '../components/snackbar.dart';
 
 class MyLogInPage extends StatefulWidget {
   const MyLogInPage({Key? key}) : super(key: key);
@@ -19,7 +23,35 @@ class _MyLogInPageState extends State<MyLogInPage> {
   bool submitted = false;
   bool isloading = false;
 
+  late User currentUser;
+  final auth = FirebaseAuth.instance;
+
   final _formKey = GlobalKey<FormState>();
+
+  Timer mytime = Timer.periodic(const Duration(seconds: 3), ((timer) async {
+    print('time reached');
+  }));
+
+  Future<void> checkEmail() async {
+    currentUser = auth.currentUser!;
+    await currentUser.reload();
+
+    if (currentUser.emailVerified) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      prefs.setString('password', passwordcontroller.text);
+      setState(() {
+        isloading = false;
+
+        usernamecontroller.clear();
+        passwordcontroller.clear();
+        Navigator.popUntil(context, ModalRoute.withName('/'));
+        Navigator.pushNamed(context, '/main');
+      });
+    } else {
+      print('not yet');
+    }
+  }
 
   final emialValidator = MultiValidator([
     RequiredValidator(errorText: 'Email is required'),
@@ -35,249 +67,288 @@ class _MyLogInPageState extends State<MyLogInPage> {
   var errorMassage = '';
 
   @override
+  void dispose() {
+    mytime.cancel();
+    //test
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Form(
-      key: _formKey,
-      child: SizedBox(
-        child: Center(
-          child: SingleChildScrollView(
-            child: Column(children: [
-              Container(
-                height: 300,
-                width: 300,
-                decoration: const BoxDecoration(
-                    image: DecorationImage(
-                        image: AssetImage('images/Removal-243.png'))),
-              ),
-              Container(
-                  width: 300,
-                  padding: const EdgeInsets.only(bottom: 8),
-                  alignment: Alignment.topLeft,
-                  child: const Text(
-                    'Welcome!',
-                    style: TextStyle(
-                        fontFamily: 'Libre', fontSize: 20, color: Colors.teal),
-                  )),
-              Column(
-                children: [
-                  SizedBox(
-                    height: 80,
-                    width: 300,
-                    child: TextFormField(
-                      controller: usernamecontroller,
-                      autovalidateMode: submitted
-                          ? AutovalidateMode.always
-                          : AutovalidateMode.disabled,
-                      validator: emialValidator,
-                      decoration: InputDecoration(
-                        errorBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(
-                              width: 1, color: Colors.redAccent),
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(
-                              width: 1,
-                              color: Color.fromARGB(157, 9, 237, 176)),
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                                width: 2,
-                                color: Color.fromARGB(157, 9, 237, 176)),
-                            borderRadius: BorderRadius.circular(10)),
-                        focusedErrorBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                                width: 1, color: Colors.redAccent),
-                            borderRadius: BorderRadius.circular(10)),
-                        hintText: 'Enter Your Email Account',
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 60,
-                    width: 300,
-                    child: TextFormField(
-                      controller: passwordcontroller,
-                      obscureText: pass,
-                      autovalidateMode: submitted
-                          ? AutovalidateMode.always
-                          : AutovalidateMode.disabled,
-                      validator: passwordValidator,
-                      decoration: InputDecoration(
-                        errorBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(
-                              width: 1, color: Colors.redAccent),
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(
-                              width: 1,
-                              color: Color.fromARGB(157, 9, 237, 176)),
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                                width: 2,
-                                color: Color.fromARGB(157, 9, 237, 176)),
-                            borderRadius: BorderRadius.circular(10)),
-                        focusedErrorBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                                width: 1, color: Colors.redAccent),
-                            borderRadius: BorderRadius.circular(10)),
-                        // filled: true,
-                        // fillColor: const Color.fromARGB(157, 9, 237, 176),
-                        suffixIcon: IconButton(
-                            onPressed: () {
-                              setState(() {
-                                pass = !pass;
-                              });
-                            },
-                            splashRadius: 2,
-                            icon: pass
-                                ? const Icon(
-                                    Icons.remove_red_eye,
-                                    color: Color.fromARGB(163, 20, 20, 20),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+          backgroundColor: Colors.grey[100],
+          body: DefaultTextStyle(
+            style: TextStyle(color: Colors.grey[900]),
+            child: Form(
+              key: _formKey,
+              child: SizedBox(
+                child: Center(
+                  child: SingleChildScrollView(
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height,
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(13.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(
+                                    height: 40,
+                                  ),
+                                  Text(
+                                    "Welcome Back",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 23,
+                                        color: Colors.grey[800]),
+                                  ),
+                                  Text(
+                                    "Hello again you've been missed!",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 12,
+                                        color: Colors.grey[700]),
+                                  ),
+                                  const SizedBox(
+                                    height: 25,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 5, horizontal: 3),
+                                    child: Text(
+                                      "Email Address",
+                                      style: TextStyle(
+                                        color: Colors.grey[800],
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                  TextFormField(
+                                    controller: usernamecontroller,
+                                    autovalidateMode: submitted
+                                        ? AutovalidateMode.always
+                                        : AutovalidateMode.disabled,
+                                    validator: emialValidator,
+                                    decoration: InputDecoration(
+                                      hintText: "Enter your email",
+                                      hintStyle: const TextStyle(fontSize: 12),
+                                      labelStyle:
+                                          TextStyle(color: Colors.grey[800]),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 5, horizontal: 3),
+                                    child: Text(
+                                      "Password",
+                                      style: TextStyle(
+                                          color: Colors.grey[800],
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 12),
+                                    ),
+                                  ),
+                                  TextFormField(
+                                    controller: passwordcontroller,
+                                    obscureText: pass,
+                                    autovalidateMode: submitted
+                                        ? AutovalidateMode.always
+                                        : AutovalidateMode.disabled,
+                                    validator: passwordValidator,
+                                    decoration: InputDecoration(
+                                      hintText: "Enter your password",
+                                      hintStyle: const TextStyle(fontSize: 12),
+                                      suffixIcon: IconButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              pass = !pass;
+                                            });
+                                          },
+                                          // splashRadius: 2,
+                                          icon: pass
+                                              ? Icon(
+                                                  Icons.remove_red_eye,
+                                                  color: Colors.grey[800],
+                                                )
+                                              : Icon(
+                                                  Icons.visibility_off,
+                                                  color: Colors.grey[800],
+                                                )),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    alignment: Alignment.topRight,
+                                    child: TextButton(
+                                      onPressed: () {
+                                        Navigator.pushReplacementNamed(
+                                            context, '/reset');
+                                      },
+                                      child: const Text(
+                                        'forget password ? ',
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                            color: Colors.blue, fontSize: 12),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    height: 40,
+                                    child: ElevatedButton(
+                                        onPressed: () async {
+                                          FocusScope.of(context).unfocus();
+                                          final prefs = await SharedPreferences
+                                              .getInstance();
+                                          final String? username =
+                                              prefs.getString('UserID');
+                                          prefs.setString('password',
+                                              passwordcontroller.text);
+                                          setState(() {
+                                            submitted = true;
+                                            print('$username');
+                                          });
+                                          if (_formKey.currentState!
+                                              .validate()) {
+                                            setState(() {
+                                              isloading = true;
+                                            });
+                                            try {
+                                              final auth =
+                                                  FirebaseAuth.instance;
+                                              UserCredential currentUser =
+                                                  await auth
+                                                      .signInWithEmailAndPassword(
+                                                          email:
+                                                              usernamecontroller
+                                                                  .text,
+                                                          password:
+                                                              passwordcontroller
+                                                                  .text);
+                                              print(currentUser.user!);
+                                              setState(() {
+                                                mytime;
+                                                checkEmail();
+                                              });
+                                            } on FirebaseException catch (e) {
+                                              String errorMessage = "";
+                                              String code = e.code;
+
+                                              if (code == "invalid-email") {
+                                                errorMessage = "Invalid email.";
+                                              } else if (code ==
+                                                  "user-not-found") {
+                                                errorMessage =
+                                                    "User not found.";
+                                              } else if (code ==
+                                                  "wrong-password") {
+                                                errorMessage =
+                                                    "Invalid password.";
+                                              } else if (code ==
+                                                  "too-many-requests") {
+                                                errorMessage =
+                                                    "Too many request try again later";
+                                              } else if (code ==
+                                                  "network-request-failed") {
+                                                errorMessage =
+                                                    "Your are currently offline.";
+                                              } else {
+                                                errorMessage =
+                                                    "Something went wrong please try again.";
+                                              }
+
+                                              // ignore: use_build_context_synchronously
+                                              showSnackbar(
+                                                  context,
+                                                  errorMessage,
+                                                  1,
+                                                  Colors.red[300]);
+                                              setState(() {
+                                                isloading = false;
+                                              });
+                                            } catch (e) {
+                                              setState(() {
+                                                isloading = false;
+                                              });
+                                              // ignore: use_build_context_synchronously
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(SnackBar(
+                                                      content:
+                                                          Text(e.toString()),
+                                                      backgroundColor:
+                                                          Colors.red[300],
+                                                      duration: const Duration(
+                                                          seconds: 1)));
+                                            }
+                                          }
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                            elevation: 0,
+                                            primary: Colors.blueAccent),
+                                        child: isloading
+                                            ? const SizedBox(
+                                                width: 15,
+                                                height: 15,
+                                                child:
+                                                    CircularProgressIndicator(
+                                                  color: Colors.white,
+                                                  strokeWidth: 2,
+                                                ),
+                                              )
+                                            : const Text(
+                                                'SignIn',
+                                              )),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 30),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Don't have an account? ",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.grey[800],
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pushReplacementNamed(
+                                          context, '/register');
+                                    },
+                                    style: TextButton.styleFrom(
+                                        padding: EdgeInsets.zero,
+                                        minimumSize: const Size(50, 30),
+                                        tapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
+                                        alignment: Alignment.centerLeft),
+                                    child: const Text(
+                                      "Signup",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.blueAccent,
+                                        fontSize: 12,
+                                      ),
+                                    ),
                                   )
-                                : const Icon(
-                                    Icons.visibility_off,
-                                    color: Color.fromARGB(163, 19, 18, 18),
-                                  )),
-                        hintText: 'Enter Password',
-                      ),
+                                ],
+                              ),
+                            ),
+                          ]),
                     ),
                   ),
-                  Container(
-                    width: 300,
-                    alignment: Alignment.topRight,
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/reset');
-                      },
-                      child: const Text(
-                        'forget password?',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: Colors.blue),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  ElevatedButton(
-                      onPressed: () async {
-                        final prefs = await SharedPreferences.getInstance();
-                        final String? username = prefs.getString('UserID');
-                        prefs.setString('password', passwordcontroller.text);
-                        setState(() {
-                          submitted = true;
-                          print('$username');
-                        });
-                        if (_formKey.currentState!.validate()) {
-                          setState(() {
-                            isloading = true;
-                          });
-                          try {
-                            final auth = FirebaseAuth.instance;
-                            UserCredential currentUser =
-                                await auth.signInWithEmailAndPassword(
-                                    email: usernamecontroller.text,
-                                    password: passwordcontroller.text);
-                            print(currentUser.user!);
-                            if (currentUser.user!.uid != null) {
-                              isloading = false;
-                              // ignore: use_build_context_synchronously
-                              Navigator.popUntil(
-                                  context, ModalRoute.withName('/'));
-                              // ignore: use_build_context_synchronously
-                              Navigator.pushReplacementNamed(context, '/main');
-                              usernamecontroller.clear();
-                              passwordcontroller.clear();
-                            }
-                          } on FirebaseException catch (e) {
-                            if (e.code == 'user-not-found') {
-                              errorMassage = 'No user found with this E-mail';
-                            } else if (e.code == 'wrong-password') {
-                              errorMassage = ' Wrong password !';
-                            } else {
-                              errorMassage = e.code;
-                            }
-                            setState(() {
-                              isloading = false;
-                            });
-                            // ignore: use_build_context_synchronously
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                content: Text(errorMassage),
-                                backgroundColor: Colors.red,
-                                duration: const Duration(seconds: 1)));
-                          } catch (e) {
-                            setState(() {
-                              isloading = false;
-                            });
-                            // ignore: use_build_context_synchronously
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                content: Text(e.toString()),
-                                backgroundColor: Colors.red,
-                                duration: const Duration(seconds: 1)));
-                          }
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        primary: const Color.fromARGB(157, 9, 237, 176),
-                        padding: const EdgeInsets.only(left: 120, right: 120),
-                        elevation: 15,
-                      ),
-                      child: isloading
-                          ? const Padding(
-                              padding: EdgeInsets.all(10),
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                              ),
-                            )
-                          : const Padding(
-                              padding: EdgeInsets.all(10.0),
-                              child: Text(
-                                'SignIn',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: 'Libre',
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            )),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Need to Create An Account ?',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      TextButton(
-                          onPressed: () {
-                            setState(() {
-                              Navigator.pushNamed(context, '/register');
-                            });
-                          },
-                          child: const Text(
-                            'SignUp',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 15,
-                                color: Color.fromARGB(255, 8, 254, 4)),
-                          )),
-                      const SizedBox(
-                        height: 100,
-                      )
-                    ],
-                  )
-                ],
+                ),
               ),
-            ]),
-          ),
-        ),
-      ),
-    ));
+            ),
+          )),
+    );
   }
 }

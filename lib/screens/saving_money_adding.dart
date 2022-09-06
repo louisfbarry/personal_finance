@@ -1,16 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:form_field_validator/form_field_validator.dart';
 import '../model/firebaseservice.dart';
 
 class AddSavingMoney extends StatefulWidget {
   final String title;
   final String id;
   final int addPrice;
+  final int targetPrice;
 
   const AddSavingMoney(
-      {Key? key, required this.title, required this.id, required this.addPrice})
+      {Key? key,
+      required this.title,
+      required this.id,
+      required this.addPrice,
+      required this.targetPrice})
       : super(key: key);
 
   @override
@@ -70,8 +74,16 @@ class _AddSavingMoneyState extends State<AddSavingMoney> {
                         ? AutovalidateMode.onUserInteraction
                         : AutovalidateMode.disabled,
                     keyboardType: TextInputType.number,
-                    validator:
-                        RequiredValidator(errorText: "Please enter amount"),
+                    // 1/9
+                    validator: (value) {
+                      if (value == null || value.isEmpty || value == "0") {
+                        return "Please enter amount";
+                      } else if (int.parse(value) + widget.addPrice >
+                          widget.targetPrice) {
+                        return "Your add price is over your target price";
+                      }
+                      return null;
+                    },
                     decoration: const InputDecoration(
                       hintText: "Enter Your Amount",
                       hintStyle: TextStyle(fontSize: 12),

@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Mainpage extends StatefulWidget {
   const Mainpage({Key? key}) : super(key: key);
@@ -24,23 +25,22 @@ class _MainpageState extends State<Mainpage> {
 
   final screens = [Dashboard(), Saving(), AddValue(), Budget(), Setting()];
 
-  void loginCheck() {
-    FirebaseAuth.instance.authStateChanges().listen((user) {
-      if (user == null) {
-        print('User is currently signed out!');
-        Navigator.pushNamed(context, '/login');
-      } else {
-        print('User is signed in!');
-      }
-    });
+  
+
+  showBottomSheet() {
+    return showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        barrierColor: Colors.transparent,
+        builder: (_) => Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              color: Color.fromARGB(255, 0, 179, 255),
+              child: const AddValue(),
+            ));
   }
 
-  @override
-  void initState() {
-    loginCheck();
-    // TODO: implement initState
-    super.initState();
-  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -71,34 +71,65 @@ class _MainpageState extends State<Mainpage> {
           ),
           child: NavigationBar(
             height: 60,
-            backgroundColor: Color.fromRGBO(193, 214, 233, 1),
+            backgroundColor: const Color.fromARGB(255, 238, 250, 255),
+            elevation: 0,
             labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
             selectedIndex: currentIndex,
             onDestinationSelected: (index) {
-              setState(() {
-                currentIndex = index;
-              });
+              if (index == 2) {
+                showModalBottomSheet(
+                    backgroundColor: Colors.transparent,
+                    barrierColor: Colors.transparent,
+                    context: context,
+                    enableDrag: true,
+                    isScrollControlled: true,
+                    builder: (_) {
+                      return Container(
+                        height: MediaQuery.of(context).size.height * 0.6,
+                        decoration: const BoxDecoration(
+                            color: Color.fromARGB(255, 194, 237, 255),
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              topRight: Radius.circular(20),
+                            )),
+                        child: const AddValue(),
+                      );
+                    });
+                // showBottomSheet();
+                // print("hi");
+              } else {
+                setState(() {
+                  currentIndex = index;
+                });
+              }
             },
             destinations: const [
               NavigationDestination(
-                  icon: Icon(Icons.home_outlined),
-                  selectedIcon: Icon(Icons.home),
+                  icon: Icon(FontAwesomeIcons.house),
+                  selectedIcon:
+                      Icon(FontAwesomeIcons.house, color: Colors.blueAccent),
                   label: "Home"),
               NavigationDestination(
-                  icon: Icon(Icons.savings_outlined),
-                  selectedIcon: Icon(Icons.savings),
+                  icon: Icon(
+                    FontAwesomeIcons.piggyBank,
+                  ),
+                  selectedIcon: Icon(FontAwesomeIcons.piggyBank,
+                      color: Colors.blueAccent),
                   label: "Saving"),
               NavigationDestination(
-                  icon: Icon(Icons.add_outlined),
-                  selectedIcon: Icon(Icons.add),
+                  icon: Icon(FontAwesomeIcons.circlePlus),
+                  selectedIcon: Icon(FontAwesomeIcons.circlePlus,
+                      color: Colors.blueAccent),
                   label: "Add Value"),
               NavigationDestination(
-                  icon: Icon(Icons.money_outlined),
-                  selectedIcon: Icon(Icons.money),
+                  icon: Icon(FontAwesomeIcons.chartSimple),
+                  selectedIcon: Icon(FontAwesomeIcons.chartSimple,
+                      color: Colors.blueAccent),
                   label: "Budget"),
               NavigationDestination(
-                  icon: Icon(Icons.settings_outlined),
-                  selectedIcon: Icon(Icons.settings),
+                  icon: Icon(FontAwesomeIcons.gear),
+                  selectedIcon:
+                      Icon(FontAwesomeIcons.gear, color: Colors.blueAccent),
                   label: "Setting"),
             ],
           ),

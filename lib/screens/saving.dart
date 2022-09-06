@@ -1,4 +1,5 @@
 import 'package:finance/model/firebaseservice.dart';
+import 'package:finance/screens/saving_details.dart';
 import 'package:finance/screens/saving_money_adding.dart';
 import 'package:finance/screens/savingadding.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../model/firebaseservice.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Saving extends StatefulWidget {
   const Saving({Key? key}) : super(key: key);
@@ -29,7 +31,7 @@ class _SavingState extends State<Saving> {
             onPressed: () {
               // Navigator.pushNamed(context, "/savingadding");
               Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => AddSaving(
+                  builder: (context) => const AddSaving(
                         isEdit: false,
                       )));
             },
@@ -40,12 +42,13 @@ class _SavingState extends State<Saving> {
         elevation: 0.0,
         backgroundColor: Colors.blueAccent,
       ),
-      body: ListView.builder(
-        itemCount: 1,
-        itemBuilder: (context, index) {
-          return SavingCard();
-        },
-      ),
+      // body: ListView.builder(
+      //   itemCount: 1,
+      //   itemBuilder: (context, index) {
+      //     return SavingCard();
+      //   },
+      // ),
+      body: SavingCard(),
     );
   }
 }
@@ -137,20 +140,21 @@ class SavingDataCard extends StatelessWidget {
                           style: TextStyle(fontSize: 12),
                         )),
                     TextButton(
-                        onPressed: () {
-                          FirebaseFirestore.instance
-                              .collection('${currentuser!.email}')
-                              .doc("Saving")
-                              .collection("saving-data")
-                              .doc(id)
-                              .delete();
-                          FirebaseFirestore.instance
+                        // 1/9
+                        onPressed: () async {
+                          await FirebaseFirestore.instance
                               .collection('${currentuser!.email}')
                               .doc("Saving")
                               .collection("saving-data")
                               .doc(id)
                               .collection('add-prices')
                               .doc()
+                              .delete();
+                          await FirebaseFirestore.instance
+                              .collection('${currentuser!.email}')
+                              .doc("Saving")
+                              .collection("saving-data")
+                              .doc(id)
                               .delete();
                           Navigator.pop(context);
                         },
@@ -177,15 +181,18 @@ class SavingDataCard extends StatelessWidget {
                   title: title,
                   id: id,
                   addPrice: addPrice,
+                  targetPrice: targetPrice,
                 )));
         break;
       case 1:
         // print("Clicked edit");
+        // 1/9
         Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => AddSaving(
                   isEdit: true,
                   title: title,
                   targetPrice: targetPrice,
+                  addPrice: addPrice,
                   id: id,
                 )));
         break;
@@ -199,14 +206,21 @@ class SavingDataCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      // 1/9
       onTap: () {
-        Navigator.pushNamed(context, "/savingDetails", arguments: {
-          'title': title,
-          'targetPrice': targetPrice,
-          'addPrice': addPrice,
-          'id': id
-        });
+        // Navigator.pushNamed(context, "/savingDetails", arguments: {
+        //   'title': title,
+        //   'targetPrice': targetPrice,
+        //   'addPrice': addPrice,
+        //   'id': id
+        // }
+        // );
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => SavingDetails(
+                  id: id,
+                )));
       },
+
       child: Padding(
         padding: const EdgeInsets.fromLTRB(5, 5, 5, 0),
         child: SizedBox(

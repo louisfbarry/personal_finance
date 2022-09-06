@@ -1,80 +1,75 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finance/screens/saving_money_adding.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import '../model/firebaseservice.dart';
 
 class SavingDetails extends StatefulWidget {
-  SavingDetails({Key? key}) : super(key: key);
-
+  String id;
+  SavingDetails({Key? key, required this.id}) : super(key: key);
   @override
   State<SavingDetails> createState() => _SavingDetailsState();
 }
 
 class _SavingDetailsState extends State<SavingDetails> {
   TextEditingController addPricesController = TextEditingController();
-
-  // Future openDialog(String id, int addPrices) => showDialog(
-  //     context: context,
-  //     builder: (context) => AlertDialog(
-  //           contentPadding: const EdgeInsets.fromLTRB(24.0, 10.0, 24.0, 10.0),
-  //           title: Text(
-  //             "Add Money",
-  //             style: TextStyle(color: Colors.grey[800], fontSize: 15),
-  //           ),
-  //           content: TextFormField(
-  //             controller: addPricesController,
-  //             autofocus: true,
-  //             keyboardType: TextInputType.number,
-  //             decoration: const InputDecoration(
-  //               hintText: "Add amount",
-  //               hintStyle: TextStyle(fontSize: 12),
-  //               contentPadding: EdgeInsets.all(8),
-  //               isDense: true,
-  //             ),
-  //           ),
-  //           actions: [
-  //             Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-  //               TextButton(
-  //                   onPressed: () {
-  //                     Navigator.pop(context);
-  //                   },
-  //                   child: Text("Cancel")),
-  //               TextButton(
-  //                   onPressed: () {
-  //                     // Navigator.pop(context);
-  //                     if (addPricesController.text.isNotEmpty) {
-  //                       API().savingPriceAdding(
-  //                           int.parse(addPricesController.text), id);
-  //                       FirebaseFirestore.instance
-  //                           .collection("lwinhtooaung267@gmail.com")
-  //                           .doc("Saving")
-  //                           .collection("saving-data")
-  //                           .doc(id)
-  //                           .update({
-  //                         "addPrice":
-  //                             addPrices + int.parse(addPricesController.text)
-  //                       });
-  //                       Navigator.pop(context);
-  //                       addPricesController.clear();
-  //                     }
-  //                   },
-  //                   child: Text("Save")),
-  //             ])
-  //           ],
-  //         ));
-
-  var data;
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    data = ModalRoute.of(context)!.settings.arguments;
+    return Scaffold(
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection("${currentuser!.email}")
+            .doc("Saving")
+            .collection("saving-data")
+            // .doc(widget.id)
+            .where('id', isEqualTo: widget.id)
+            .snapshots(),
+        builder: (context, snapshot) {
+          List detailsData = [];
+          if (snapshot.hasData) {
+            // print("have");
+            // print(snapshot.data);
+            var docss = snapshot.data!.docs;
+            var details = docss[0].data()!;
+            detailsData.add(docss[0].data());
+            // return Text(widgeet[0]['title']);
+            return DetailsUi(
+                id: detailsData[0]['id'],
+                title: detailsData[0]['title'],
+                addPrice: detailsData[0]['addPrice'],
+                targetPrice: detailsData[0]['targetPrice']);
+          }
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
 
-    var title = data['title'];
-    int targetPrice = data['targetPrice'];
-    int addPrice = data['addPrice'];
-    int reamainingPrice = targetPrice - addPrice;
-    String id = data['id'];
-
+class DetailsUi extends StatelessWidget {
+  String id;
+  String title;
+  int addPrice;
+  int targetPrice;
+  DetailsUi(
+      {Key? key,
+      required this.id,
+      required this.title,
+      required this.addPrice,
+      required this.targetPrice})
+      : super(key: key);
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
@@ -99,11 +94,12 @@ class _SavingDetailsState extends State<SavingDetails> {
         backgroundColor: Colors.blueAccent,
         onPressed: () {
           // openDialog(id, addPrice);
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
+          Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => AddSavingMoney(
                     title: title,
                     id: id,
                     addPrice: addPrice,
+                    targetPrice: targetPrice,
                   )));
         },
         child: const Icon(Icons.add),
@@ -219,7 +215,9 @@ class _SavingDetailsState extends State<SavingDetails> {
                         fontSize: 12,
                         fontWeight: FontWeight.w500),
                   ),
-                  Text(NumberFormat.decimalPattern().format(reamainingPrice),
+                  Text(
+                      NumberFormat.decimalPattern()
+                          .format(targetPrice - addPrice),
                       style: TextStyle(
                           color: Colors.red[300],
                           fontSize: 12,

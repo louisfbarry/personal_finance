@@ -1,6 +1,8 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finance/model/firebaseGet.dart';
-import 'package:finance/components/CategoDetail.dart';
+import 'package:finance/components/catego_detail.dart';
 import 'package:finance/screens/addValue.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
@@ -59,22 +61,15 @@ class _IncomePageState extends State<IncomePage> {
       }
     });
 
-    List<IncomeData> getIncomeChartData() {
-      List<IncomeData> IncomeChartData = [
-        IncomeData("Salary", salaryTotal.toInt()),
-        IncomeData("Investment", investTotal.toInt()),
-        IncomeData("Uncategorized", uncategoTotal.toInt())
-      ];
+    // ignore: non_constant_identifier_names
 
-      return IncomeChartData;
-    }
-
-    _IncomeChart = getIncomeChartData();
+    // _IncomeChart = [];
+    // setState(() {
+    //   _IncomeChart =
+    // });
   }
 
-  List<IncomeData>? _IncomeChart;
-
-  
+  List<IncomeData> _IncomeChart = [];
 
   @override
   void initState() {
@@ -85,33 +80,34 @@ class _IncomePageState extends State<IncomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 238, 250, 255),
       appBar: AppBar(title: const Text('Income')),
-      bottomNavigationBar: BottomAppBar(
-          elevation: 5,
-          child: InkWell(
-            onTap: () async {
-              Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (BuildContext context) => const AddValue(),
-                ),
-              );
-            },
-            child: Container(
-              color: Colors.greenAccent,
-              width: MediaQuery.of(context).size.width,
-              height: 50,
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Text(
-                      'Add income',
-                      style:
-                          TextStyle(color: Colors.black, fontFamily: "Libre"),
-                    )
-                  ]),
-            ),
-          )),
+      // bottomNavigationBar: BottomAppBar(
+      //     elevation: 5,
+      //     child: InkWell(
+      //       onTap: () async {
+      //         Navigator.push(
+      //           context,
+      //           MaterialPageRoute<void>(
+      //             builder: (BuildContext context) => const AddValue(),
+      //           ),
+      //         );
+      //       },
+      //       child: Container(
+      //         color: Colors.greenAccent,
+      //         width: MediaQuery.of(context).size.width,
+      //         height: 50,
+      //         child: Column(
+      //             mainAxisAlignment: MainAxisAlignment.center,
+      //             children: const [
+      //               Text(
+      //                 'Add income',
+      //                 style:
+      //                     TextStyle(color: Colors.black, fontFamily: "Libre"),
+      //               )
+      //             ]),
+      //       ),
+      //     )),
       body: SingleChildScrollView(
           child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -119,7 +115,7 @@ class _IncomePageState extends State<IncomePage> {
           children: [
             SizedBox(
               width: MediaQuery.of(context).size.width - 30,
-              height: 200,
+              height: MediaQuery.of(context).size.height * 0.4,
               child: Card(
                 child: Padding(
                   padding: const EdgeInsets.all(5),
@@ -129,7 +125,12 @@ class _IncomePageState extends State<IncomePage> {
                     tooltipBehavior: TooltipBehavior(enable: true),
                     series: <CircularSeries>[
                       PieSeries<IncomeData, String>(
-                        dataSource: _IncomeChart,
+                        // dataSource: _IncomeChart,
+                        dataSource: [
+                          IncomeData("Salary", salaryTotal.toInt()),
+                          IncomeData("Investment", investTotal.toInt()),
+                          IncomeData("Uncategorized", uncategoTotal.toInt())
+                        ],
                         xValueMapper: (IncomeData data, _) => data.IncomeType,
                         yValueMapper: (IncomeData data, _) => data.IncomeValue,
                         dataLabelSettings: const DataLabelSettings(

@@ -45,6 +45,8 @@ dependencies:
   percent_indicator: ^4.2.2
   syncfusion_flutter_charts: ^20.2.45
   intl: ^0.17.0
+  font_awesome_flutter: ^10.1.0
+  local_auth: ^2.1.2
 
 
 dev_dependencies:

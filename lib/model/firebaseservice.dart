@@ -15,7 +15,7 @@ final Stream<QuerySnapshot> incomeStream = firestore
     .collection('${currentuser!.email}')
     .doc('Income')
     .collection('income-data')
-    .orderBy('created At', descending: true)
+    .orderBy('created At', descending: false)
     .snapshots();
 
 class API {
@@ -25,7 +25,7 @@ class API {
     user.doc('Saving').set({'Created At': Cdate});
   }
 
-  incomeadding(String category, double amount) {
+  incomeadding(String category, int amount) {
     final incomeId = user.doc('Income').collection('income-data').doc();
     incomeId.set({
       'category': category,
@@ -35,7 +35,19 @@ class API {
     });
   }
 
-  outcomeadding(String category, double amount) {
+  incomehistroydelete(String id) {
+    user.doc('Income').collection('income-data').doc(id).delete();
+  }
+
+  incomehistroyupdate(String catego, int amount, String id) {
+    user
+        .doc('Income')
+        .collection('income-data')
+        .doc(id)
+        .update({'category': catego, 'amount': amount});
+  }
+
+  outcomeadding(String category, int amount) {
     final outcomeId = user.doc('Outcome').collection('outcome-data').doc();
     outcomeId.set({
       'category': category,
