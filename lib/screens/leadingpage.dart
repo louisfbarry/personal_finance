@@ -16,7 +16,7 @@ class _FrontScreenState extends State<FrontScreen> {
   bool showBiometrics = false;
 
   isBiometricAvailable() async {
-    showBiometrics = await BiometricHelper().authenticate();
+    showBiometrics = await BiometricHelper().hasEnrolledBiometrics();
     if (showBiometrics == false) {
       // ignore: use_build_context_synchronously
       Navigator.pushReplacement(

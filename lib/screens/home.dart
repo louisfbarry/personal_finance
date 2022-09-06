@@ -1,3 +1,4 @@
+import 'package:finance/model/firebaseGet.dart';
 import 'package:finance/model/firebaseservice.dart';
 import 'package:finance/screens/addValue.dart';
 import 'package:finance/screens/budget.dart';
@@ -23,24 +24,30 @@ class Mainpage extends StatefulWidget {
 class _MainpageState extends State<Mainpage> {
   int currentIndex = 0;
 
-  final screens = [Dashboard(), Saving(), AddValue(), Budget(), Setting()];
-
-  
-
-  showBottomSheet() {
-    return showModalBottomSheet(
-        context: context,
-        backgroundColor: Colors.transparent,
-        barrierColor: Colors.transparent,
-        builder: (_) => Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              color: Color.fromARGB(255, 0, 179, 255),
-              child: const AddValue(),
-            ));
+  final screens = [
+    Dashboard(),
+    Saving(),
+    AddValue(),
+    const Budget(),
+    Setting()
+  ];
+  void loginCheck() {
+    FirebaseAuth.instance.authStateChanges().listen((user) {
+      if (user == null) {
+        print('User is currently signed out!');
+        Navigator.pushNamed(context, '/login');
+      } else {
+        print('User is signed in!');
+      }
+    });
   }
 
-  
+  @override
+  void initState() {
+    loginCheck();
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,11 +99,9 @@ class _MainpageState extends State<Mainpage> {
                               topLeft: Radius.circular(20),
                               topRight: Radius.circular(20),
                             )),
-                        child: const AddValue(),
+                        child: AddValue(),
                       );
                     });
-                // showBottomSheet();
-                // print("hi");
               } else {
                 setState(() {
                   currentIndex = index;

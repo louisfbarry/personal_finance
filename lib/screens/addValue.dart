@@ -23,6 +23,22 @@ class _AddValueState extends State<AddValue> {
 
   final _formKey = GlobalKey<FormState>();
   bool submitted = false;
+  List<String>? incomelist;
+  getlist() async {
+    await IncomeCategoList().then((value) {
+      setState(() {
+        incomelist = value;
+      });
+    });
+    print(incomelist);
+  }
+
+  @override
+  void initState() {
+    getlist();
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,16 +72,28 @@ class _AddValueState extends State<AddValue> {
                 fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black),
           ),
         ),
-        body: Form(
-          key: _formKey,
-          child: const TabBarView(children: [
-            IncomeAddingDetail(),
-            OutcomeAddingDetail(),
-            Center(
-              child: Text('THird'),
-            ),
-          ]),
-        ),
+        body: incomelist == null
+            ? Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                  CircularProgressIndicator()
+                ]),
+              )
+            : Form(
+                key: _formKey,
+                child: TabBarView(children: [
+                  IncomeAddingDetail(
+                    incomeCategoList: incomelist!,
+                  ),
+                  OutcomeAddingDetail(),
+                  Center(
+                    child: Text('THird'),
+                  ),
+                ]),
+              ),
       ),
     );
   }

@@ -23,6 +23,28 @@ class API {
     user.doc('Income').set({'Created At': Cdate});
     user.doc('Outcome').set({'Created At': Cdate});
     user.doc('Saving').set({'Created At': Cdate});
+    user.doc('Income-catego').set({'Created At': Cdate});
+    user
+        .doc('Income-catego')
+        .collection('data')
+        .doc('Investment')
+        .set({'categoname': 'Investment', 'imagId': 'invest'});
+    user
+        .doc('Income-catego')
+        .collection('data')
+        .doc('Salary')
+        .set({'categoname': 'Salary', 'imagId': 'job'});
+    user.doc('Outcome-catego').set({'Created At': Cdate});
+    user
+        .doc('Outcome-catego')
+        .collection('data')
+        .doc('Food')
+        .set({'categoname': 'Food', 'imagId': 'food'});
+    user
+        .doc('Outcome-catego')
+        .collection('data')
+        .doc('Bill')
+        .set({'categoname': 'Bill', 'imagId': 'bill'});
   }
 
   incomeadding(String category, int amount) {

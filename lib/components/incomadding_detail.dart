@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:finance/model/firebaseGet.dart';
 import 'package:finance/screens/Income.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,19 +9,31 @@ import 'package:form_field_validator/form_field_validator.dart';
 import '../model/firebaseservice.dart';
 
 class IncomeAddingDetail extends StatefulWidget {
-  const IncomeAddingDetail({Key? key}) : super(key: key);
+  List<String> incomeCategoList;
+  IncomeAddingDetail({Key? key, required this.incomeCategoList})
+      : super(key: key);
 
   @override
   State<IncomeAddingDetail> createState() => _IncomeAddingDetailState();
 }
 
 class _IncomeAddingDetailState extends State<IncomeAddingDetail> {
-  List<String> incomeCategoList = ['Investment', 'Salary', 'Uncategorized'];
+  List<String>? getlist;
   String dropdownValue = 'Investment';
   bool submitted = false;
+  List<String> incomeCategoList = [];
   final _formKey = GlobalKey<FormState>();
   TextEditingController amountcontroller = TextEditingController();
   TextEditingController? notecontroller = TextEditingController();
+
+  @override
+  void initState() {
+    incomeCategoList = widget.incomeCategoList;
+    print(incomeCategoList);
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -70,7 +84,13 @@ class _IncomeAddingDetailState extends State<IncomeAddingDetail> {
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 15.0),
                         child: IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (_) {
+                                    return const Popupdialog();
+                                  });
+                            },
                             icon: const FaIcon(
                               FontAwesomeIcons.fileCirclePlus,
                               size: 35,
@@ -152,8 +172,8 @@ class _IncomeAddingDetailState extends State<IncomeAddingDetail> {
                             '$dropdownValue and ${int.parse(amountcontroller.text)}');
 
                         if (_formKey.currentState!.validate()) {
-                          API().incomeadding(dropdownValue,
-                              int.parse(amountcontroller.text));
+                          API().incomeadding(
+                              dropdownValue, int.parse(amountcontroller.text));
 
                           Navigator.push(
                             context,
@@ -174,6 +194,70 @@ class _IncomeAddingDetailState extends State<IncomeAddingDetail> {
               )
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class Popupdialog extends StatelessWidget {
+  const Popupdialog({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    TextEditingController? newcatego = TextEditingController();
+    CollectionReference user = firestore.collection('${currentuser!.email}');
+    return Scaffold(
+      body: Center(
+        child: Container(
+          color: Colors.amber,
+          height: 300,
+          width: 300,
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: SizedBox(
+                width: 200,
+                height: 50,
+                child: TextFormField(
+                  controller: newcatego,
+                  autovalidateMode: AutovalidateMode.disabled,
+                  validator:
+                      RequiredValidator(errorText: 'Pls enter your name'),
+                  decoration: InputDecoration(
+                    errorBorder: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(width: 1, color: Colors.redAccent),
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(width: 1, color: Colors.black),
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(width: 2, color: Colors.black),
+                        borderRadius: BorderRadius.circular(5)),
+                    focusedErrorBorder: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(width: 1, color: Colors.redAccent),
+                        borderRadius: BorderRadius.circular(5)),
+                    hintText: 'Enter name',
+                  ),
+                ),
+              ),
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  user
+                      .doc('Income-catego')
+                      .collection('data')
+                      .doc(newcatego.text)
+                      .set({'categoname': newcatego.text, 'imagId': 'job'});
+                },
+                child: const Text('set catego'))
+          ]),
         ),
       ),
     );

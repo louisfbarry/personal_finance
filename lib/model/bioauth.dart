@@ -12,7 +12,7 @@ class BiometricHelper {
         await bioauth.getAvailableBiometrics();
 
     if (availableBiometrics.isNotEmpty) {
-      return true;
+      return authenticate();
     }
     return false;
   }

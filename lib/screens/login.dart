@@ -45,6 +45,7 @@ class _MyLogInPageState extends State<MyLogInPage> {
 
         usernamecontroller.clear();
         passwordcontroller.clear();
+        mytime.cancel();
         Navigator.popUntil(context, ModalRoute.withName('/'));
         Navigator.pushNamed(context, '/main');
       });

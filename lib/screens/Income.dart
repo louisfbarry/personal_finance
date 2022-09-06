@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finance/model/firebaseGet.dart';
 import 'package:finance/components/catego_detail.dart';
 import 'package:finance/screens/addValue.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -33,7 +34,7 @@ class _IncomePageState extends State<IncomePage> {
   Future<List<dynamic>>? salary;
   Future<List<dynamic>>? uncatego;
 
-  valuecalculate() async {
+  investcalculate() async {
     invest = incomecategovalue('Investment');
     await invest!.then((value) {
       for (var i = 0; i < value.length; i++) {
@@ -42,7 +43,9 @@ class _IncomePageState extends State<IncomePage> {
         });
       }
     });
+  }
 
+  salarycalculate() async {
     salary = incomecategovalue('Salary');
     await salary!.then((value) {
       for (var i = 0; i < value.length; i++) {
@@ -51,7 +54,9 @@ class _IncomePageState extends State<IncomePage> {
         });
       }
     });
+  }
 
+  uncategocalculate() async {
     uncatego = incomecategovalue('Uncategorized');
     await uncatego!.then((value) {
       for (var i = 0; i < value.length; i++) {
@@ -60,20 +65,15 @@ class _IncomePageState extends State<IncomePage> {
         });
       }
     });
-
-    // ignore: non_constant_identifier_names
-
-    // _IncomeChart = [];
-    // setState(() {
-    //   _IncomeChart =
-    // });
   }
 
   List<IncomeData> _IncomeChart = [];
 
   @override
   void initState() {
-    valuecalculate();
+    investcalculate();
+    salarycalculate();
+    uncategocalculate();
     super.initState();
   }
 
@@ -82,32 +82,6 @@ class _IncomePageState extends State<IncomePage> {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 238, 250, 255),
       appBar: AppBar(title: const Text('Income')),
-      // bottomNavigationBar: BottomAppBar(
-      //     elevation: 5,
-      //     child: InkWell(
-      //       onTap: () async {
-      //         Navigator.push(
-      //           context,
-      //           MaterialPageRoute<void>(
-      //             builder: (BuildContext context) => const AddValue(),
-      //           ),
-      //         );
-      //       },
-      //       child: Container(
-      //         color: Colors.greenAccent,
-      //         width: MediaQuery.of(context).size.width,
-      //         height: 50,
-      //         child: Column(
-      //             mainAxisAlignment: MainAxisAlignment.center,
-      //             children: const [
-      //               Text(
-      //                 'Add income',
-      //                 style:
-      //                     TextStyle(color: Colors.black, fontFamily: "Libre"),
-      //               )
-      //             ]),
-      //       ),
-      //     )),
       body: SingleChildScrollView(
           child: Padding(
         padding: const EdgeInsets.all(8.0),

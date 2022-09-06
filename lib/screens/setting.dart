@@ -291,6 +291,7 @@ class _SettingState extends State<Setting> {
                       () async {
                     print("logout");
                     await FirebaseAuth.instance.signOut();
+                    
                   });
                 },
                 child: settingButton(

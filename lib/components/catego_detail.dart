@@ -153,12 +153,8 @@ class _DetailStyleState extends State<DetailStyle> {
   TextEditingController? amountcontroller;
   TextEditingController? categocontroller;
 
-  double investTotal = 0;
-  double salaryTotal = 0;
-  double uncategoTotal = 0;
-  Future<List<dynamic>>? invest;
-  Future<List<dynamic>>? salary;
-  Future<List<dynamic>>? uncatego;
+  
+
 
   @override
   void initState() {

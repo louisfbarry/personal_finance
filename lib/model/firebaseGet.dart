@@ -5,44 +5,25 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../model/firebaseservice.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 CollectionReference user = firestore.collection('${currentuser!.email}');
 
-// double total = 0;
-// List value = [];
+Future<List<String>> IncomeCategoList() async {
+  List<String> list = [];
+  await user.doc('Income-catego').collection('data').get().then((snapshot) {
+    snapshot.docs.map((DocumentSnapshot document) {
+      Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
 
-// categoValue(Stream<QuerySnapshot> _usersStream) {
-//   return Container(
-//     color: Colors.green,
-//     height: 100,
-//     width: 200,
-//     child: StreamBuilder<QuerySnapshot>(
-//       stream: _usersStream,
-//       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-//         total = 0;
-//         value = [];
-//         if (snapshot.hasError) {
-//           return const Text('Something went wrong');
-//         }
-
-//         if (snapshot.connectionState == ConnectionState.waiting) {
-//           return const Text("Loading");
-//         }
-
-//         if (snapshot.hasData) {
-//           snapshot.data!.docs.map((DocumentSnapshot document) {
-//             Map<String, dynamic> data =
-//                 document.data()! as Map<String, dynamic>;
-//             total += data['amount'];
-//             value.add(data['amount']);
-//           }).toList();
-//         }
-//         print(value);
-//         return Text('$total');
-//       },
-//     ),
-//   );
-// }
+      list.add(data['categoname']);
+    }).toList();
+  });
+  print(list);
+  return list;
+  // final allData = querySnapshot.docs.map((doc) {
+  //   doc.data();
+  // }).toList();
+}
 
 Future<List> incomecategovalue(String catego) async {
   List<int> list = [0];
