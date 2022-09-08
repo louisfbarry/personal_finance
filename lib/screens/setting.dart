@@ -273,7 +273,35 @@ class _SettingState extends State<Setting> {
                     });
                   });
 
+                  // delete income category
+                  var incomeCategoryPath = FirebaseFirestore.instance
+                      .collection("${currentuser!.email}")
+                      .doc("Income-catego")
+                      .collection("data");
+
+                  incomeCategoryPath.get().then((value) => {
+                        value.docs.forEach((element) {
+                          incomeCategoryPath.doc(element.id).delete();
+                        })
+                      });
+
+                  // delete outcome category
+                  var outcomeCategoryPath = FirebaseFirestore.instance
+                      .collection("${currentuser!.email}")
+                      .doc("Outcome-catego")
+                      .collection("data");
+
+                  outcomeCategoryPath.get().then((value) => {
+                        value.docs.forEach((element) {
+                          outcomeCategoryPath.doc(element.id).delete();
+                        })
+                      });
+
+                  
                   Navigator.pop(context);
+                  // Navigator.pushNamed(context, "/main");
+                  showSnackbar(
+                      context, "Successful reset app", 2, Colors.green[300]);
 
                   //last
                 });
@@ -291,7 +319,6 @@ class _SettingState extends State<Setting> {
                       () async {
                     print("logout");
                     await FirebaseAuth.instance.signOut();
-                    
                   });
                 },
                 child: settingButton(

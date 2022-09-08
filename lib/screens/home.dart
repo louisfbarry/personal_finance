@@ -45,6 +45,7 @@ class _MainpageState extends State<Mainpage> {
   @override
   void initState() {
     loginCheck();
+    API().addCollection();
     // TODO: implement initState
     super.initState();
   }

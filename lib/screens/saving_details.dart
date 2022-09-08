@@ -3,17 +3,20 @@ import 'package:finance/screens/saving_money_adding.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+
 import '../model/firebaseservice.dart';
 
 class SavingDetails extends StatefulWidget {
   String id;
   SavingDetails({Key? key, required this.id}) : super(key: key);
+
   @override
   State<SavingDetails> createState() => _SavingDetailsState();
 }
 
 class _SavingDetailsState extends State<SavingDetails> {
   TextEditingController addPricesController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -30,26 +33,26 @@ class _SavingDetailsState extends State<SavingDetails> {
             // .doc(widget.id)
             .where('id', isEqualTo: widget.id)
             .snapshots(),
-        builder: (context, snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           List detailsData = [];
-          if (snapshot.hasData) {
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasData) {
             // print("have");
             // print(snapshot.data);
             var docss = snapshot.data!.docs;
             var details = docss[0].data()!;
             detailsData.add(docss[0].data());
             // return Text(widgeet[0]['title']);
-            return DetailsUi(
-                id: detailsData[0]['id'],
-                title: detailsData[0]['title'],
-                addPrice: detailsData[0]['addPrice'],
-                targetPrice: detailsData[0]['targetPrice']);
+
           }
-          return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
+          return DetailsUi(
+              id: detailsData[0]['id'],
+              title: detailsData[0]['title'],
+              addPrice: detailsData[0]['addPrice'],
+              targetPrice: detailsData[0]['targetPrice']);
         },
       ),
     );
@@ -68,6 +71,7 @@ class DetailsUi extends StatelessWidget {
       required this.addPrice,
       required this.targetPrice})
       : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

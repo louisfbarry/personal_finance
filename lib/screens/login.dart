@@ -207,14 +207,15 @@ class _MyLogInPageState extends State<MyLogInPage> {
                                               .getInstance();
                                           final String? username =
                                               prefs.getString('UserID');
-                                          prefs.setString('password',
-                                              passwordcontroller.text);
+
                                           setState(() {
                                             submitted = true;
                                             print('$username');
                                           });
                                           if (_formKey.currentState!
                                               .validate()) {
+                                            prefs.setString('password',
+                                                passwordcontroller.text);
                                             setState(() {
                                               isloading = true;
                                             });

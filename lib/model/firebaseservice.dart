@@ -15,7 +15,14 @@ final Stream<QuerySnapshot> incomeStream = firestore
     .collection('${currentuser!.email}')
     .doc('Income')
     .collection('income-data')
-    .orderBy('created At', descending: false)
+    .orderBy('created At', descending: true)
+    .snapshots();
+
+final Stream<QuerySnapshot> outcomeStream = firestore
+    .collection('${currentuser!.email}')
+    .doc('Outcome')
+    .collection('outcome-data')
+    .orderBy('created At', descending: true)
     .snapshots();
 
 class API {
@@ -57,8 +64,22 @@ class API {
     });
   }
 
+  outcomeadding(String category, int amount) {
+    final outcomeId = user.doc('Outcome').collection('outcome-data').doc();
+    outcomeId.set({
+      'category': category,
+      'id': outcomeId.id,
+      'amount': amount,
+      'created At': Cdate,
+    });
+  }
+
   incomehistroydelete(String id) {
     user.doc('Income').collection('income-data').doc(id).delete();
+  }
+
+  outcomehistorydelete(String id) {
+    user.doc('Outcome').collection('outcome-data').doc(id).delete();
   }
 
   incomehistroyupdate(String catego, int amount, String id) {
@@ -69,14 +90,12 @@ class API {
         .update({'category': catego, 'amount': amount});
   }
 
-  outcomeadding(String category, int amount) {
-    final outcomeId = user.doc('Outcome').collection('outcome-data').doc();
-    outcomeId.set({
-      'category': category,
-      'id': outcomeId.id,
-      'amount': amount,
-      'created At': Cdate
-    });
+  outcomehistroyupdate(String catego, int amount, String id) {
+    user
+        .doc('Outcome')
+        .collection('outcome-data')
+        .doc(id)
+        .update({'category': catego, 'amount': amount});
   }
 
   savingadding(
@@ -98,14 +117,14 @@ class API {
     int price,
     String id,
   ) {
-    final savingDataId = user.doc("Saving").collection('saving-data');
-    firestore
-        .collection('${currentuser!.email}')
-        .doc('Saving')
-        .collection("saving-data")
+    final savingHistory = user
+        .doc("Saving")
+        .collection('saving-data')
         .doc(id)
-        .collection("add-prices")
-        .add({'price': price, 'createdAt': DateTime.now()});
+        .collection('add-prices')
+        .doc();
+    savingHistory.set(
+        {'price': price, 'id': savingHistory.id, 'createdAt': DateTime.now()});
   }
 
   updateSaving(String id, String title, int targetPrice) {

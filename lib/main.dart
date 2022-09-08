@@ -1,4 +1,3 @@
-import 'package:finance/screens/Income.dart';
 import 'package:finance/screens/changePw.dart';
 import 'package:finance/screens/home.dart';
 import 'package:finance/screens/leadingpage.dart';
@@ -30,8 +29,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -63,7 +60,7 @@ class _MyAppState extends State<MyApp> {
         '/main': (context) => const Mainpage(),
         '/changepassword': (context) => const ChangePw(),
         // '/savingadding': (context) => const AddSaving(),
-        '/income': (context) => const IncomePage(),
+        // '/income': (context) => const IncomePage(),
         '/passcode': (context) => const MyPasscode(),
         // ignore: equal_keys_in_map
         // '/savingadding': (context) => const AddSaving(),

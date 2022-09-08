@@ -41,7 +41,11 @@ class _SavingHistoryState extends State<SavingHistory> {
               .snapshots(),
           builder: (context, snapshot) {
             List<SavingHistoryCard> savingHistoryData = [];
-            if (snapshot.hasData) {
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasData) {
               var data = snapshot.data!.docs;
               for (var history in data) {
                 savingHistoryData.add(SavingHistoryCard(
@@ -55,7 +59,21 @@ class _SavingHistoryState extends State<SavingHistory> {
             }
             return SingleChildScrollView(
               child: Column(
-                children: savingHistoryData,
+                children: (savingHistoryData.isEmpty)
+                    ? [
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        Center(
+                            child: Text(
+                          "No price has been added.",
+                          style: TextStyle(
+                              fontSize: 15,
+                              color: Colors.grey[700],
+                              fontWeight: FontWeight.w500),
+                        ))
+                      ]
+                    : savingHistoryData,
               ),
             );
           },
@@ -147,7 +165,6 @@ class _SavingHistoryCardState extends State<SavingHistoryCard> {
     );
   }
 
-  // ignore: prefer_typing_uninitialized_variables
   late var totalAddPrice;
 
   void getTotalValue() async {
@@ -157,7 +174,7 @@ class _SavingHistoryCardState extends State<SavingHistoryCard> {
         .collection("saving-data")
         .doc(widget.id)
         .snapshots()) {
-      totalAddPrice = snapshot.data()!['addPrice'];
+      totalAddPrice = snapshot.data()?['addPrice'];
     }
   }
 

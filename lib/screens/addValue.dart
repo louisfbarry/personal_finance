@@ -1,7 +1,6 @@
 import 'package:finance/components/incomadding_detail.dart';
 import 'package:finance/components/outcomeadding_detail.dart';
 import 'package:finance/model/firebaseGet.dart';
-import 'package:finance/screens/Income.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/foundation/key.dart';
@@ -24,17 +23,26 @@ class _AddValueState extends State<AddValue> {
   final _formKey = GlobalKey<FormState>();
   bool submitted = false;
   List<String>? incomelist;
+  List<String>? outcomelist;
   getlist() async {
-    await IncomeCategoList().then((value) {
+    await incomeCategoList().then((value) {
       setState(() {
         incomelist = value;
       });
     });
-    print(incomelist);
+    // print(incomelist);
+
+    await outcomeCategoList().then((value) {
+      setState(() {
+        outcomelist = value;
+      });
+    });
+    // print(outcomelist);
   }
 
   @override
   void initState() {
+    API().addCollection();
     getlist();
     // TODO: implement initState
     super.initState();
@@ -72,15 +80,13 @@ class _AddValueState extends State<AddValue> {
                 fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black),
           ),
         ),
-        body: incomelist == null
+        body: outcomelist == null
             ? Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                  CircularProgressIndicator()
-                ]),
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [CircularProgressIndicator()]),
               )
             : Form(
                 key: _formKey,
@@ -88,7 +94,9 @@ class _AddValueState extends State<AddValue> {
                   IncomeAddingDetail(
                     incomeCategoList: incomelist!,
                   ),
-                  OutcomeAddingDetail(),
+                  OutcomeAddingDetail(
+                    outcomeCategoList: outcomelist!,
+                  ),
                   Center(
                     child: Text('THird'),
                   ),

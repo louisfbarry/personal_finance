@@ -15,27 +15,27 @@ class FrontScreen extends StatefulWidget {
 class _FrontScreenState extends State<FrontScreen> {
   bool showBiometrics = false;
 
-  isBiometricAvailable() async {
-    showBiometrics = await BiometricHelper().hasEnrolledBiometrics();
-    if (showBiometrics == false) {
-      // ignore: use_build_context_synchronously
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const MyPasscode(),
-        ),
-      );
-    } else {
-      // ignore: use_build_context_synchronously
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const Mainpage(),
-          ));
-    }
-    print(">>>>> $showBiometrics");
-    setState(() {});
-  }
+  // isBiometricAvailable() async {
+  //   showBiometrics = await BiometricHelper().hasEnrolledBiometrics();
+  //   if (showBiometrics == false) {
+  //     // ignore: use_build_context_synchronously
+  //     Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (context) => const MyPasscode(),
+  //       ),
+  //     );
+  //   } else {
+  //     // ignore: use_build_context_synchronously
+  //     Navigator.pushReplacement(
+  //         context,
+  //         MaterialPageRoute(
+  //           builder: (context) => const Mainpage(),
+  //         ));
+  //   }
+  //   print(">>>>> $showBiometrics");
+  //   setState(() {});
+  // }
 
   void loginCheck() {
     FirebaseAuth.instance.authStateChanges().listen((user) {
@@ -44,7 +44,8 @@ class _FrontScreenState extends State<FrontScreen> {
         Navigator.pushNamed(context, '/login');
       } else {
         print('User is signed in!');
-        isBiometricAvailable();
+        Navigator.pushNamed(context, '/passcode');
+        // isBiometricAvailable();
       }
     });
   }
@@ -70,8 +71,10 @@ class _FrontScreenState extends State<FrontScreen> {
                   ),
                 ),
                 Text("Personal Finance",
-                      style: TextStyle(
-                          fontSize: 23, fontWeight: FontWeight.bold, color: Colors.grey[800])),
+                    style: TextStyle(
+                        fontSize: 23,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[800])),
                 Text(
                   "Find ways to get more income and saving",
                   style: TextStyle(

@@ -16,6 +16,42 @@ class Saving extends StatefulWidget {
 }
 
 class _SavingState extends State<Saving> {
+  // Future<List> incomevalue() async {
+  //   List<int> list = [0];
+  //   await user
+  //       .doc('Income')
+  //       .collection('income-data')
+  //       .orderBy('created At')
+  //       .get()
+  //       .then((snapshot) {
+  //     snapshot.docs.map((DocumentSnapshot document) {
+  //       Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+
+  //       list.add(data['amount']);
+  //     }).toList();
+  //   });
+  //   print(list);
+  //   return list;
+  // }
+
+  // Future<List> savingtotal() async {
+  //   List<int> list = [0];
+
+  //   await FirebaseFirestore.instance
+  //       .collection("${currentuser!.email}")
+  //       .doc("Saving")
+  //       .collection("saving-data")
+  //       .get()
+  //       .then((snapshot) {
+  //     snapshot.docs.map((DocumentSnapshot document) {
+  //       Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+  //       list.add(data['addPrice']);
+  //     }).toList();
+  //   });
+  //   print(list);
+  //   return list;
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,53 +78,52 @@ class _SavingState extends State<Saving> {
         elevation: 0.0,
         backgroundColor: Colors.blueAccent,
       ),
-      // body: ListView.builder(
-      //   itemCount: 1,
-      //   itemBuilder: (context, index) {
-      //     return SavingCard();
-      //   },
-      // ),
-      body: SavingCard(),
-    );
-  }
-}
-
-class SavingCard extends StatelessWidget {
-  const SavingCard({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection("${currentuser!.email}")
-              .doc("Saving")
-              .collection("saving-data")
-              .orderBy('createdAt', descending: true)
-              .snapshots(),
-          builder: (context, snapshot) {
-            List<SavingDataCard> savingData = [];
-            if (snapshot.hasData) {
-              var data = snapshot.data!.docs;
-              for (var savingList in data) {
-                // savingData.add(Text(sd['title']));
-                savingData.add(SavingDataCard(
-                  title: savingList['title'],
-                  targetPrice: savingList['targetPrice'],
-                  addPrice: savingList['addPrice'],
-                  id: savingList['id'],
-                ));
-              }
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection("${currentuser!.email}")
+            .doc("Saving")
+            .collection("saving-data")
+            .orderBy('createdAt', descending: true)
+            .snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          List<SavingDataCard> savingData = [];
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasData) {
+            var data = snapshot.data!.docs;
+            for (var savingList in data) {
+              // savingData.add(Text(sd['title']));
+              savingData.add(SavingDataCard(
+                title: savingList['title'],
+                targetPrice: savingList['targetPrice'],
+                addPrice: savingList['addPrice'],
+                id: savingList['id'],
+              ));
             }
-            return SingleChildScrollView(
-              child: Column(
-                children: savingData,
-              ),
-            );
-          },
-        )
-      ],
+          }
+          return SingleChildScrollView(
+            child: Column(
+              children: (savingData.isEmpty)
+                  ? [
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      Center(
+                          child: Text(
+                        "No saving has been added.",
+                        style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.grey[700],
+                            fontWeight: FontWeight.w500),
+                      ))
+                    ]
+                  : savingData,
+            ),
+          );
+        },
+      ),
     );
   }
 }
@@ -142,20 +177,26 @@ class SavingDataCard extends StatelessWidget {
                     TextButton(
                         // 1/9
                         onPressed: () async {
-                          await FirebaseFirestore.instance
-                              .collection('${currentuser!.email}')
+                          var savingAddPricePath = FirebaseFirestore.instance
+                              .collection(
+                                  '${FirebaseAuth.instance.currentUser!.email}')
                               .doc("Saving")
                               .collection("saving-data")
                               .doc(id)
-                              .collection('add-prices')
-                              .doc()
-                              .delete();
+                              .collection('add-prices');
+                          await savingAddPricePath.get().then((data) {
+                            data.docs.forEach((element) {
+                              savingAddPricePath.doc(element.id).delete();
+                            });
+                          });
                           await FirebaseFirestore.instance
-                              .collection('${currentuser!.email}')
+                              .collection(
+                                  '${FirebaseAuth.instance.currentUser!.email}')
                               .doc("Saving")
                               .collection("saving-data")
                               .doc(id)
                               .delete();
+
                           Navigator.pop(context);
                         },
                         child: const Text(
