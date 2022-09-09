@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -185,52 +186,24 @@ class _RegisterPageState extends State<RegisterPage> {
                                           isloading = true;
                                         });
                                         try {
-                                          await FirebaseAuth
-                                              .instance.currentUser!
+                                          final newUser = await auth
+                                              .createUserWithEmailAndPassword(
+                                                  email:
+                                                      userregistController.text,
+                                                  password:
+                                                      passwordregistController
+                                                          .text);
+                                          await auth.currentUser!
                                               .updateDisplayName(
                                                   nameregistController.text);
-                                          final currentuser = auth.currentUser;
-                                          currentuser!.sendEmailVerification();
+                                          auth.currentUser!
+                                              .sendEmailVerification();
                                           // ignore: use_build_context_synchronously
                                           showSnackbar(
                                               context,
                                               ' We sent Verification email to "${userregistController.text}"',
                                               2,
                                               Colors.green[300]);
-                                          // ScaffoldMessenger.of(context)
-                                          //     .showSnackBar(SnackBar(
-                                          //         content: Container(
-                                          //           alignment: Alignment.center,
-                                          //           height: 50,
-                                          //           child: Column(
-                                          //             children: [
-                                          //               Text(
-                                          //                 ' We sent Verification email to "${userregistController.text}"',
-                                          //                 style:
-                                          //                     const TextStyle(
-                                          //                         fontFamily:
-                                          //                             'Libre',
-                                          //                         fontSize: 15,
-                                          //                         color: Colors
-                                          //                             .black),
-                                          //               ),
-                                          //               const Text(
-                                          //                 'Pls verify your email.',
-                                          //                 style: TextStyle(
-                                          //                     fontFamily:
-                                          //                         'Libre',
-                                          //                     fontSize: 15,
-                                          //                     color:
-                                          //                         Colors.black),
-                                          //               ),
-                                          //             ],
-                                          //           ),
-                                          //         ),
-                                          //         backgroundColor:
-                                          //             const Color.fromARGB(
-                                          //                 157, 9, 237, 176),
-                                          //         duration: const Duration(
-                                          //             seconds: 2)));
                                           Navigator.pushNamed(
                                               context, '/login');
                                           setState(() {
@@ -263,6 +236,8 @@ class _RegisterPageState extends State<RegisterPage> {
                                           setState(() {
                                             isloading = false;
                                           });
+                                        } catch (e) {
+                                          print(e);
                                         }
                                       }
                                     },

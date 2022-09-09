@@ -75,82 +75,105 @@ class _SettingState extends State<Setting> {
 
   void _securityDialog(BuildContext context) {
     securityController.clear();
+    bool pass = true;
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          contentPadding: const EdgeInsets.only(left: 10, top: 10, right: 10),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          content: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Security",
-                  style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[800],
-                      fontWeight: FontWeight.w500),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                TextFormField(
-                    controller: securityController,
-                    autofocus: true,
-                    decoration: const InputDecoration(
-                      hintText: "Enter your password",
-                      hintStyle: TextStyle(fontSize: 12),
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 8,
-                      ),
-                      isDense: true,
-                    )),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: const Text(
-                          "Cancel",
-                          style: TextStyle(fontSize: 12),
-                        )),
-                    TextButton(
-                        // 1/9
-                        onPressed: () async {
-                          final prefs = await SharedPreferences.getInstance();
-                          final String? password = prefs.getString('password');
-                          // print(password);
-                          if (securityController.text == password) {
-                            Navigator.pop(context);
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => const Security()));
-                          } else {
-                            // ignore: use_build_context_synchronously
-                            showSnackbar(context, "Invalid password", 2,
-                                Colors.red[300]);
-                            Navigator.pop(context);
-                          }
-
-                          securityController.clear();
-                        },
-                        child: const Text(
-                          "Enter",
-                          style: TextStyle(fontSize: 12),
-                        )),
-                  ],
-                )
-              ],
+        return StatefulBuilder(builder: (context, setState) {
+          return AlertDialog(
+            contentPadding: const EdgeInsets.only(left: 10, top: 10, right: 10),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
             ),
-          ),
-        );
+            content: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Security",
+                    style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[800],
+                        fontWeight: FontWeight.w500),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  TextFormField(
+                      controller: securityController,
+                      autofocus: true,
+                      obscureText: pass,
+                      decoration: InputDecoration(
+                        hintText: "Enter your password",
+                        hintStyle: const TextStyle(fontSize: 12),
+                        suffixIcon: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                print(pass);
+                                pass = !pass;
+                              });
+                            },
+                            splashRadius: 2,
+                            icon: (pass)
+                                ? const Icon(
+                                    Icons.remove_red_eye,
+                                    color: Color.fromARGB(163, 20, 20, 20),
+                                  )
+                                : const Icon(
+                                    Icons.visibility_off,
+                                    color: Color.fromARGB(163, 19, 18, 18),
+                                  )),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 8,
+                        ),
+                        isDense: true,
+                      )),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text(
+                            "Cancel",
+                            style: TextStyle(fontSize: 12),
+                          )),
+                      TextButton(
+                          // 1/9
+                          onPressed: () async {
+                            final prefs = await SharedPreferences.getInstance();
+                            final String? password =
+                                prefs.getString('password');
+                            // print(password);
+                            if (securityController.text == password) {
+                              Navigator.pop(context);
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => const Security()));
+                            } else {
+                              // ignore: use_build_context_synchronously
+                              showSnackbar(context, "Invalid password", 2,
+                                  Colors.red[300]);
+                              Navigator.pop(context);
+                            }
+
+                            securityController.clear();
+                          },
+                          child: const Text(
+                            "Enter",
+                            style: TextStyle(fontSize: 12),
+                          )),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          );
+        });
       },
     );
   }
@@ -297,7 +320,6 @@ class _SettingState extends State<Setting> {
                         })
                       });
 
-                  
                   Navigator.pop(context);
                   // Navigator.pushNamed(context, "/main");
                   showSnackbar(

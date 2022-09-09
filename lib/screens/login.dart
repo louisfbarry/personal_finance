@@ -34,6 +34,7 @@ class _MyLogInPageState extends State<MyLogInPage> {
 
   Future<void> checkEmail() async {
     currentUser = auth.currentUser!;
+    mytime;
     await currentUser.reload();
 
     if (currentUser.emailVerified) {
@@ -50,7 +51,8 @@ class _MyLogInPageState extends State<MyLogInPage> {
         Navigator.pushNamed(context, '/main');
       });
     } else {
-      print('not yet');
+      showSnackbar(context, 'Email has not been verified', 2, Colors.red[300]);
+      isloading = false;
     }
   }
 
@@ -214,8 +216,6 @@ class _MyLogInPageState extends State<MyLogInPage> {
                                           });
                                           if (_formKey.currentState!
                                               .validate()) {
-                                            prefs.setString('password',
-                                                passwordcontroller.text);
                                             setState(() {
                                               isloading = true;
                                             });
@@ -233,7 +233,6 @@ class _MyLogInPageState extends State<MyLogInPage> {
                                                                   .text);
                                               print(currentUser.user!);
                                               setState(() {
-                                                mytime;
                                                 checkEmail();
                                               });
                                             } on FirebaseException catch (e) {
