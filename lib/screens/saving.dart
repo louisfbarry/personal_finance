@@ -80,7 +80,7 @@ class _SavingState extends State<Saving> {
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
-            .collection("${currentuser!.email}")
+            .collection("${FirebaseAuth.instance.currentUser!.email}")
             .doc("Saving")
             .collection("saving-data")
             .orderBy('createdAt', descending: true)

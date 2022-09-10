@@ -2,13 +2,7 @@ import 'package:finance/components/incomadding_detail.dart';
 import 'package:finance/components/outcomeadding_detail.dart';
 import 'package:finance/model/firebaseGet.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:form_field_validator/form_field_validator.dart';
-
 import '../model/firebaseservice.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 // bool addvaluefinished = false;
 

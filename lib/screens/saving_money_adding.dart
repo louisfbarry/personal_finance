@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../model/firebaseservice.dart';
@@ -120,7 +121,7 @@ class _AddSavingMoneyState extends State<AddSavingMoney> {
                                       int.parse(amountController.text),
                                       widget.id);
                                   FirebaseFirestore.instance
-                                      .collection("${currentuser!.email}")
+                                      .collection("${FirebaseAuth.instance.currentUser!.email}")
                                       .doc("Saving")
                                       .collection("saving-data")
                                       .doc(widget.id)

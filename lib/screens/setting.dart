@@ -239,7 +239,7 @@ class _SettingState extends State<Setting> {
                     () async {
                   // saving delete path
                   var savingDeletePath = FirebaseFirestore.instance
-                      .collection("${currentuser!.email}")
+                      .collection("${FirebaseAuth.instance.currentUser!.email}")
                       .doc("Saving")
                       .collection('saving-data');
 
@@ -272,7 +272,7 @@ class _SettingState extends State<Setting> {
 
                   // income path
                   var incomeDeletePath = FirebaseFirestore.instance
-                      .collection("${currentuser!.email}")
+                      .collection("${FirebaseAuth.instance.currentUser!.email}")
                       .doc("Income")
                       .collection('income-data');
 
@@ -285,7 +285,7 @@ class _SettingState extends State<Setting> {
 
                   // outcome path
                   var outcomeDeletePath = FirebaseFirestore.instance
-                      .collection("${currentuser!.email}")
+                      .collection("${FirebaseAuth.instance.currentUser!.email}")
                       .doc("Outcome")
                       .collection('outcome-data');
 
@@ -298,7 +298,7 @@ class _SettingState extends State<Setting> {
 
                   // delete income category
                   var incomeCategoryPath = FirebaseFirestore.instance
-                      .collection("${currentuser!.email}")
+                      .collection("${FirebaseAuth.instance.currentUser!.email}")
                       .doc("Income-catego")
                       .collection("data");
 
@@ -310,7 +310,7 @@ class _SettingState extends State<Setting> {
 
                   // delete outcome category
                   var outcomeCategoryPath = FirebaseFirestore.instance
-                      .collection("${currentuser!.email}")
+                      .collection("${FirebaseAuth.instance.currentUser!.email}")
                       .doc("Outcome-catego")
                       .collection("data");
 

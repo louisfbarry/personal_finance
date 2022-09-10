@@ -1,6 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finance/components/newcategocreate.dart';
-import 'package:finance/model/firebaseGet.dart';
 import 'package:finance/screens/incomecatego_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

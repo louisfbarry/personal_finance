@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:finance/model/firebaseservice.dart';
@@ -32,7 +33,7 @@ class _SavingHistoryState extends State<SavingHistory> {
         ),
         body: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
-              .collection("${currentuser!.email}")
+              .collection("${FirebaseAuth.instance.currentUser!.email}")
               .doc("Saving")
               .collection('saving-data')
               .doc(id)
@@ -136,14 +137,14 @@ class _SavingHistoryCardState extends State<SavingHistoryCard> {
                         onPressed: () async {
                           Navigator.pop(context);
                           await FirebaseFirestore.instance
-                              .collection('${currentuser!.email}')
+                              .collection("${FirebaseAuth.instance.currentUser!.email}")
                               .doc("Saving")
                               .collection("saving-data")
                               .doc(widget.id)
                               .update({"addPrice": totalPrice - deletePrice});
                           getTotalValue();
                           await FirebaseFirestore.instance
-                              .collection('${currentuser!.email}')
+                              .collection("${FirebaseAuth.instance.currentUser!.email}")
                               .doc("Saving")
                               .collection("saving-data")
                               .doc(widget.id)
@@ -169,7 +170,7 @@ class _SavingHistoryCardState extends State<SavingHistoryCard> {
 
   void getTotalValue() async {
     await for (var snapshot in FirebaseFirestore.instance
-        .collection("${currentuser!.email}")
+        .collection("${FirebaseAuth.instance.currentUser!.email}")
         .doc("Saving")
         .collection("saving-data")
         .doc(widget.id)

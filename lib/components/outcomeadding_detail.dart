@@ -1,6 +1,4 @@
 import 'package:finance/components/newcategocreate.dart';
-import 'package:finance/screens/home.dart';
-import 'package:finance/screens/incomecatego_detail.dart';
 import 'package:finance/screens/outcomecatego_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

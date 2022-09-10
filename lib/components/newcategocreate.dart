@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finance/model/firebaseservice.dart';
-import 'package:finance/screens/addValue.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
@@ -11,7 +11,7 @@ class Popupdialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextEditingController? newcatego = TextEditingController();
-    CollectionReference user = firestore.collection('${currentuser!.email}');
+    CollectionReference user = firestore.collection('${FirebaseAuth.instance.currentUser!.email}');
     final _formKey = GlobalKey<FormState>();
     return SingleChildScrollView(
       child: Form(

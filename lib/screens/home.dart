@@ -1,4 +1,3 @@
-import 'package:finance/model/firebaseGet.dart';
 import 'package:finance/model/firebaseservice.dart';
 import 'package:finance/screens/addValue.dart';
 import 'package:finance/screens/budget.dart';
@@ -6,12 +5,8 @@ import 'package:finance/screens/dashboard.dart';
 import 'package:finance/screens/saving.dart';
 import 'package:finance/screens/setting.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Mainpage extends StatefulWidget {

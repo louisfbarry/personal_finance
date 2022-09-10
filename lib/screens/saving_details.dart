@@ -1,10 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finance/screens/saving_money_adding.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-
-import '../model/firebaseservice.dart';
 
 class SavingDetails extends StatefulWidget {
   String id;
@@ -27,7 +26,7 @@ class _SavingDetailsState extends State<SavingDetails> {
     return Scaffold(
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
-            .collection("${currentuser!.email}")
+            .collection("${FirebaseAuth.instance.currentUser!.email}")
             .doc("Saving")
             .collection("saving-data")
             // .doc(widget.id)

@@ -1,20 +1,9 @@
-// ignore_for_file: unrelated_type_equality_checks
-
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:finance/screens/incomecatego_detail.dart';
-import 'package:finance/model/firebaseGet.dart';
-import 'package:finance/screens/outcomecatego_detail.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 // import 'package:pie_chart/pie_chart.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:syncfusion_flutter_charts/sparkcharts.dart';
-
-import '../model/firebaseservice.dart';
-import '../components/categobadge.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:multiple_stream_builder/multiple_stream_builder.dart';
 
@@ -26,7 +15,6 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   var stream1 = FirebaseFirestore.instance
-      // .collection("${currentuser!.email}")
       .collection("${FirebaseAuth.instance.currentUser!.email}")
       .doc("Income")
       .collection("income-data")

@@ -1,18 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:finance/screens/incomecatego_detail.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-
 import '../model/firebaseservice.dart';
-import 'package:firebase_database/firebase_database.dart';
 
-CollectionReference user = firestore.collection('${currentuser!.email}');
+// CollectionReference user = firestore.collection('${FirebaseAuth.instance.currentUser!.email');
 
 Future<List<String>> incomeCategoList() async {
   List<String> list = [];
-  await firestore.collection('${currentuser!.email}').doc('Income-catego').collection('data').get().then((snapshot) {
+  await firestore.collection('${FirebaseAuth.instance.currentUser!.email}').doc('Income-catego').collection('data').get().then((snapshot) {
     snapshot.docs.map((DocumentSnapshot document) {
       Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
 
@@ -147,7 +141,7 @@ Future<List> savingtotal() async {
   List<int> list = [0];
 
   await FirebaseFirestore.instance
-      .collection("${currentuser!.email}")
+      .collection("${FirebaseAuth.instance.currentUser!.email}")
       .doc("Saving")
       .collection("saving-data")
       .get()
