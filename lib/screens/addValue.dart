@@ -10,6 +10,8 @@ import 'package:form_field_validator/form_field_validator.dart';
 import '../model/firebaseservice.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+// bool addvaluefinished = false;
+
 class AddValue extends StatefulWidget {
   const AddValue({Key? key}) : super(key: key);
 
@@ -24,6 +26,8 @@ class _AddValueState extends State<AddValue> {
   bool submitted = false;
   List<String>? incomelist;
   List<String>? outcomelist;
+  List<String>? outcomeImglist;
+  List<String>? incomeImglist;
   getlist() async {
     await incomeCategoList().then((value) {
       setState(() {
@@ -32,12 +36,29 @@ class _AddValueState extends State<AddValue> {
     });
     // print(incomelist);
 
+    await incomeCategoImgList().then((value) {
+      setState(() {
+        incomeImglist = value;
+      });
+    });
+
     await outcomeCategoList().then((value) {
       setState(() {
         outcomelist = value;
       });
     });
     // print(outcomelist);
+
+    await outcomeCategoImgList().then((value) {
+      setState(() {
+        outcomeImglist = value;
+      });
+    });
+    // print(outcomeImglist);
+
+    // setState(() {
+    //   addvaluefinished = true;
+    // });
   }
 
   @override
@@ -80,7 +101,7 @@ class _AddValueState extends State<AddValue> {
                 fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black),
           ),
         ),
-        body: outcomelist == null
+        body: outcomeImglist == null
             ? Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
@@ -93,9 +114,11 @@ class _AddValueState extends State<AddValue> {
                 child: TabBarView(children: [
                   IncomeAddingDetail(
                     incomeCategoList: incomelist!,
+                    incomeCategoImgList: incomeImglist!,
                   ),
                   OutcomeAddingDetail(
                     outcomeCategoList: outcomelist!,
+                    outcomeCategoIMgList: outcomeImglist!,
                   ),
                   Center(
                     child: Text('THird'),

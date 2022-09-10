@@ -11,7 +11,11 @@ import '../model/firebaseservice.dart';
 
 class IncomeAddingDetail extends StatefulWidget {
   List<String> incomeCategoList;
-  IncomeAddingDetail({Key? key, required this.incomeCategoList})
+  List<String> incomeCategoImgList;
+  IncomeAddingDetail(
+      {Key? key,
+      required this.incomeCategoList,
+      required this.incomeCategoImgList})
       : super(key: key);
 
   @override
@@ -25,7 +29,7 @@ class _IncomeAddingDetailState extends State<IncomeAddingDetail> {
   List<String> incomeCategoList = [];
   final _formKey = GlobalKey<FormState>();
   TextEditingController amountcontroller = TextEditingController();
-  TextEditingController? notecontroller = TextEditingController();
+  TextEditingController notecontroller = TextEditingController();
 
   @override
   void initState() {
@@ -57,9 +61,23 @@ class _IncomeAddingDetailState extends State<IncomeAddingDetail> {
                         items: incomeCategoList
                             .map((item) => DropdownMenuItem<String>(
                                   value: item,
-                                  child: Text(
-                                    item,
-                                    // textAlign: TextAlign.center,
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        height: 25,
+                                        width: 25,
+                                        child: Image(
+                                            image: AssetImage(
+                                                'images/Income/${widget.incomeCategoImgList[incomeCategoList.indexOf(item)]}.png')),
+                                      ),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        item,
+                                        // textAlign: TextAlign.center,
+                                      ),
+                                    ],
                                   ),
                                 ))
                             .toList(),
@@ -192,7 +210,9 @@ class _IncomeAddingDetailState extends State<IncomeAddingDetail> {
 
                         if (_formKey.currentState!.validate()) {
                           API().incomeadding(
-                              dropdownValue, int.parse(amountcontroller.text));
+                              dropdownValue,
+                              int.parse(amountcontroller.text),
+                              notecontroller.text);
                           Navigator.pop(context);
                           Navigator.push(
                             context,

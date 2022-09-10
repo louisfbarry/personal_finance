@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
 import '../components/snackbar.dart';
+import '../model/firebaseservice.dart';
 
 class MyLogInPage extends StatefulWidget {
   const MyLogInPage({Key? key}) : super(key: key);
@@ -24,7 +25,7 @@ class _MyLogInPageState extends State<MyLogInPage> {
   bool isloading = false;
 
   late User currentUser;
-  final auth = FirebaseAuth.instance;
+  
 
   final _formKey = GlobalKey<FormState>();
 
@@ -41,14 +42,17 @@ class _MyLogInPageState extends State<MyLogInPage> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
 
       prefs.setString('password', passwordcontroller.text);
+      prefs.setString('displayName', "${currentUser.displayName}");
+      prefs.setString('email', usernamecontroller.text);
       setState(() {
         isloading = false;
 
         usernamecontroller.clear();
         passwordcontroller.clear();
         mytime.cancel();
+        currentUser.reload();
         Navigator.popUntil(context, ModalRoute.withName('/'));
-        Navigator.pushNamed(context, '/main');
+        Navigator.pushReplacementNamed(context, '/main');
       });
     } else {
       showSnackbar(context, 'Email has not been verified', 2, Colors.red[300]);

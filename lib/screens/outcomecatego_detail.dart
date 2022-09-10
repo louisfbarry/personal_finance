@@ -13,6 +13,7 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import '../model/firebaseGet.dart';
 
 List<String> outcomelist = [];
+List<String> outcomeImglist = [];
 List<OutcomeData> OutcomeChart = [];
 int total = 0;
 bool finished = false;
@@ -50,7 +51,12 @@ class _OutcomeCategoDetailState extends State<OutcomeCategoDetail> {
         outcomelist = value;
       });
     });
-    print(outcomelist);
+    await outcomeCategoImgList().then((value) {
+      setState(() {
+        outcomeImglist = value;
+      });
+    });
+
     for (var i = 0; i < outcomelist.length; i++) {
       total = 0;
       await outcomecategovalue(outcomelist[i]).then((value) {
@@ -240,11 +246,13 @@ class _DetailStyleState extends State<DetailStyle> {
   bool isloading = false;
 
   TextEditingController? amountcontroller;
+  TextEditingController? notecontroller;
   String dropdownValue = '';
 
   @override
   void initState() {
     amountcontroller = TextEditingController(text: '${widget.data!['amount']}');
+    notecontroller = TextEditingController(text: '${widget.data!['note']}');
     dropdownValue = widget.data!['category'];
     // TODO: implement initState
     super.initState();
@@ -259,143 +267,203 @@ class _DetailStyleState extends State<DetailStyle> {
             barrierColor: Colors.transparent,
             context: context,
             builder: (_) {
-              return Container(
-                height: 400,
-                decoration: const BoxDecoration(
-                    color: Color.fromARGB(240, 245, 252, 228),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
-                    )),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: Column(children: [
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: IconButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              icon: const Icon(Icons.close))),
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(bottom: 5.0),
-                          child: Text('Category'),
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).size.width * 0.8,
-                          child: DropdownButtonFormField(
-                            value: dropdownValue,
-                            isExpanded: true,
-                            items: outcomelist
-                                .map((item) => DropdownMenuItem<String>(
-                                      value: item,
-                                      child: Text(
-                                        item,
-                                        // textAlign: TextAlign.center,
-                                      ),
-                                    ))
-                                .toList(),
-                            onChanged: (newValue) {
-                              setState(() {
-                                dropdownValue = newValue.toString();
-                              });
-                            },
-                            decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(
-                                        width: 1, color: Colors.black),
-                                    borderRadius: BorderRadius.circular(5)),
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(
-                                        width: 2, color: Colors.black),
-                                    borderRadius: BorderRadius.circular(5))),
+              return SingleChildScrollView(
+                child: Container(
+                  height: MediaQuery.of(context).size.height * 0.6,
+                  decoration: const BoxDecoration(
+                      color: Color.fromARGB(240, 245, 252, 228),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                      )),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Column(children: [
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: IconButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                icon: const Icon(Icons.close))),
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(bottom: 5.0),
+                            child: Text('Category'),
                           ),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.only(bottom: 5.0),
-                          child: Text('Amount'),
-                        ),
-                        SizedBox(
-                          height: 60,
-                          width: 300,
-                          child: TextFormField(
-                            controller: amountcontroller,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
-                            keyboardType: TextInputType.number,
-                            autovalidateMode: submitted
-                                ? AutovalidateMode.always
-                                : AutovalidateMode.disabled,
-                            validator: RequiredValidator(
-                                errorText: 'Pls enter your amount'),
-                            decoration: InputDecoration(
-                              errorBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                    width: 1, color: Colors.redAccent),
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                    width: 1, color: Colors.black),
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      width: 2,
-                                      color: Color.fromARGB(157, 9, 237, 176)),
-                                  borderRadius: BorderRadius.circular(10)),
-                              focusedErrorBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      width: 1, color: Colors.redAccent),
-                                  borderRadius: BorderRadius.circular(10)),
-                              // filled: true,
-                              // fillColor: const Color.fromARGB(157, 9, 237, 176),
-
-                              hintText: '${widget.data!['amount']}',
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            child: DropdownButtonFormField(
+                              value: dropdownValue,
+                              isExpanded: true,
+                              items: outcomelist
+                                  .map((item) => DropdownMenuItem<String>(
+                                        value: item,
+                                        child: Row(
+                                          children: [
+                                            SizedBox(
+                                              height: 25,
+                                              width: 25,
+                                              child: Image(
+                                                  image: AssetImage(
+                                                      'images/Outcome/${outcomeImglist[outcomelist.indexOf(item)]}.png')),
+                                            ),
+                                            const SizedBox(
+                                              width: 10,
+                                            ),
+                                            Text(
+                                              item,
+                                              // textAlign: TextAlign.center,
+                                            ),
+                                          ],
+                                        ),
+                                      ))
+                                  .toList(),
+                              onChanged: (newValue) {
+                                setState(() {
+                                  dropdownValue = newValue.toString();
+                                });
+                              },
+                              decoration: InputDecoration(
+                                  enabledBorder: OutlineInputBorder(
+                                      borderSide: const BorderSide(
+                                          width: 1, color: Colors.black),
+                                      borderRadius: BorderRadius.circular(5)),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: const BorderSide(
+                                          width: 2, color: Colors.black),
+                                      borderRadius: BorderRadius.circular(5))),
                             ),
                           ),
-                        ),
-                        Text('Created At : ${widget.data!['created At']}'),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            ElevatedButton(
-                                onPressed: () async {
-                                  finished = false;
-                                  API().outcomehistroyupdate(
-                                      dropdownValue,
-                                      int.parse(amountcontroller!.text),
-                                      widget.data!['id']);
-                                  OutcomeChart = [];
-                                  widget.getlist();
-                                  print(finished);
-                                  Navigator.pop(context);
-                                },
-                                child: const Text('Edit')),
-                            ElevatedButton(
-                                onPressed: () async {
-                                  finished = false;
-                                  API()
-                                      .outcomehistorydelete(widget.data!['id']);
-                                  OutcomeChart = [];
-                                  widget.getlist();
-                                  print(finished);
-                                  Navigator.pop(context);
-                                },
-                                child: const Text('delete')),
-                          ],
-                        )
-                      ],
-                    ),
-                  ]),
+                          const Padding(
+                            padding: EdgeInsets.only(bottom: 5.0),
+                            child: Text('Amount'),
+                          ),
+                          SizedBox(
+                            height: 60,
+                            width: 300,
+                            child: TextFormField(
+                              controller: amountcontroller,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                              keyboardType: TextInputType.number,
+                              autovalidateMode: submitted
+                                  ? AutovalidateMode.always
+                                  : AutovalidateMode.disabled,
+                              validator: RequiredValidator(
+                                  errorText: 'Pls enter your amount'),
+                              decoration: InputDecoration(
+                                errorBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      width: 1, color: Colors.redAccent),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      width: 1, color: Colors.black),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                        width: 2,
+                                        color:
+                                            Color.fromARGB(157, 9, 237, 176)),
+                                    borderRadius: BorderRadius.circular(10)),
+                                focusedErrorBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                        width: 1, color: Colors.redAccent),
+                                    borderRadius: BorderRadius.circular(10)),
+                                // filled: true,
+                                // fillColor: const Color.fromARGB(157, 9, 237, 176),
+
+                                hintText: '${widget.data!['amount']}',
+                              ),
+                            ),
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.only(bottom: 5.0),
+                            child: Text('Note'),
+                          ),
+                          SizedBox(
+                            height: 60,
+                            width: 300,
+                            child: TextFormField(
+                              controller: notecontroller,
+                              autovalidateMode: submitted
+                                  ? AutovalidateMode.always
+                                  : AutovalidateMode.disabled,
+                              validator: RequiredValidator(
+                                  errorText: 'Pls enter your note'),
+                              decoration: InputDecoration(
+                                errorBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      width: 1, color: Colors.redAccent),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      width: 1, color: Colors.black),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                        width: 2,
+                                        color:
+                                            Color.fromARGB(157, 9, 237, 176)),
+                                    borderRadius: BorderRadius.circular(10)),
+                                focusedErrorBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                        width: 1, color: Colors.redAccent),
+                                    borderRadius: BorderRadius.circular(10)),
+                                // filled: true,
+                                // fillColor: const Color.fromARGB(157, 9, 237, 176),
+
+                                hintText: '${widget.data!['note']}',
+                              ),
+                            ),
+                          ),
+                          Text('Created At : ${widget.data!['created At']}'),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              ElevatedButton(
+                                  onPressed: () async {
+                                    finished = false;
+                                    API().outcomehistroyupdate(
+                                        dropdownValue,
+                                        int.parse(amountcontroller!.text),
+                                        notecontroller!.text,
+                                        widget.data!['id']);
+                                    OutcomeChart = [];
+                                    widget.getlist();
+                                    print(finished);
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('Edit')),
+                              ElevatedButton(
+                                  onPressed: () async {
+                                    finished = false;
+                                    API().outcomehistorydelete(
+                                        widget.data!['id']);
+                                    OutcomeChart = [];
+                                    widget.getlist();
+                                    print(finished);
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('delete')),
+                            ],
+                          )
+                        ],
+                      ),
+                    ]),
+                  ),
                 ),
               );
             });

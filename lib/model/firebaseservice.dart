@@ -7,19 +7,21 @@ import 'package:intl/intl.dart';
 
 var firestore = FirebaseFirestore.instance;
 final currentuser = FirebaseAuth.instance.currentUser;
+final auth = FirebaseAuth.instance;
 
 String Cdate = DateFormat("EEEEE, dd, MM, yyyy").format(DateTime.now());
 
-CollectionReference user = firestore.collection('${currentuser!.email}');
+CollectionReference user =
+    firestore.collection('${FirebaseAuth.instance.currentUser!.email}');
 final Stream<QuerySnapshot> incomeStream = firestore
-    .collection('${currentuser!.email}')
+    .collection('${FirebaseAuth.instance.currentUser!.email}')
     .doc('Income')
     .collection('income-data')
     .orderBy('created At', descending: true)
     .snapshots();
 
 final Stream<QuerySnapshot> outcomeStream = firestore
-    .collection('${currentuser!.email}')
+    .collection('${FirebaseAuth.instance.currentUser!.email}')
     .doc('Outcome')
     .collection('outcome-data')
     .orderBy('created At', descending: true)
@@ -54,22 +56,24 @@ class API {
         .set({'categoname': 'Bill', 'imagId': 'bill'});
   }
 
-  incomeadding(String category, int amount) {
+  incomeadding(String category, int amount, String note) {
     final incomeId = user.doc('Income').collection('income-data').doc();
     incomeId.set({
       'category': category,
       'id': incomeId.id,
       'amount': amount,
+      'note': note,
       'created At': Cdate,
     });
   }
 
-  outcomeadding(String category, int amount) {
+  outcomeadding(String category, int amount, String note) {
     final outcomeId = user.doc('Outcome').collection('outcome-data').doc();
     outcomeId.set({
       'category': category,
       'id': outcomeId.id,
       'amount': amount,
+      'note': note,
       'created At': Cdate,
     });
   }
@@ -82,20 +86,20 @@ class API {
     user.doc('Outcome').collection('outcome-data').doc(id).delete();
   }
 
-  incomehistroyupdate(String catego, int amount, String id) {
+  incomehistroyupdate(String catego, int amount, String note, String id) {
     user
         .doc('Income')
         .collection('income-data')
         .doc(id)
-        .update({'category': catego, 'amount': amount});
+        .update({'category': catego, 'amount': amount, 'note': note});
   }
 
-  outcomehistroyupdate(String catego, int amount, String id) {
+  outcomehistroyupdate(String catego, int amount, String note, String id) {
     user
         .doc('Outcome')
         .collection('outcome-data')
         .doc(id)
-        .update({'category': catego, 'amount': amount});
+        .update({'category': catego, 'amount': amount, 'note': note});
   }
 
   savingadding(

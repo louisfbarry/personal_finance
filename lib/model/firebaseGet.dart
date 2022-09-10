@@ -12,11 +12,24 @@ CollectionReference user = firestore.collection('${currentuser!.email}');
 
 Future<List<String>> incomeCategoList() async {
   List<String> list = [];
-  await user.doc('Income-catego').collection('data').get().then((snapshot) {
+  await firestore.collection('${currentuser!.email}').doc('Income-catego').collection('data').get().then((snapshot) {
     snapshot.docs.map((DocumentSnapshot document) {
       Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
 
       list.add(data['categoname']);
+    }).toList();
+  });
+  // print(list);
+  return list;
+}
+
+Future<List<String>> incomeCategoImgList() async {
+  List<String> list = [];
+  await user.doc('Income-catego').collection('data').get().then((snapshot) {
+    snapshot.docs.map((DocumentSnapshot document) {
+      Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+
+      list.add(data['imagId']);
     }).toList();
   });
   // print(list);
@@ -33,6 +46,19 @@ Future<List<String>> outcomeCategoList() async {
     }).toList();
   });
   // print(list);
+  return list;
+}
+
+Future<List<String>> outcomeCategoImgList() async {
+  List<String> list = [];
+  await user.doc('Outcome-catego').collection('data').get().then((snapshot) {
+    snapshot.docs.map((DocumentSnapshot document) {
+      Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+
+      list.add(data['imagId']);
+    }).toList();
+  });
+  print(list);
   return list;
 }
 
@@ -134,4 +160,3 @@ Future<List> savingtotal() async {
   print(list);
   return list;
 }
-

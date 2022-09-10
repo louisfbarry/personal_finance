@@ -11,7 +11,11 @@ import '../model/firebaseservice.dart';
 
 class OutcomeAddingDetail extends StatefulWidget {
   List<String> outcomeCategoList;
-  OutcomeAddingDetail({Key? key, required this.outcomeCategoList})
+  List<String> outcomeCategoIMgList;
+  OutcomeAddingDetail(
+      {Key? key,
+      required this.outcomeCategoList,
+      required this.outcomeCategoIMgList})
       : super(key: key);
 
   @override
@@ -19,8 +23,9 @@ class OutcomeAddingDetail extends StatefulWidget {
 }
 
 class _OutcomeAddingDetailState extends State<OutcomeAddingDetail> {
-  String dropdownValue = 'Food';
+  String dropdownValue = 'Bill';
   List<String> outcomeCategoList = [];
+  List<String> outcomeCategoImgList = [];
   bool submitted = false;
   final _formKey = GlobalKey<FormState>();
   TextEditingController outcomeamountcontroller = TextEditingController();
@@ -29,7 +34,8 @@ class _OutcomeAddingDetailState extends State<OutcomeAddingDetail> {
   @override
   void initState() {
     outcomeCategoList = widget.outcomeCategoList;
-    print(outcomeCategoList);
+    outcomeCategoImgList = widget.outcomeCategoIMgList;
+    print(outcomeCategoImgList);
     // TODO: implement initState
     super.initState();
   }
@@ -56,8 +62,22 @@ class _OutcomeAddingDetailState extends State<OutcomeAddingDetail> {
                         items: outcomeCategoList
                             .map((item) => DropdownMenuItem<String>(
                                   value: item,
-                                  child: Text(
-                                    item,
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        height: 25,
+                                        width: 25,
+                                        child: Image(
+                                            image: AssetImage(
+                                                'images/Outcome/${outcomeCategoImgList[outcomeCategoList.indexOf(item)]}.png')),
+                                      ),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        item,
+                                      ),
+                                    ],
                                   ),
                                 ))
                             .toList(),
@@ -189,8 +209,10 @@ class _OutcomeAddingDetailState extends State<OutcomeAddingDetail> {
                             '$dropdownValue and ${int.parse(outcomeamountcontroller.text)}');
 
                         if (_formKey.currentState!.validate()) {
-                          API().outcomeadding(dropdownValue,
-                              int.parse(outcomeamountcontroller.text));
+                          API().outcomeadding(
+                              dropdownValue,
+                              int.parse(outcomeamountcontroller.text),
+                              outcomenotecontroller.text);
                           Navigator.pop(context);
                           Navigator.push(
                             context,

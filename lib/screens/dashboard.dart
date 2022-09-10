@@ -1,12 +1,22 @@
+// ignore_for_file: unrelated_type_equality_checks
+
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finance/screens/incomecatego_detail.dart';
 import 'package:finance/model/firebaseGet.dart';
 import 'package:finance/screens/outcomecatego_detail.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:pie_chart/pie_chart.dart';
+// import 'package:pie_chart/pie_chart.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 
 import '../model/firebaseservice.dart';
 import '../components/categobadge.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:multiple_stream_builder/multiple_stream_builder.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -15,106 +25,140 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  double? incomeTotal;
-  double? outcomeTotal;
-  double? savngTotal;
-  Future<List<dynamic>>? income;
-  Future<List<dynamic>>? outcome;
-  Future<List<dynamic>>? saving;
+  var stream1 = FirebaseFirestore.instance
+      // .collection("${currentuser!.email}")
+      .collection("${FirebaseAuth.instance.currentUser!.email}")
+      .doc("Income")
+      .collection("income-data")
+      .snapshots();
 
-  incometotalcalculate() async {
-    income = incomevalue();
-    await income!.then((value) {
-      incomeTotal = 0;
-      for (var i = 0; i < value.length; i++) {
-        setState(() {
-          incomeTotal = incomeTotal! + value[i];
-        });
-      }
-    });
-    print(incomeTotal);
+  var stream2 = FirebaseFirestore.instance
+      .collection("${FirebaseAuth.instance.currentUser!.email}")
+      .doc("Outcome")
+      .collection("outcome-data")
+      .snapshots();
+
+  var stream3 = FirebaseFirestore.instance
+      .collection("${FirebaseAuth.instance.currentUser!.email}")
+      .doc("Saving")
+      .collection('saving-data')
+      .snapshots();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey[100],
+      body: StreamBuilder3<QuerySnapshot, QuerySnapshot, QuerySnapshot>(
+        streams: StreamTuple3(stream1, stream2, stream3),
+        builder: (context, snapshots) {
+          int incomeTotal = 0;
+          int outcomeTotal = 0;
+          int savingTotal = 0;
+          if (snapshots.snapshot1.hasError) {
+            return Text('Error: ${snapshots.snapshot1.error}');
+          } else if (snapshots.snapshot2.hasError) {
+            return Text('Error: ${snapshots.snapshot2.error}');
+          } else if (snapshots.snapshot3.hasError) {
+            return Text('Error: ${snapshots.snapshot3.error}');
+          }
+          if (snapshots.snapshot1.connectionState ==
+              "ConnectionState.waiting") {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshots.snapshot2.connectionState ==
+              "ConnectionState.waiting") {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshots.snapshot3.connectionState ==
+              "ConnectionState.waiting") {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshots.snapshot1.hasData) {
+            // var incomeData = snapshots.snapshot1.data!.docs;
+            for (var data in snapshots.snapshot1.data!.docs) {
+              var incomeField = data;
+              int amount = incomeField['amount'];
+              incomeTotal = incomeTotal + amount;
+            }
+          }
+          if (snapshots.snapshot2.hasData) {
+            // var incomeData = snapshots.snapshot1.data!.docs;
+            for (var data in snapshots.snapshot2.data!.docs) {
+              var outcomeField = data;
+              int amount = outcomeField['amount'];
+              outcomeTotal = outcomeTotal + amount;
+            }
+          }
+          if (snapshots.snapshot3.hasData) {
+            for (var data in snapshots.snapshot3.data!.docs) {
+              var savingField = data;
+              int addPrice = savingField['addPrice'];
+              savingTotal = savingTotal + addPrice;
+            }
+          }
+          return DashboardUi(
+              Income: incomeTotal, Outcome: outcomeTotal, Saving: savingTotal);
+        },
+      ),
+    );
   }
+}
 
-  outcometotalcalculate() async {
-    outcome = outcomevalue();
-    await outcome!.then((value) {
-      outcomeTotal = 0;
-      for (var i = 0; i < value.length; i++) {
-        setState(() {
-          outcomeTotal = outcomeTotal! + value[i];
-        });
-      }
+class DashboardUi extends StatefulWidget {
+  int Income;
+  int Outcome;
+  int Saving;
+  DashboardUi({
+    Key? key,
+    required this.Income,
+    required this.Outcome,
+    required this.Saving,
+  }) : super(key: key);
+
+  @override
+  State<DashboardUi> createState() => _DashboardUiState();
+}
+
+class _DashboardUiState extends State<DashboardUi> {
+  String displayName = "";
+  Future getDisplayName() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? name = prefs.getString('displayName');
+    // print(">> ${action}");
+    setState(() {
+      displayName = name!;
     });
-    print(outcomeTotal);
   }
-
-  savingtotalcalculate() async {
-    saving = savingtotal();
-    await saving!.then((value) {
-      savngTotal = 0;
-      for (var i = 0; i < value.length; i++) {
-        setState(() {
-          savngTotal = savngTotal! + value[i];
-        });
-      }
-    });
-    print(savngTotal);
-  }
-
-  Map<String, double>? dataMap;
 
   @override
   void initState() {
-    // API().addCollection();
-
-    setState(() {
-      incometotalcalculate();
-      outcometotalcalculate();
-      savingtotalcalculate();
-    });
-
-    // TODO: implement initState
+    getDisplayName();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    // (incomeTotal == null)
-    //     ? dataMap = {
-    //         "Income": 20,
-    //         "Outcome": 20,
-    //         "Saving": 200,
-    //       }
-    //     : dataMap = {
-    //         "Income": incomeTotal!.toDouble(),
-    //         "Outcome": outcomeTotal!.toDouble(),
-    //         "Saving": 200,
-    //       };
-
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 238, 250, 255),
-      // backgroundColor: const Color.fromRGBO(193, 214, 233, 1),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: incomeTotal == null || outcomeTotal == null
-                ? Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height,
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [CircularProgressIndicator()]),
-                  )
-                : Column(
+      backgroundColor: Colors.grey[100],
+      body: (displayName == "")
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : SafeArea(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(
-                        height: 100,
+                        height: 90,
                         width: MediaQuery.of(context).size.width,
                         child: Card(
                           elevation: 0.0,
-                          color: Colors.grey[800],
+                          // color: Colors.grey[800],
+                          color: Colors.blue[700],
+
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Column(
@@ -122,7 +166,7 @@ class _DashboardState extends State<Dashboard> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  "User",
+                                  displayName,
                                   style: TextStyle(
                                       color: Colors.grey[200],
                                       fontSize: 15,
@@ -132,7 +176,7 @@ class _DashboardState extends State<Dashboard> {
                                   height: 10,
                                 ),
                                 Text(
-                                  "100000",
+                                  "${widget.Income - (widget.Outcome + widget.Saving)}",
                                   style: TextStyle(
                                       color: Colors.grey[100],
                                       fontWeight: FontWeight.bold,
@@ -146,242 +190,74 @@ class _DashboardState extends State<Dashboard> {
                       const SizedBox(
                         height: 15,
                       ),
-                      Row(
-                        children: [
-                          SizedBox(
-                            height: 200,
-                            width: 200,
-                            child: LayoutBuilder(
-                                builder: ((context, constraints) => Container(
-                                      decoration: const BoxDecoration(
-                                        // color: Color.fromRGBO(193, 214, 233, 1),
-                                        color: Colors.white,
-                                        shape: BoxShape.circle,
-                                        boxShadow: [
-                                          BoxShadow(
-                                            spreadRadius: -10,
-                                            blurRadius: 17,
-                                            offset: Offset(-5, -5),
-                                            color: Colors.white,
-                                          ),
-                                          BoxShadow(
-                                            spreadRadius: -2,
-                                            blurRadius: 10,
-                                            offset: Offset(7, 7),
-                                            // color: Color.fromRGBO(146, 182, 216, 1),
-                                            // color: Color.fromRGBO(146, 182, 216, 1),
-                                            color: Colors.grey,
-                                          )
-                                        ],
-                                      ),
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        child: PieChart(
-                                          dataMap: incomeTotal == null
-                                              ? {
-                                                  "Income": 20,
-                                                  "Outcome": 20,
-                                                  "Saving": 200,
-                                                }
-                                              : {
-                                                  "Income":
-                                                      incomeTotal!.toDouble(),
-                                                  "Outcome":
-                                                      outcomeTotal!.toDouble(),
-                                                  "Saving":
-                                                      savngTotal!.toDouble(),
-                                                },
-                                          colorList: [
-                                            Colors.blue.shade200,
-                                            Colors.red.shade200,
-                                            Colors.green.shade200
-                                            // Colors.grey.shade400,
-                                            // Colors.grey.shade600,
-                                            // Colors.grey.shade700,
-                                          ],
-                                          animationDuration: const Duration(
-                                              milliseconds: 1000),
-                                          chartRadius: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              2,
-                                          chartValuesOptions:
-                                              const ChartValuesOptions(
-                                            showChartValuesInPercentage: true,
-                                            showChartValueBackground: false,
-                                            // showChartValuesOutside: true
-                                          ),
-                                          legendOptions: const LegendOptions(
-                                              showLegends: false),
-                                        ),
-                                      ),
-                                    ))),
-                          ),
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  SizedBox(
-                                      width: 10,
-                                      child: CircleAvatar(
-                                          backgroundColor: Colors.indigo[200])),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                  const Text("Income")
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  SizedBox(
-                                      width: 10,
-                                      child: CircleAvatar(
-                                          backgroundColor: Colors.red[200])),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                  const Text("Outcome")
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  SizedBox(
-                                      width: 10,
-                                      child: CircleAvatar(
-                                          backgroundColor: Colors.green[200])),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                  const Text("Saving")
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      // const SizedBox(
-                      //   height: 15,
-                      // ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute<void>(
-                              builder: (BuildContext context) => CategoDetail(
-                                userstream: incomeStream,
-                              ),
-                            ),
-                          );
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 15, vertical: 15),
-                          child: Text(
-                            "Income >",
-                            style: TextStyle(
-                                color: Colors.grey[800],
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                      ),
+                      // Text("Income - ${widget.Income}"),
+                      // Text("Outcome - ${widget.Outcome}"),
+                      // Text("Saving - ${widget.Saving}"),
+
                       SizedBox(
-                        width: (MediaQuery.of(context).size.width),
-                        height: 150,
-                        child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            primary: false,
-                            padding: const EdgeInsets.all(6),
-                            children: List.generate(choices.length, (index) {
-                              return Center(
-                                child: SelectCard(choice: choices[index]),
-                              );
-                            })),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute<void>(
-                                builder: (BuildContext context) =>
-                                    OutcomeCategoDetail(
-                                        userstream: outcomeStream)),
-                          );
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 15, vertical: 15),
-                          child: Text(
-                            "Outcome >",
-                            style: TextStyle(
-                                color: Colors.grey[800],
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600),
-                          ),
+                        width: MediaQuery.of(context).size.width,
+                        height: 200,
+                        child: Card(
+                          elevation: 3,
+                          child: (widget.Income == 0 &&
+                                  widget.Outcome == 0 &&
+                                  widget.Saving == 0)
+                              ? Center(
+                                  child: Text(
+                                    "No Data",
+                                    style: TextStyle(
+                                        color: Colors.grey[700],
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                )
+                              : Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: SfCircularChart(
+                                    legend: Legend(
+                                        isVisible: true,
+                                        position: LegendPosition.bottom),
+                                    tooltipBehavior:
+                                        TooltipBehavior(enable: true),
+                                    series: <CircularSeries>[
+                                      PieSeries<IOData, String>(
+                                          dataSource: [
+                                            IOData("Income", widget.Income),
+                                            IOData("Outcome", widget.Outcome),
+                                            IOData("Saving", widget.Saving)
+                                          ],
+                                          xValueMapper: (IOData data, _) =>
+                                              data.iotype,
+                                          yValueMapper: (IOData data, _) =>
+                                              data.iovalue,
+                                          dataLabelSettings:
+                                              const DataLabelSettings(
+                                                  isVisible: true,
+                                                  showZeroValue: true,
+                                                  overflowMode:
+                                                      OverflowMode.trim,
+                                                  showCumulativeValues: true,
+                                                  labelPosition:
+                                                      ChartDataLabelPosition
+                                                          .outside),
+                                          enableTooltip: true,
+                                          animationDuration: 800)
+                                    ],
+                                  ),
+                                ),
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                              width:
-                                  (MediaQuery.of(context).size.width / 2) - 20,
-                              height: 100,
-                              child: const Card()),
-                        ],
-                      )
                     ],
                   ),
-          ),
-        ),
-      ),
+                ),
+              ),
+            ),
     );
   }
 }
 
-class SelectCard extends StatelessWidget {
-  const SelectCard({Key? key, required this.choice}) : super(key: key);
-  final Choice choice;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      // onTap: () {
-      //   Navigator.push(
-      //       context,
-      //       MaterialPageRoute<void>(
-      //         builder: (BuildContext context) =>
-      //             IncomeCategoDetail(userstream: choice.userstream),
-      //       ));
-      // },
-      child: Card(
-          elevation: 7,
-          color: choice.color,
-          child: Center(
-            child: SizedBox(
-              height: 150,
-              width: 150,
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Expanded(
-                        child:
-                            Icon(choice.icon, size: 40.0, color: Colors.black)),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Text(
-                        choice.title,
-                        style:
-                            const TextStyle(fontFamily: 'Libre', fontSize: 12),
-                      ),
-                    ),
-                  ]),
-            ),
-          )),
-    );
-  }
+class IOData {
+  IOData(this.iotype, this.iovalue);
+  final String iotype;
+  final int iovalue;
 }
