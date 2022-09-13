@@ -57,10 +57,6 @@ class _MainpageState extends State<Mainpage> {
         return false;
       },
       child: Scaffold(
-        // body: IndexedStack(
-        //   index: currentIndex,
-        //   children: screens,
-        // ),
         body: screens[currentIndex],
 
         // BAR 1
@@ -88,14 +84,14 @@ class _MainpageState extends State<Mainpage> {
                     isScrollControlled: true,
                     builder: (_) {
                       return Container(
-                        height: MediaQuery.of(context).size.height * 0.6,
-                        decoration: const BoxDecoration(
-                            color: Color.fromARGB(255, 194, 237, 255),
-                            borderRadius: BorderRadius.only(
+                        height: MediaQuery.of(context).size.height * 0.8,
+                        decoration: BoxDecoration(
+                            color: Colors.grey[100],
+                            borderRadius: const BorderRadius.only(
                               topLeft: Radius.circular(20),
                               topRight: Radius.circular(20),
                             )),
-                        child: AddValue(),
+                        child: const AddValue(),
                       );
                     });
               } else {

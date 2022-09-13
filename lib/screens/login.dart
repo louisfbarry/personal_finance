@@ -25,7 +25,6 @@ class _MyLogInPageState extends State<MyLogInPage> {
   bool isloading = false;
 
   late User currentUser;
-  
 
   final _formKey = GlobalKey<FormState>();
 
@@ -51,7 +50,7 @@ class _MyLogInPageState extends State<MyLogInPage> {
         passwordcontroller.clear();
         mytime.cancel();
         currentUser.reload();
-        Navigator.popUntil(context, ModalRoute.withName('/'));
+        // Navigator.popUntil(context, ModalRoute.withName('/'));
         Navigator.pushReplacementNamed(context, '/main');
       });
     } else {

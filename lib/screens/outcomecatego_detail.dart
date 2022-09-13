@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finance/model/firebaseservice.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,8 +21,7 @@ bool finished = false;
 
 // ignore: must_be_immutable
 class OutcomeCategoDetail extends StatefulWidget {
-  Stream<QuerySnapshot> userstream;
-  OutcomeCategoDetail({Key? key, required this.userstream}) : super(key: key);
+  const OutcomeCategoDetail({Key? key}) : super(key: key);
 
   @override
   State<OutcomeCategoDetail> createState() => _OutcomeCategoDetailState();
@@ -37,7 +37,7 @@ class _OutcomeCategoDetailState extends State<OutcomeCategoDetail> {
   Map<String, dynamic>? data;
   String daybeforesplit() {
     List<String> parts = daybefore.split(',');
-    return '${parts[0]}(${parts[1]},${parts[2]} ) ';
+    return '${parts[0]}(${parts[1]}/${parts[2]} ) ';
   }
 
   String datesplit(String date) {
@@ -82,7 +82,12 @@ class _OutcomeCategoDetailState extends State<OutcomeCategoDetail> {
   Widget build(BuildContext context) {
     return SizedBox(
       child: StreamBuilder<QuerySnapshot>(
-        stream: widget.userstream,
+        stream: firestore
+            .collection('${FirebaseAuth.instance.currentUser!.email}')
+            .doc('Outcome')
+            .collection('outcome-data')
+            .orderBy('created At', descending: false)
+            .snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
             return const Text('Something went wrong');

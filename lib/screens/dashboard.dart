@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:multiple_stream_builder/multiple_stream_builder.dart';
+import 'package:intl/intl.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -83,9 +84,15 @@ class _DashboardState extends State<Dashboard> {
               int addPrice = savingField['addPrice'];
               savingTotal = savingTotal + addPrice;
             }
+            return DashboardUi(
+              income: incomeTotal,
+              outcome: outcomeTotal,
+              saving: savingTotal,
+              incomeVs: incomeTotal - (outcomeTotal + savingTotal),
+              allTotal: incomeTotal + outcomeTotal + savingTotal,
+            );
           }
-          return DashboardUi(
-              Income: incomeTotal, Outcome: outcomeTotal, Saving: savingTotal);
+          return const Center(child: CircularProgressIndicator());
         },
       ),
     );
@@ -93,15 +100,19 @@ class _DashboardState extends State<Dashboard> {
 }
 
 class DashboardUi extends StatefulWidget {
-  int Income;
-  int Outcome;
-  int Saving;
-  DashboardUi({
-    Key? key,
-    required this.Income,
-    required this.Outcome,
-    required this.Saving,
-  }) : super(key: key);
+  int income;
+  int outcome;
+  int saving;
+  int incomeVs;
+  int allTotal;
+  DashboardUi(
+      {Key? key,
+      required this.income,
+      required this.outcome,
+      required this.saving,
+      required this.incomeVs,
+      required this.allTotal})
+      : super(key: key);
 
   @override
   State<DashboardUi> createState() => _DashboardUiState();
@@ -109,6 +120,9 @@ class DashboardUi extends StatefulWidget {
 
 class _DashboardUiState extends State<DashboardUi> {
   String displayName = "";
+
+  int selectedChart = 1;
+
   Future getDisplayName() async {
     final prefs = await SharedPreferences.getInstance();
     final String? name = prefs.getString('displayName');
@@ -127,7 +141,7 @@ class _DashboardUiState extends State<DashboardUi> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      // backgroundColor: Colors.grey[100],
       body: (displayName == "")
           ? const Center(
               child: CircularProgressIndicator(),
@@ -140,7 +154,7 @@ class _DashboardUiState extends State<DashboardUi> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(
-                        height: 90,
+                        height: 60,
                         width: MediaQuery.of(context).size.width,
                         child: Card(
                           elevation: 0.0,
@@ -149,8 +163,8 @@ class _DashboardUiState extends State<DashboardUi> {
 
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
@@ -164,11 +178,14 @@ class _DashboardUiState extends State<DashboardUi> {
                                   height: 10,
                                 ),
                                 Text(
-                                  "${widget.Income - (widget.Outcome + widget.Saving)}",
+                                  // "${widget.income - (widget.outcome + widget.saving)}",
+                                  // "${widget.incomeVs}",
+                                  NumberFormat.decimalPattern()
+                                      .format(widget.incomeVs),
                                   style: TextStyle(
                                       color: Colors.grey[100],
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 20),
+                                      fontSize: 16),
                                 )
                               ],
                             ),
@@ -176,20 +193,21 @@ class _DashboardUiState extends State<DashboardUi> {
                         ),
                       ),
                       const SizedBox(
-                        height: 15,
+                        height: 10,
                       ),
-                      // Text("Income - ${widget.Income}"),
-                      // Text("Outcome - ${widget.Outcome}"),
-                      // Text("Saving - ${widget.Saving}"),
-
+                      // Text("income - ${widget.income}"),
+                      // Text("outcome - ${widget.outcome}"),
+                      // Text("saving - ${widget.saving}"),
+                      // Text("all Total - ${widget.allTotal}"),
                       SizedBox(
                         width: MediaQuery.of(context).size.width,
-                        height: 200,
+                        height: 280,
                         child: Card(
+                          color: Colors.grey[100],
                           elevation: 3,
-                          child: (widget.Income == 0 &&
-                                  widget.Outcome == 0 &&
-                                  widget.Saving == 0)
+                          child: (widget.income == 0 &&
+                                  widget.outcome == 0 &&
+                                  widget.saving == 0)
                               ? Center(
                                   child: Text(
                                     "No Data",
@@ -199,39 +217,231 @@ class _DashboardUiState extends State<DashboardUi> {
                                         fontWeight: FontWeight.bold),
                                   ),
                                 )
-                              : Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: SfCircularChart(
-                                    legend: Legend(
-                                        isVisible: true,
-                                        position: LegendPosition.bottom),
-                                    tooltipBehavior:
-                                        TooltipBehavior(enable: true),
-                                    series: <CircularSeries>[
-                                      PieSeries<IOData, String>(
-                                          dataSource: [
-                                            IOData("Income", widget.Income),
-                                            IOData("Outcome", widget.Outcome),
-                                            IOData("Saving", widget.Saving)
-                                          ],
-                                          xValueMapper: (IOData data, _) =>
-                                              data.iotype,
-                                          yValueMapper: (IOData data, _) =>
-                                              data.iovalue,
-                                          dataLabelSettings:
-                                              const DataLabelSettings(
-                                                  isVisible: true,
-                                                  showZeroValue: true,
-                                                  overflowMode:
-                                                      OverflowMode.trim,
-                                                  showCumulativeValues: true,
-                                                  labelPosition:
-                                                      ChartDataLabelPosition
-                                                          .outside),
-                                          enableTooltip: true,
-                                          animationDuration: 800)
-                                    ],
-                                  ),
+                              : Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                            flex: 1,
+                                            child: Row(
+                                              children: [
+                                                Transform.scale(
+                                                  scale: 0.8,
+                                                  child: Radio(
+                                                      value: 1,
+                                                      groupValue: selectedChart,
+                                                      onChanged: (value) =>
+                                                          setState(() {
+                                                            selectedChart = 1;
+                                                          })),
+                                                ),
+                                                const Expanded(
+                                                    child: Text(
+                                                  "Pie Chart",
+                                                  style: TextStyle(
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.w500),
+                                                ))
+                                              ],
+                                            )),
+                                        Expanded(
+                                            flex: 1,
+                                            child: Row(
+                                              children: [
+                                                Transform.scale(
+                                                  scale: 0.8,
+                                                  child: Radio(
+                                                      value: 2,
+                                                      groupValue: selectedChart,
+                                                      onChanged: (value) =>
+                                                          setState(() {
+                                                            selectedChart = 2;
+                                                          })),
+                                                ),
+                                                const Expanded(
+                                                    child: Text(
+                                                  "Column Chart",
+                                                  style: TextStyle(
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.w500),
+                                                ))
+                                              ],
+                                            ))
+                                      ],
+                                    ),
+                                    (selectedChart == 1)
+                                        ? SizedBox(
+                                            height: 200,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(5.0),
+                                              child: SfCircularChart(
+                                                legend: Legend(
+                                                    isVisible: true,
+                                                    position:
+                                                        LegendPosition.bottom),
+                                                tooltipBehavior:
+                                                    TooltipBehavior(
+                                                        enable: true),
+                                                // series: <CircularSeries>[
+                                                //   PieSeries<IOData, String>(
+                                                //     dataSource: [
+                                                //       IOData("income",
+                                                //           widget.income
+                                                //           ),
+                                                //       IOData("outcome",
+                                                //           widget.outcome),
+                                                //       IOData("saving",
+                                                //           widget.saving)
+                                                //     ],
+
+                                                //     xValueMapper:
+                                                //         (IOData data, _) =>
+                                                //             data.iotype,
+                                                //     yValueMapper:
+                                                //         (IOData data, _) =>
+                                                //             data.iovalue,
+                                                //     dataLabelSettings:
+                                                //         const DataLabelSettings(
+                                                //             isVisible: true,
+                                                //             showZeroValue: true,
+                                                //             overflowMode:
+                                                //                 OverflowMode
+                                                //                     .trim,
+                                                //             showCumulativeValues:
+                                                //                 true,
+                                                //             labelPosition:
+                                                //                 ChartDataLabelPosition
+                                                //                     .outside),
+                                                //     enableTooltip: true,
+                                                //   )
+                                                // ],
+                                                series: <CircularSeries>[
+                                                  PieSeries<IOData, String>(
+                                                    dataSource: [
+                                                      IOData(
+                                                          "Income",
+                                                          double.parse(((widget
+                                                                          .income /
+                                                                      widget
+                                                                          .allTotal) *
+                                                                  100)
+                                                              .toStringAsFixed(
+                                                                  2)),
+                                                          "${double.parse(((widget.income / widget.allTotal) * 100).toStringAsFixed(2))}%"),
+                                                      IOData(
+                                                          "Outcome",
+                                                          double.parse(((widget
+                                                                          .outcome /
+                                                                      widget
+                                                                          .allTotal) *
+                                                                  100)
+                                                              .toStringAsFixed(
+                                                                  2)),
+                                                          "${double.parse(((widget.outcome / widget.allTotal) * 100).toStringAsFixed(2))}%"),
+                                                      IOData(
+                                                          "Saving",
+                                                          double.parse(((widget
+                                                                          .saving /
+                                                                      widget
+                                                                          .allTotal) *
+                                                                  100)
+                                                              .toStringAsFixed(
+                                                                  2)),
+                                                          "${double.parse(((widget.saving / widget.allTotal) * 100).toStringAsFixed(2))}%")
+                                                    ],
+                                                    xValueMapper:
+                                                        (IOData data, _) =>
+                                                            data.iotype,
+                                                    yValueMapper:
+                                                        (IOData data, _) =>
+                                                            data.iovalue,
+                                                    dataLabelMapper:
+                                                        (IOData data, _) =>
+                                                            data.iolabel,
+                                                    dataLabelSettings:
+                                                        const DataLabelSettings(
+                                                      isVisible: true,
+                                                      showZeroValue: true,
+                                                      // overflowMode:
+                                                      //     OverflowMode
+                                                      //         .trim,
+                                                      overflowMode:
+                                                          OverflowMode.shift,
+                                                      showCumulativeValues:
+                                                          true,
+                                                      // labelPosition:
+                                                      //     ChartDataLabelPosition
+                                                      //         .outside
+                                                    ),
+                                                    enableTooltip: true,
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          )
+                                        : SizedBox(
+                                            height: 200,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(5.0),
+                                              child: SfCartesianChart(
+                                                tooltipBehavior:
+                                                    TooltipBehavior(
+                                                        enable: true),
+                                                series: <ChartSeries>[
+                                                  ColumnSeries<IOCData, String>(
+                                                    dataSource: [
+                                                      IOCData(
+                                                          "income",
+                                                          widget.income,
+                                                          NumberFormat
+                                                                  .decimalPattern()
+                                                              .format(widget
+                                                                  .income)),
+                                                      IOCData(
+                                                          "outcome",
+                                                          widget.outcome,
+                                                          NumberFormat
+                                                                  .decimalPattern()
+                                                              .format(widget
+                                                                  .outcome)),
+                                                      IOCData(
+                                                          "saving",
+                                                          widget.saving,
+                                                          NumberFormat
+                                                                  .decimalPattern()
+                                                              .format(widget
+                                                                  .saving))
+                                                    ],
+                                                    name: "data",
+                                                    xValueMapper:
+                                                        (IOCData data, _) =>
+                                                            data.iotype,
+                                                    yValueMapper:
+                                                        (IOCData data, _) =>
+                                                            data.iovalue,
+                                                    dataLabelMapper:
+                                                        (IOCData data, _) =>
+                                                            data.iolabel,
+                                                    enableTooltip: true,
+                                                    dataLabelSettings:
+                                                        const DataLabelSettings(
+                                                            isVisible: true,
+                                                            labelAlignment:
+                                                                ChartDataLabelAlignment
+                                                                    .outer),
+                                                  ),
+                                                ],
+                                                primaryXAxis: CategoryAxis(),
+                                              ),
+                                            ),
+                                          ),
+                                    // : Text("hi")
+                                  ],
                                 ),
                         ),
                       ),
@@ -245,7 +455,17 @@ class _DashboardUiState extends State<DashboardUi> {
 }
 
 class IOData {
-  IOData(this.iotype, this.iovalue);
+  IOData(this.iotype, this.iovalue, this.iolabel);
+  // final String iotype;
+  final String iotype;
+  // final int iovalue;
+  final double iovalue;
+  final String iolabel;
+}
+
+class IOCData {
+  IOCData(this.iotype, this.iovalue, this.iolabel);
   final String iotype;
   final int iovalue;
+  final String iolabel;
 }

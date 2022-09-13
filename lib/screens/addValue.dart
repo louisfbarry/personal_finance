@@ -4,8 +4,6 @@ import 'package:finance/model/firebaseGet.dart';
 import 'package:flutter/material.dart';
 import '../model/firebaseservice.dart';
 
-// bool addvaluefinished = false;
-
 class AddValue extends StatefulWidget {
   const AddValue({Key? key}) : super(key: key);
 
@@ -18,60 +16,15 @@ class _AddValueState extends State<AddValue> {
 
   final _formKey = GlobalKey<FormState>();
   bool submitted = false;
-  List<String>? incomelist;
-  List<String>? outcomelist;
-  List<String>? outcomeImglist;
-  List<String>? incomeImglist;
-  getlist() async {
-    await incomeCategoList().then((value) {
-      setState(() {
-        incomelist = value;
-      });
-    });
-    // print(incomelist);
-
-    await incomeCategoImgList().then((value) {
-      setState(() {
-        incomeImglist = value;
-      });
-    });
-
-    await outcomeCategoList().then((value) {
-      setState(() {
-        outcomelist = value;
-      });
-    });
-    // print(outcomelist);
-
-    await outcomeCategoImgList().then((value) {
-      setState(() {
-        outcomeImglist = value;
-      });
-    });
-    // print(outcomeImglist);
-
-    // setState(() {
-    //   addvaluefinished = true;
-    // });
-  }
-
-  @override
-  void initState() {
-    API().addCollection();
-    getlist();
-    // TODO: implement initState
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        backgroundColor: const Color.fromARGB(255, 194, 237, 255),
+        backgroundColor: Colors.white,
         appBar: AppBar(
-          elevation: 5,
-          backgroundColor: const Color.fromARGB(255, 194, 237, 255),
+          backgroundColor: Colors.white,
           bottom: const TabBar(
             labelColor: Colors.black,
             unselectedLabelColor: Colors.black,
@@ -89,36 +42,24 @@ class _AddValueState extends State<AddValue> {
           ),
           automaticallyImplyLeading: false,
           centerTitle: true,
-          title: const Text(
-            '__',
-            style: TextStyle(
-                fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black),
+          title: const SizedBox(
+            width: 30,
+            child: Divider(
+              color: Colors.black,
+              thickness: 2,
+            ),
           ),
         ),
-        body: outcomeImglist == null
-            ? Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [CircularProgressIndicator()]),
-              )
-            : Form(
-                key: _formKey,
-                child: TabBarView(children: [
-                  IncomeAddingDetail(
-                    incomeCategoList: incomelist!,
-                    incomeCategoImgList: incomeImglist!,
-                  ),
-                  OutcomeAddingDetail(
-                    outcomeCategoList: outcomelist!,
-                    outcomeCategoIMgList: outcomeImglist!,
-                  ),
-                  Center(
-                    child: Text('THird'),
-                  ),
-                ]),
-              ),
+        body: Form(
+          key: _formKey,
+          child: TabBarView(children: [
+            IncomeAddingDetail(),
+            OutcomeAddingDetail(),
+            const Center(
+              child: Text('THird'),
+            ),
+          ]),
+        ),
       ),
     );
   }

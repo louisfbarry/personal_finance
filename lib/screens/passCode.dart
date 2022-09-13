@@ -1,3 +1,4 @@
+import 'package:finance/components/snackbar.dart';
 import 'package:finance/model/bioauth.dart';
 import 'package:finance/screens/home.dart';
 import 'package:finance/screens/login.dart';
@@ -24,110 +25,168 @@ class _MyPasscodeState extends State<MyPasscode> {
 
   final LocalAuthentication bioauth = LocalAuthentication();
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Form(
-      key: _formKey,
-      child: Center(
-          child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(
-            height: 80,
-            width: 300,
-            child: TextFormField(
-              controller: passwordcontroller,
-              obscureText: pass,
-              autovalidateMode: submitted
-                  ? AutovalidateMode.always
-                  : AutovalidateMode.disabled,
-              validator:
-                  RequiredValidator(errorText: "Password can't be empty"),
-              decoration: InputDecoration(
-                errorBorder: OutlineInputBorder(
-                  borderSide:
-                      const BorderSide(width: 1, color: Colors.redAccent),
-                  borderRadius: BorderRadius.circular(10.0),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+          body: SafeArea(
+        child: Form(
+          key: _formKey,
+          child: Center(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextFormField(
+                      autofocus: true,
+                      controller: passwordcontroller,
+                      obscureText: pass,
+                      autovalidateMode: submitted
+                          ? AutovalidateMode.always
+                          : AutovalidateMode.disabled,
+                      validator: RequiredValidator(
+                          errorText: "Password can't be empty"),
+                      decoration: InputDecoration(
+                        suffixIcon: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                pass = !pass;
+                              });
+                            },
+                            // splashRadius: 2,
+                            icon: pass
+                                ? const Icon(
+                                    Icons.remove_red_eye,
+                                    color: Color.fromARGB(163, 20, 20, 20),
+                                  )
+                                : const Icon(
+                                    Icons.visibility_off,
+                                    color: Color.fromARGB(163, 19, 18, 18),
+                                  )),
+                        hintText: 'Enter your Password',
+                        hintStyle: const TextStyle(fontSize: 12),
+                        labelStyle: TextStyle(color: Colors.grey[800]),
+                      ),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      alignment: Alignment.topRight,
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pushReplacementNamed(context, '/reset2');
+                        },
+                        child: Text(
+                          'forget password ? ',
+                          textAlign: TextAlign.left,
+                          style:
+                              TextStyle(color: Colors.blue[700], fontSize: 12),
+                        ),
+                      ),
+                    ),
+                    // const SizedBox(
+                    //   height: 15,
+                    // ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                          onPressed: () async {
+                            setState(() {
+                              submitted = true;
+                            });
+
+                            if (_formKey.currentState!.validate()) {
+                              setState(() {
+                                isloading = true;
+                              });
+                              final prefs =
+                                  await SharedPreferences.getInstance();
+                              // final pass = prefs.getString('password');
+
+                              // print(pass);
+                              final email = prefs.getString('email');
+                              await FirebaseAuth.instance.currentUser!.reload();
+                              try {
+                                await FirebaseAuth.instance
+                                    .signInWithEmailAndPassword(
+                                        email: email!,
+                                        password: passwordcontroller.text);
+                                // ignore: use_build_context_synchronously
+                                Navigator.pushReplacementNamed(
+                                    context, '/main');
+                                setState(() {
+                                  isloading = false;
+                                });
+                              } on FirebaseException catch (e) {
+                                String errorMessage = "";
+                                String code = e.code;
+                                if (e.code == "wrong-password") {
+                                  errorMessage = "Invalid password.";
+                                } else if (code == "too-many-requests") {
+                                  errorMessage =
+                                      "Too many request try again later";
+                                } else if (code == "network-request-failed") {
+                                  errorMessage = "Your are currently offline.";
+                                } else {
+                                  errorMessage =
+                                      "Something went wrong please try again.";
+                                }
+                                // ignore: use_build_context_synchronously
+                                showSnackbar(
+                                    context, errorMessage, 1, Colors.red[300]);
+                                setState(() {
+                                  isloading = false;
+                                });
+                              }
+
+                              // if (pass == passwordcontroller.text) {
+                              //   Navigator.pushReplacementNamed(context, '/main');
+                              //   setState(() {
+                              //     isloading = false;
+                              //   });
+                              // } else {
+                              //   // print('wrong pass');
+                              //   // ignore: use_build_context_synchronously
+                              //   showSnackbar(context, "Invalid Password", 2,
+                              //       Colors.red[300]);
+                              //   setState(() {
+                              //     isloading = false;
+                              //   });
+                              // }
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                              elevation: 0, primary: Colors.blue[700]),
+                          child: isloading
+                              ? const SizedBox(
+                                  width: 15,
+                                  height: 15,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Padding(
+                                  padding: EdgeInsets.all(10.0),
+                                  child: Text(
+                                    'SignIn',
+                                  ),
+                                )),
+                    ),
+                  ],
                 ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(
-                      width: 1, color: Color.fromARGB(157, 0, 0, 0)),
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                        width: 2, color: Color.fromARGB(157, 0, 0, 0)),
-                    borderRadius: BorderRadius.circular(10)),
-                focusedErrorBorder: OutlineInputBorder(
-                    borderSide:
-                        const BorderSide(width: 1, color: Colors.redAccent),
-                    borderRadius: BorderRadius.circular(10)),
-                suffixIcon: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        pass = !pass;
-                      });
-                    },
-                    splashRadius: 2,
-                    icon: pass
-                        ? const Icon(
-                            Icons.remove_red_eye,
-                            color: Color.fromARGB(163, 20, 20, 20),
-                          )
-                        : const Icon(
-                            Icons.visibility_off,
-                            color: Color.fromARGB(163, 19, 18, 18),
-                          )),
-                hintText: 'Enter your Password',
               ),
             ),
           ),
-          ElevatedButton(
-              onPressed: () async {
-                setState(() {
-                  submitted = true;
-                });
-                if (_formKey.currentState!.validate()) {
-                  setState(() {
-                    isloading = true;
-                  });
-                  final prefs = await SharedPreferences.getInstance();
-                  final pass = prefs.getString('password');
-                  print(pass);
-
-                  if (pass == passwordcontroller.text) {
-                    Navigator.pushReplacementNamed(context, '/main');
-                    isloading = false;
-                  } else {
-                    print('wrong pass');
-                  }
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                primary: Color.fromARGB(94, 0, 0, 0),
-                padding: const EdgeInsets.only(left: 120, right: 120),
-                elevation: 10,
-              ),
-              child: isloading
-                  ? const Padding(
-                      padding: EdgeInsets.all(10),
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                      ),
-                    )
-                  : const Padding(
-                      padding: EdgeInsets.all(10.0),
-                      child: Text(
-                        'SignIn',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontFamily: 'Libre',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15,
-                        ),
-                      ),
-                    )),
-        ],
+        ),
       )),
-    ));
+    );
   }
 }
+
+
+
+
+
+
+

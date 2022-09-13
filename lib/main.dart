@@ -1,10 +1,12 @@
 import 'package:finance/screens/changePw.dart';
+import 'package:finance/screens/checkScreen.dart';
 import 'package:finance/screens/home.dart';
 import 'package:finance/screens/leadingpage.dart';
 import 'package:finance/screens/login.dart';
 import 'package:finance/screens/passCode.dart';
 import 'package:finance/screens/register.dart';
 import 'package:finance/screens/resetPw.dart';
+import 'package:finance/screens/resetPw2.dart';
 import 'package:finance/screens/saving_details.dart';
 import 'package:finance/screens/saving_money_adding_history.dart';
 import 'package:finance/screens/savingadding.dart';
@@ -13,7 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -57,14 +59,11 @@ class _MyAppState extends State<MyApp> {
         '/login': (context) => const MyLogInPage(),
         '/register': (context) => const RegisterPage(),
         '/reset': (context) => const ResetPassword(),
+        '/reset2': (context) => const ResetPassword2(),
         '/main': (context) => const Mainpage(),
         '/changepassword': (context) => const ChangePw(),
-        // '/savingadding': (context) => const AddSaving(),
-        // '/income': (context) => const IncomePage(),
+        '/checkScreen': (context) => const checkScreen(),
         '/passcode': (context) => const MyPasscode(),
-        // ignore: equal_keys_in_map
-        // '/savingadding': (context) => const AddSaving(),
-        // '/savingDetails': (context) => SavingDetails(),
         '/savingHistory': (context) => const SavingHistory()
       },
     );

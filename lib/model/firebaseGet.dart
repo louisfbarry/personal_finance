@@ -6,7 +6,12 @@ import '../model/firebaseservice.dart';
 
 Future<List<String>> incomeCategoList() async {
   List<String> list = [];
-  await firestore.collection('${FirebaseAuth.instance.currentUser!.email}').doc('Income-catego').collection('data').get().then((snapshot) {
+  await firestore
+      .collection('${FirebaseAuth.instance.currentUser!.email}')
+      .doc('Income-catego')
+      .collection('data')
+      .get()
+      .then((snapshot) {
     snapshot.docs.map((DocumentSnapshot document) {
       Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
 
@@ -15,6 +20,22 @@ Future<List<String>> incomeCategoList() async {
   });
   // print(list);
   return list;
+}
+
+Future<String> getImg(String categoname) async {
+  String img = '';
+  await firestore
+      .collection('${FirebaseAuth.instance.currentUser!.email}')
+      .doc('Income-catego')
+      .collection('data')
+      .doc(categoname)
+      .get()
+      .then((value) {
+    final data = value.data() as Map<String, dynamic>;
+    img = data['imagId'];
+  });
+  // print(img);
+  return img;
 }
 
 Future<List<String>> incomeCategoImgList() async {
@@ -52,7 +73,7 @@ Future<List<String>> outcomeCategoImgList() async {
       list.add(data['imagId']);
     }).toList();
   });
-  print(list);
+  // print(list);
   return list;
 }
 
@@ -153,4 +174,68 @@ Future<List> savingtotal() async {
   });
   print(list);
   return list;
+}
+
+incomeCategoDelete(String id) {
+  user.doc('Income-catego').collection('data').doc(id).delete();
+}
+
+outcomeCategoDelete(String id) {
+  user.doc('Outcome-catego').collection('data').doc(id).delete();
+}
+
+incomecategoDataDelete(String catego) async {
+  await user.doc('Income').collection('income-data').get().then((snapshot) {
+    snapshot.docs.map((DocumentSnapshot document) {
+      Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+      if (data['category'] == catego) {
+        print('${data['id']}>>>>>>>${data['category']}');
+        user.doc('Income').collection('income-data').doc(data['id']).delete();
+      }
+    }).toList();
+  });
+}
+
+incomecategoDataEdit(String catego, String newcatego) async {
+  await user.doc('Income').collection('income-data').get().then((snapshot) {
+    snapshot.docs.map((DocumentSnapshot document) {
+      Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+      if (data['category'] == catego) {
+        print('${data['id']}>>>>>>>${data['category']}');
+        user
+            .doc('Income')
+            .collection('income-data')
+            .doc(data['id'])
+            .update({'category': newcatego});
+      }
+    }).toList();
+  });
+}
+
+outcomecategoDataDelete(String catego) async {
+  await user.doc('Outcome').collection('outcome-data').get().then((snapshot) {
+    snapshot.docs.map((DocumentSnapshot document) {
+      Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+      if (data['category'] == catego) {
+        print('${data['id']}>>>>>>>${data['category']}');
+        user.doc('Outcome').collection('outcome-data').doc(data['id']).delete();
+      }
+    }).toList();
+  });
+}
+
+outcomecategoDataEdit(String catego, String newcatego) async {
+  await user.doc('Outcome').collection('outcome-data').get().then((snapshot) {
+    snapshot.docs.map((DocumentSnapshot document) {
+      Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+      if (data['category'] == catego) {
+        print('${data['id']}>>>>>>>${data['category']}');
+        user
+            .doc('Outcome')
+            .collection('outcome-data')
+            .doc(data['id'])
+            .update({'category': newcatego});
+      }
+    }).toList();
+  });
 }

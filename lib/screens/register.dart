@@ -202,7 +202,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                           showSnackbar(
                                               context,
                                               ' We sent Verification email to "${userregistController.text}"',
-                                              2,
+                                              4,
                                               Colors.green[300]);
                                           Navigator.pushNamed(
                                               context, '/login');

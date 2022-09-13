@@ -274,9 +274,7 @@ class _DashboardState extends State<Dashboard> {
                           Navigator.push(
                             context,
                             MaterialPageRoute<void>(
-                              builder: (BuildContext context) => CategoDetail(
-                                userstream: incomeStream,
-                              ),
+                              builder: (BuildContext context) => CategoDetail(),
                             ),
                           );
                         },
@@ -311,8 +309,7 @@ class _DashboardState extends State<Dashboard> {
                             context,
                             MaterialPageRoute<void>(
                                 builder: (BuildContext context) =>
-                                    OutcomeCategoDetail(
-                                        userstream: outcomeStream)),
+                                    const OutcomeCategoDetail()),
                           );
                         },
                         child: Padding(

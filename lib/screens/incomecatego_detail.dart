@@ -1,13 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finance/model/firebaseservice.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:finance/model/firebaseservice.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../model/firebaseGet.dart';
@@ -20,8 +17,7 @@ bool finished = false;
 
 // ignore: must_be_immutable
 class CategoDetail extends StatefulWidget {
-  Stream<QuerySnapshot> userstream;
-  CategoDetail({Key? key, required this.userstream}) : super(key: key);
+  CategoDetail({Key? key}) : super(key: key);
 
   @override
   State<CategoDetail> createState() => _CategoDetailState();
@@ -37,7 +33,7 @@ class _CategoDetailState extends State<CategoDetail> {
   Map<String, dynamic>? data;
   String daybeforesplit() {
     List<String> parts = daybefore.split(',');
-    return '${parts[0]}(${parts[1]},${parts[2]} ) ';
+    return '${parts[0]}(${parts[1]}/${parts[2]} ) ';
   }
 
   String datesplit(String date) {
@@ -79,7 +75,12 @@ class _CategoDetailState extends State<CategoDetail> {
   Widget build(BuildContext context) {
     return SizedBox(
       child: StreamBuilder<QuerySnapshot>(
-        stream: widget.userstream,
+        stream: firestore
+            .collection('${FirebaseAuth.instance.currentUser!.email}')
+            .doc('Income')
+            .collection('income-data')
+            .orderBy('created At', descending: false)
+            .snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
             return const Text('Something went wrong');
@@ -125,93 +126,96 @@ class _CategoDetailState extends State<CategoDetail> {
           return Scaffold(
             backgroundColor: const Color.fromARGB(255, 238, 250, 255),
             appBar: AppBar(title: const Text('Income')),
-            body: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width - 30,
-                    height: MediaQuery.of(context).size.height * 0.4,
-                    child: finished
-                        ? Card(
-                            child: Padding(
-                              padding: const EdgeInsets.all(5),
-                              child: SfCircularChart(
-                                legend: Legend(
-                                    isVisible: true,
-                                    position: LegendPosition.bottom),
-                                tooltipBehavior: TooltipBehavior(enable: true),
-                                series: <CircularSeries>[
-                                  PieSeries<IncomeData, String>(
-                                    dataSource: IncomeChart,
-                                    xValueMapper: (IncomeData data, _) =>
-                                        data.IncomeType,
-                                    yValueMapper: (IncomeData data, _) =>
-                                        data.IncomeValue,
-                                    dataLabelSettings: const DataLabelSettings(
-                                        isVisible: true,
-                                        showZeroValue: true,
-                                        overflowMode: OverflowMode.trim,
-                                        showCumulativeValues: true,
-                                        labelPosition:
-                                            ChartDataLabelPosition.outside),
-                                    enableTooltip: true,
-                                  )
-                                ],
+            body: finished
+                ? SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                            width: MediaQuery.of(context).size.width - 30,
+                            height: MediaQuery.of(context).size.height * 0.4,
+                            child: Card(
+                              child: Padding(
+                                padding: const EdgeInsets.all(5),
+                                child: SfCircularChart(
+                                  legend: Legend(
+                                      isVisible: true,
+                                      position: LegendPosition.bottom),
+                                  tooltipBehavior:
+                                      TooltipBehavior(enable: true),
+                                  series: <CircularSeries>[
+                                    PieSeries<IncomeData, String>(
+                                      dataSource: IncomeChart,
+                                      xValueMapper: (IncomeData data, _) =>
+                                          data.IncomeType,
+                                      yValueMapper: (IncomeData data, _) =>
+                                          data.IncomeValue,
+                                      dataLabelSettings:
+                                          const DataLabelSettings(
+                                              isVisible: true,
+                                              showZeroValue: true,
+                                              overflowMode: OverflowMode.trim,
+                                              showCumulativeValues: true,
+                                              labelPosition:
+                                                  ChartDataLabelPosition
+                                                      .outside),
+                                      enableTooltip: true,
+                                    )
+                                  ],
+                                ),
                               ),
-                            ),
-                          )
-                        : const Center(
-                            child: CircularProgressIndicator(),
+                            )),
+                        const Padding(
+                          padding: EdgeInsets.only(left: 10.0),
+                          child: Text('Today'),
+                        ),
+                        todayDetail.isEmpty
+                            ? const Text('No Income has been added !')
+                            : Card(
+                                elevation: 1,
+                                child: Column(children: todayDetail)),
+                        yestDetail.isEmpty
+                            ? const Text('')
+                            : const Padding(
+                                padding: EdgeInsets.only(left: 10.0),
+                                child: Text('Yesterday'),
+                              ),
+                        Card(
+                          elevation: 1,
+                          child: Column(
+                            children: yestDetail,
                           ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(left: 10.0),
-                    child: Text('Today'),
-                  ),
-                  todayDetail.isEmpty
-                      ? const Text('No Income has been added !')
-                      : Card(
-                          elevation: 1, child: Column(children: todayDetail)),
-                  yestDetail.isEmpty
-                      ? const Text('')
-                      : const Padding(
-                          padding: EdgeInsets.only(left: 10.0),
-                          child: Text('Yesterday'),
                         ),
-                  Card(
-                    elevation: 1,
-                    child: Column(
-                      children: yestDetail,
-                    ),
-                  ),
-                  daybeforeDetail.isEmpty
-                      ? const Text('')
-                      : Padding(
-                          padding: const EdgeInsets.only(left: 10.0),
-                          child: Text(daybeforesplit()),
+                        daybeforeDetail.isEmpty
+                            ? const Text('')
+                            : Padding(
+                                padding: const EdgeInsets.only(left: 10.0),
+                                child: Text(daybeforesplit()),
+                              ),
+                        Card(
+                          elevation: 1,
+                          child: Column(
+                            children: daybeforeDetail,
+                          ),
                         ),
-                  Card(
-                    elevation: 1,
-                    child: Column(
-                      children: daybeforeDetail,
-                    ),
-                  ),
-                  left.isEmpty
-                      ? const Text('')
-                      : const Padding(
-                          padding: EdgeInsets.only(left: 10.0),
-                          child: Text('Last 7 day'),
+                        left.isEmpty
+                            ? const Text('')
+                            : const Padding(
+                                padding: EdgeInsets.only(left: 10.0),
+                                child: Text('Last 7 day'),
+                              ),
+                        Card(
+                          elevation: 2,
+                          child: Column(
+                            children: left,
+                          ),
                         ),
-                  Card(
-                    elevation: 2,
-                    child: Column(
-                      children: left,
+                      ],
                     ),
+                  )
+                : const Center(
+                    child: CircularProgressIndicator(),
                   ),
-                ],
-              ),
-            ),
           );
         },
       ),
@@ -248,12 +252,25 @@ class _DetailStyleState extends State<DetailStyle> {
   TextEditingController? amountcontroller;
   TextEditingController? notecontroller;
   String dropdownValue = '';
+  String img = 'a';
+  getimg() async {
+    isloading = false;
+    await getImg(widget.data!['category']).then((value) {
+      setState(() {
+        img = value;
+      });
+    });
+    setState(() {
+      isloading = true;
+    });
+  }
 
   @override
   void initState() {
     amountcontroller = TextEditingController(text: '${widget.data!['amount']}');
     notecontroller = TextEditingController(text: '${widget.data!['note']}');
     dropdownValue = widget.data!['category'];
+    getimg();
     // TODO: implement initState
     super.initState();
   }
@@ -474,39 +491,51 @@ class _DetailStyleState extends State<DetailStyle> {
               );
             });
       },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    const Icon(Icons.badge_outlined),
-                    Text(
-                      '${widget.data!['category']} ',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyText1!
-                          .copyWith(color: Colors.black),
-                    ),
-                  ],
+      child: isloading
+          ? Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          SizedBox(
+                            height: 25,
+                            width: 25,
+                            child: Image(
+                                image: AssetImage('images/Income/$img.png')),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            '${widget.data!['category']} ',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1!
+                                .copyWith(color: Colors.black),
+                          ),
+                        ],
+                      ),
+                      Text(
+                        '${widget.data!['amount']} MMK',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText1!
+                            .copyWith(color: Colors.black),
+                      ),
+                    ],
+                  ),
                 ),
-                Text(
-                  '${widget.data!['amount']} MMK',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText1!
-                      .copyWith(color: Colors.black),
-                ),
-              ],
+              ),
+            )
+          : const Center(
+              child: Text('....'),
             ),
-          ),
-        ),
-      ),
     );
   }
 }

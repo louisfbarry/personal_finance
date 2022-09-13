@@ -4,7 +4,11 @@ showSnackbar(context, message, duration, color) {
   return ScaffoldMessenger.of(context)
     ..removeCurrentSnackBar()
     ..showSnackBar(SnackBar(
-      content: Text(message),
+      // edit
+      content: Text(
+        message,
+        style: const TextStyle(fontSize: 12),
+      ),
       duration: Duration(seconds: duration),
       backgroundColor: color,
       behavior: SnackBarBehavior.floating,
@@ -12,5 +16,3 @@ showSnackbar(context, message, duration, color) {
       margin: const EdgeInsets.symmetric(vertical: 40, horizontal: 30),
     ));
 }
-
-

@@ -19,6 +19,32 @@ class Setting extends StatefulWidget {
 class _SettingState extends State<Setting> {
   TextEditingController securityController = TextEditingController();
 
+  String userEmail = "";
+  String userDisplayName = "";
+  bool? toggleOn;
+
+  getNameAndEmail() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userDisplayName = prefs.getString("displayName")!;
+      userEmail = prefs.getString("email")!;
+    });
+  }
+
+  getPassLoginOnOff() async {
+    final prefs = await SharedPreferences.getInstance();
+    final bool? onOff = prefs.getBool('passwordLogin');
+    toggleOn = onOff;
+    // print("onOff ${toggleOn}");
+  }
+
+  @override
+  void initState() {
+    getNameAndEmail();
+    getPassLoginOnOff();
+    super.initState();
+  }
+
   void _showDialog(
       BuildContext context, String title, String button, Function fun) {
     showDialog(
@@ -182,180 +208,292 @@ class _SettingState extends State<Setting> {
   Widget build(BuildContext context) {
     return Scaffold(
       // backgroundColor: Colors.grey[100],
-      body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(
-              height: 30,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Text(
-                "Setting",
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[800]),
+      // appBar: AppBar(
+      //   title: Padding(
+      //     padding: const EdgeInsets.symmetric(horizontal: 10),
+      //     child: Text("Setting", style: TextStyle(color: Colors.grey[800], fontWeight: FontWeight.w600),),
+      //   ),
+      //   backgroundColor: Colors.transparent,
+      //   elevation: 0,
+
+      // ),
+      body: (userEmail == "" || userDisplayName == "")
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : SafeArea(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // const SizedBox(
+                    //   height: 20,
+                    // ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20, top: 25),
+                      child: Text(
+                        "Setting",
+                        style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey[800]),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Card(
+                        elevation: 2,
+                        color: Colors.grey[100],
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 15),
+                          child: Row(
+                            // mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              const Icon(
+                                Icons.person,
+                                size: 30,
+                                color: Colors.brown,
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    userDisplayName,
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.grey[800]),
+                                  ),
+                                  Text(
+                                    userEmail,
+                                    style: TextStyle(
+                                        fontSize: 10, color: Colors.grey[700]),
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.password,
+                                color: Colors.yellow[700],
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              const Text(
+                                "Password Login",
+                                style: TextStyle(fontSize: 13),
+                              )
+                            ],
+                          ),
+                          Switch.adaptive(
+                              value: toggleOn == null ? false : toggleOn!,
+                              activeColor: Colors.blueAccent,
+                              onChanged: (value) async {
+                                setState(() {
+                                  toggleOn = value;
+                                });
+                                // print(this.toggleOn);
+                                final prefs =
+                                    await SharedPreferences.getInstance();
+                                await prefs.setBool('passwordLogin', toggleOn!);
+                              })
+                        ],
+                      ),
+                    ),
+                    Divider(
+                      color: Colors.grey[300],
+                      thickness: 0.5,
+                    ),
+
+                    InkWell(
+                      onTap: () {
+                        _securityDialog(context);
+                      },
+                      child: settingButton(
+                          "Security",
+                          const Icon(
+                            Icons.lock,
+                            color: Colors.green,
+                          )),
+                    ),
+                    Divider(
+                      color: Colors.grey[300],
+                      thickness: 0.5,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        print("Language");
+                      },
+                      child: settingButton(
+                          "Language",
+                          const Icon(
+                            Icons.language,
+                            color: Colors.blue,
+                          )),
+                    ),
+                    Divider(
+                      color: Colors.grey[300],
+                      thickness: 0.5,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        _showDialog(
+                            context, "Do you want to reset app ?", "reset",
+                            () async {
+                          // saving delete path
+                          var savingDeletePath = FirebaseFirestore.instance
+                              .collection(
+                                  "${FirebaseAuth.instance.currentUser!.email}")
+                              .doc("Saving")
+                              .collection('saving-data');
+
+                          // delete saving add-price
+                          savingDeletePath.get().then((value) {
+                            value.docs.forEach((element) {
+                              savingDeletePath
+                                  .doc(element.id)
+                                  .collection("add-prices")
+                                  .get()
+                                  .then((value2) {
+                                value2.docs.forEach((element2) {
+                                  savingDeletePath
+                                      .doc(element.id)
+                                      .collection('add-prices')
+                                      .doc(element2.id)
+                                      .delete();
+                                  // .then((value) => print("success"));
+                                });
+                              });
+                            });
+                          });
+
+                          // delete saving data
+                          savingDeletePath.get().then((value) {
+                            value.docs.forEach((element) {
+                              savingDeletePath.doc(element.id).delete();
+                            });
+                          });
+
+                          // income path
+                          var incomeDeletePath = FirebaseFirestore.instance
+                              .collection(
+                                  "${FirebaseAuth.instance.currentUser!.email}")
+                              .doc("Income")
+                              .collection('income-data');
+
+                          // delete income data
+                          incomeDeletePath.get().then((value) {
+                            value.docs.forEach((element) {
+                              incomeDeletePath.doc(element.id).delete();
+                            });
+                          });
+
+                          // outcome path
+                          var outcomeDeletePath = FirebaseFirestore.instance
+                              .collection(
+                                  "${FirebaseAuth.instance.currentUser!.email}")
+                              .doc("Outcome")
+                              .collection('outcome-data');
+
+                          // delete outcome data
+                          outcomeDeletePath.get().then((value) {
+                            value.docs.forEach((element) {
+                              outcomeDeletePath.doc(element.id).delete();
+                            });
+                          });
+
+                          // delete income category
+                          var incomeCategoryPath = FirebaseFirestore.instance
+                              .collection(
+                                  "${FirebaseAuth.instance.currentUser!.email}")
+                              .doc("Income-catego")
+                              .collection("data");
+
+                          incomeCategoryPath.get().then((value) => {
+                                value.docs.forEach((element) {
+                                  incomeCategoryPath.doc(element.id).delete();
+                                })
+                              });
+
+                          // delete outcome category
+                          var outcomeCategoryPath = FirebaseFirestore.instance
+                              .collection(
+                                  "${FirebaseAuth.instance.currentUser!.email}")
+                              .doc("Outcome-catego")
+                              .collection("data");
+
+                          outcomeCategoryPath.get().then((value) => {
+                                value.docs.forEach((element) {
+                                  outcomeCategoryPath.doc(element.id).delete();
+                                })
+                              });
+
+                          Navigator.pop(context);
+                          // Navigator.pushNamed(context, "/main");
+                          showSnackbar(context, "Successfully reset app", 2,
+                              Colors.green[300]);
+
+                          //last
+                        });
+                      },
+                      child: settingButton("Reset App",
+                          const Icon(Icons.restart_alt, color: Colors.orange)),
+                    ),
+                    Divider(
+                      color: Colors.grey[300],
+                      thickness: 0.5,
+                    ),
+                    InkWell(
+                        onTap: () {
+                          _showDialog(
+                              context, "Do you want to logout ?", "logout",
+                              () async {
+                            final prefs = await SharedPreferences.getInstance();
+                            final success = await prefs.remove('passwordLogin');
+                            // ignore: use_build_context_synchronously
+                            Navigator.pop(context);
+                            print("logout - ${success}");
+                            await FirebaseAuth.instance.signOut();
+                          });
+                        },
+                        child: settingButton(
+                            "Logout",
+                            const Icon(
+                              Icons.logout,
+                              color: Colors.red,
+                            ))),
+                    Divider(
+                      color: Colors.grey[300],
+                      thickness: 0.5,
+                    )
+                  ],
+                ),
               ),
             ),
-            const SizedBox(
-              height: 10,
-            ),
-            InkWell(
-              onTap: () {
-                _securityDialog(context);
-              },
-              child: settingButton(
-                  "Security",
-                  const Icon(
-                    Icons.lock,
-                    color: Colors.green,
-                  )),
-            ),
-            Divider(
-              color: Colors.grey[300],
-              thickness: 0.5,
-            ),
-            InkWell(
-              onTap: () {
-                print("Language");
-              },
-              child: settingButton(
-                  "Language",
-                  const Icon(
-                    Icons.language,
-                    color: Colors.blue,
-                  )),
-            ),
-            Divider(
-              color: Colors.grey[300],
-              thickness: 0.5,
-            ),
-            InkWell(
-              onTap: () {
-                _showDialog(context, "Do you want to reset app ?", "reset",
-                    () async {
-                  // saving delete path
-                  var savingDeletePath = FirebaseFirestore.instance
-                      .collection("${FirebaseAuth.instance.currentUser!.email}")
-                      .doc("Saving")
-                      .collection('saving-data');
-
-                  // delete saving add-price
-                  savingDeletePath.get().then((value) {
-                    value.docs.forEach((element) {
-                      savingDeletePath
-                          .doc(element.id)
-                          .collection("add-prices")
-                          .get()
-                          .then((value2) {
-                        value2.docs.forEach((element2) {
-                          savingDeletePath
-                              .doc(element.id)
-                              .collection('add-prices')
-                              .doc(element2.id)
-                              .delete();
-                          // .then((value) => print("success"));
-                        });
-                      });
-                    });
-                  });
-
-                  // delete saving data
-                  savingDeletePath.get().then((value) {
-                    value.docs.forEach((element) {
-                      savingDeletePath.doc(element.id).delete();
-                    });
-                  });
-
-                  // income path
-                  var incomeDeletePath = FirebaseFirestore.instance
-                      .collection("${FirebaseAuth.instance.currentUser!.email}")
-                      .doc("Income")
-                      .collection('income-data');
-
-                  // delete income data
-                  incomeDeletePath.get().then((value) {
-                    value.docs.forEach((element) {
-                      incomeDeletePath.doc(element.id).delete();
-                    });
-                  });
-
-                  // outcome path
-                  var outcomeDeletePath = FirebaseFirestore.instance
-                      .collection("${FirebaseAuth.instance.currentUser!.email}")
-                      .doc("Outcome")
-                      .collection('outcome-data');
-
-                  // delete outcome data
-                  outcomeDeletePath.get().then((value) {
-                    value.docs.forEach((element) {
-                      outcomeDeletePath.doc(element.id).delete();
-                    });
-                  });
-
-                  // delete income category
-                  var incomeCategoryPath = FirebaseFirestore.instance
-                      .collection("${FirebaseAuth.instance.currentUser!.email}")
-                      .doc("Income-catego")
-                      .collection("data");
-
-                  incomeCategoryPath.get().then((value) => {
-                        value.docs.forEach((element) {
-                          incomeCategoryPath.doc(element.id).delete();
-                        })
-                      });
-
-                  // delete outcome category
-                  var outcomeCategoryPath = FirebaseFirestore.instance
-                      .collection("${FirebaseAuth.instance.currentUser!.email}")
-                      .doc("Outcome-catego")
-                      .collection("data");
-
-                  outcomeCategoryPath.get().then((value) => {
-                        value.docs.forEach((element) {
-                          outcomeCategoryPath.doc(element.id).delete();
-                        })
-                      });
-
-                  Navigator.pop(context);
-                  // Navigator.pushNamed(context, "/main");
-                  showSnackbar(
-                      context, "Successful reset app", 2, Colors.green[300]);
-
-                  //last
-                });
-              },
-              child: settingButton("Reset App",
-                  const Icon(Icons.restart_alt, color: Colors.orange)),
-            ),
-            Divider(
-              color: Colors.grey[300],
-              thickness: 0.5,
-            ),
-            InkWell(
-                onTap: () {
-                  _showDialog(context, "Do you want to logout ?", "logout",
-                      () async {
-                    print("logout");
-                    await FirebaseAuth.instance.signOut();
-                  });
-                },
-                child: settingButton(
-                    "Logout",
-                    const Icon(
-                      Icons.logout,
-                      color: Colors.red,
-                    ))),
-            Divider(
-              color: Colors.grey[300],
-              thickness: 0.5,
-            )
-          ],
-        ),
-      ),
     );
   }
 }
