@@ -174,7 +174,10 @@ class _CategoDetailState extends State<CategoDetail> {
                           child: Text('Today'),
                         ),
                         todayDetail.isEmpty
-                            ? const Text('No Income has been added !')
+                            ? const Padding(
+                                padding: EdgeInsets.only(left: 10.0),
+                                child: Text('No Income has been added !'),
+                              )
                             : Card(
                                 elevation: 1,
                                 child: Column(children: todayDetail)),

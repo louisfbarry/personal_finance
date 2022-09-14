@@ -180,7 +180,10 @@ class _OutcomeCategoDetailState extends State<OutcomeCategoDetail> {
                             child: Text('Today'),
                           ),
                           todayDetail.isEmpty
-                              ? const Text('No Outcome has been added !')
+                              ? const Padding(
+                                  padding: EdgeInsets.only(left: 10.0),
+                                  child: Text('No Outcome has been added !'),
+                                )
                               : Card(
                                   elevation: 1,
                                   child: Column(children: todayDetail)),
@@ -336,7 +339,7 @@ class _DetailStyleState extends State<DetailStyle> {
                                               width: 25,
                                               child: Image(
                                                   image: AssetImage(
-                                                      'images/Outcome/${outcomeImglist[outcomelist.indexOf(item)]}.png')),
+                                                      'images/Oct/${outcomeImglist[outcomelist.indexOf(item)]}.png')),
                                             ),
                                             const SizedBox(
                                               width: 10,
@@ -507,8 +510,8 @@ class _DetailStyleState extends State<DetailStyle> {
                           SizedBox(
                             height: 25,
                             width: 25,
-                            child: Image(
-                                image: AssetImage('images/Outcome/$img.png')),
+                            child:
+                                Image(image: AssetImage('images/Oct/$img.png')),
                           ),
                           const SizedBox(
                             width: 10,

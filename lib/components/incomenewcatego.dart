@@ -124,7 +124,7 @@ class _IncomeCategoCreateState extends State<IncomeCategoCreate> {
                         width: 10,
                       ),
                       SizedBox(
-                        width: 180,
+                        width: 150,
                         height: 50,
                         child: TextFormField(
                           controller: newcatego,
@@ -232,118 +232,115 @@ class _CategostyleState extends State<Categostyle> {
             builder: (BuildContext context) {
               return StatefulBuilder(builder: (context, setState) {
                 return AlertDialog(
-                    contentPadding: const EdgeInsets.only(left: 10, top: 10),
+                    contentPadding: const EdgeInsets.all(6),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    content: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(children: [
-                        SizedBox(
-                          width: 80,
-                          height: 50,
-                          child: DropdownButtonFormField(
-                            value: widget.imgname,
-                            isExpanded: true,
-                            items: incomeImg
-                                .map((item) => DropdownMenuItem<String>(
-                                    value: item,
-                                    child: SizedBox(
-                                        width: 40,
-                                        height: 40,
-                                        child: Image(
-                                          image: AssetImage(
-                                              'images/Income/$item.png'),
-                                        ))))
-                                .toList(),
-                            onChanged: (newValue) {
-                              setState(() {
-                                widget.imgname = newValue.toString();
-                              });
-                            },
-                            decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(
-                                        width: 1, color: Colors.black),
-                                    borderRadius: BorderRadius.circular(5)),
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(
-                                        width: 1, color: Colors.black),
-                                    borderRadius: BorderRadius.circular(5))),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        SizedBox(
-                          width: 180,
-                          height: 50,
-                          child: TextFormField(
-                            controller: newEditcatego,
-                            validator: RequiredValidator(
-                                errorText: 'Pls enter your category name'),
-                            decoration: InputDecoration(
-                              errorBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                    width: 1, color: Colors.redAccent),
-                                borderRadius: BorderRadius.circular(5.0),
-                              ),
+                    content: Row(children: [
+                      SizedBox(
+                        width: 70,
+                        height: 50,
+                        child: DropdownButtonFormField(
+                          value: widget.imgname,
+                          isExpanded: true,
+                          items: incomeImg
+                              .map((item) => DropdownMenuItem<String>(
+                                  value: item,
+                                  child: SizedBox(
+                                      width: 30,
+                                      height: 40,
+                                      child: Image(
+                                        image: AssetImage(
+                                            'images/Income/$item.png'),
+                                      ))))
+                              .toList(),
+                          onChanged: (newValue) {
+                            setState(() {
+                              widget.imgname = newValue.toString();
+                            });
+                          },
+                          decoration: InputDecoration(
                               enabledBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                    width: 1, color: Colors.black),
-                                borderRadius: BorderRadius.circular(5.0),
-                              ),
+                                  borderSide: const BorderSide(
+                                      width: 1, color: Colors.black),
+                                  borderRadius: BorderRadius.circular(5)),
                               focusedBorder: OutlineInputBorder(
                                   borderSide: const BorderSide(
-                                      width: 2, color: Colors.black),
-                                  borderRadius: BorderRadius.circular(5)),
-                              focusedErrorBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      width: 1, color: Colors.redAccent),
-                                  borderRadius: BorderRadius.circular(5)),
-                              hintText: 'Create category',
+                                      width: 1, color: Colors.black),
+                                  borderRadius: BorderRadius.circular(5))),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      SizedBox(
+                        width: 110,
+                        height: 50,
+                        child: TextFormField(
+                          controller: newEditcatego,
+                          validator: RequiredValidator(
+                              errorText: 'Pls enter your category name'),
+                          decoration: InputDecoration(
+                            errorBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  width: 1, color: Colors.redAccent),
+                              borderRadius: BorderRadius.circular(5.0),
                             ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  width: 1, color: Colors.black),
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                    width: 2, color: Colors.black),
+                                borderRadius: BorderRadius.circular(5)),
+                            focusedErrorBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                    width: 1, color: Colors.redAccent),
+                                borderRadius: BorderRadius.circular(5)),
+                            hintText: 'Create category',
                           ),
                         ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        ElevatedButton(
-                            onPressed: () async {
-                              print(
-                                  '${newEditcatego.text} <<< and >>> ${widget.imgname}');
-                              incomecategoDataEdit(
-                                  widget.categoname, newEditcatego.text);
-                              user
-                                  .doc('Income-catego')
-                                  .collection('data')
-                                  .doc(widget.categoname)
-                                  .delete();
-                              user
-                                  .doc('Income-catego')
-                                  .collection('data')
-                                  .doc(newEditcatego.text)
-                                  .set({
-                                'categoname': newEditcatego.text,
-                                'imagId': widget.imgname
-                              });
-                              Navigator.pop(context);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              primary: Colors.blue[700],
-                              // padding: const EdgeInsets.all(10),
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      ElevatedButton(
+                          onPressed: () async {
+                            print(
+                                '${newEditcatego.text} <<< and >>> ${widget.imgname}');
+                            incomecategoDataEdit(
+                                widget.categoname, newEditcatego.text);
+                            user
+                                .doc('Income-catego')
+                                .collection('data')
+                                .doc(widget.categoname)
+                                .delete();
+                            user
+                                .doc('Income-catego')
+                                .collection('data')
+                                .doc(newEditcatego.text)
+                                .set({
+                              'categoname': newEditcatego.text,
+                              'imagId': widget.imgname
+                            });
+                            Navigator.pop(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.blue[700],
+                            // padding: const EdgeInsets.all(10),
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 4, vertical: 13),
+                            child: Text(
+                              'Edit',
+                              style: TextStyle(
+                                  fontSize: 18, color: Colors.white),
                             ),
-                            child: const Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 7, vertical: 13),
-                              child: Text(
-                                'Edit',
-                                style: TextStyle(
-                                    fontSize: 18, color: Colors.white),
-                              ),
-                            ))
-                      ]),
-                    ));
+                          ))
+                    ]));
               });
             });
         break;

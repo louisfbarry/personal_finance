@@ -85,7 +85,7 @@ class _OutcomeAddingDetailState extends State<OutcomeAddingDetail> {
                                               width: 25,
                                               child: Image(
                                                   image: AssetImage(
-                                                      'images/Outcome/${outcomeCategoImgList[outcomeCategoList.indexOf(item)]}.png')),
+                                                      'images/Oct/${outcomeCategoImgList[outcomeCategoList.indexOf(item)]}.png')),
                                             ),
                                             const SizedBox(
                                               width: 10,
