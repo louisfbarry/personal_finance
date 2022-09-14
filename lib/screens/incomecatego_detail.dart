@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finance/model/firebaseservice.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:form_field_validator/form_field_validator.dart';
@@ -14,10 +15,11 @@ List<String> incomeImglist = [];
 List<IncomeData> IncomeChart = [];
 int total = 0;
 bool finished = false;
+bool isloading = false;
 
 // ignore: must_be_immutable
 class CategoDetail extends StatefulWidget {
-  CategoDetail({Key? key}) : super(key: key);
+  const CategoDetail({Key? key}) : super(key: key);
 
   @override
   State<CategoDetail> createState() => _CategoDetailState();
@@ -42,6 +44,7 @@ class _CategoDetailState extends State<CategoDetail> {
   }
 
   getlist() async {
+    finished = false;
     await incomeCategoList().then((value) {
       incomelist = value;
     });
@@ -58,6 +61,7 @@ class _CategoDetailState extends State<CategoDetail> {
       print('${incomelist[i]}>>>>>$total');
       IncomeChart.add(IncomeData(incomelist[i], total));
     }
+
     setState(() {
       finished = true;
     });
@@ -126,7 +130,7 @@ class _CategoDetailState extends State<CategoDetail> {
           return Scaffold(
             backgroundColor: const Color.fromARGB(255, 238, 250, 255),
             appBar: AppBar(title: const Text('Income')),
-            body: finished
+            body: finished || isloading
                 ? SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -246,8 +250,6 @@ class _DetailStyleState extends State<DetailStyle> {
   bool confirmpass = true;
 
   bool submitted = false;
-
-  bool isloading = false;
 
   TextEditingController? amountcontroller;
   TextEditingController? notecontroller;

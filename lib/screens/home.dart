@@ -30,7 +30,8 @@ class _MainpageState extends State<Mainpage> {
     FirebaseAuth.instance.authStateChanges().listen((user) {
       if (user == null) {
         print('User is currently signed out!');
-        Navigator.pushNamed(context, '/login');
+        Navigator.pushNamedAndRemoveUntil(
+            context, "/register", (route) => false);
       } else {
         print('User is signed in!');
       }

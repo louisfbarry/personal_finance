@@ -38,6 +38,22 @@ Future<String> getImg(String categoname) async {
   return img;
 }
 
+Future<String> getOutcomeImg(String categoname) async {
+  String img = '';
+  await firestore
+      .collection('${FirebaseAuth.instance.currentUser!.email}')
+      .doc('Outcome-catego')
+      .collection('data')
+      .doc(categoname)
+      .get()
+      .then((value) {
+    final data = value.data() as Map<String, dynamic>;
+    img = data['imagId'];
+  });
+  // print(img);
+  return img;
+}
+
 Future<List<String>> incomeCategoImgList() async {
   List<String> list = [];
   await user.doc('Income-catego').collection('data').get().then((snapshot) {

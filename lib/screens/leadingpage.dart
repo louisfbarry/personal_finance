@@ -92,9 +92,7 @@ class _FrontScreenState extends State<FrontScreen> {
                         style: ElevatedButton.styleFrom(
                             elevation: 0, primary: Colors.blueAccent),
                         onPressed: () {
-                          setState(() {
-                            loginCheck();
-                          });
+                          Navigator.pushNamed(context, '/login');
                         },
                         child: const Text(
                           "Login",

@@ -8,6 +8,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:multiple_stream_builder/multiple_stream_builder.dart';
 import 'package:intl/intl.dart';
 
+import 'incomecatego_detail.dart';
+import 'outcomecatego_detail.dart';
+
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
   @override
@@ -445,6 +448,28 @@ class _DashboardUiState extends State<DashboardUi> {
                                 ),
                         ),
                       ),
+                      ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute<void>(
+                                builder: (BuildContext context) =>
+                                    const OutcomeCategoDetail(),
+                              ),
+                            );
+                          },
+                          child: const Text('To outcome Detail')),
+                      ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute<void>(
+                                builder: (BuildContext context) =>
+                                    const CategoDetail(),
+                              ),
+                            );
+                          },
+                          child: const Text('To Income Detail')),
                     ],
                   ),
                 ),

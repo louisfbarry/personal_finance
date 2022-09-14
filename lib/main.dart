@@ -53,7 +53,7 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      initialRoute: '/',
+      initialRoute: '/checkScreen',
       routes: {
         '/': (context) => const FrontScreen(),
         '/login': (context) => const MyLogInPage(),
