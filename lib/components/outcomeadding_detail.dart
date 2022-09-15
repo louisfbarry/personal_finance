@@ -5,6 +5,7 @@ import 'package:finance/screens/outcomecatego_detail.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
@@ -45,7 +46,11 @@ class _OutcomeAddingDetailState extends State<OutcomeAddingDetail> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [CircularProgressIndicator()],
+              children: const [
+                SpinKitPulse(
+                  color: Colors.grey,
+                )
+              ],
             );
           }
 

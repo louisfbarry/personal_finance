@@ -174,7 +174,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               ),
                               SizedBox(
                                 width: double.infinity,
-                                height: 45,
+                                height: 40,
                                 child: ElevatedButton(
                                     onPressed: () async {
                                       FocusScope.of(context).unfocus();
@@ -243,7 +243,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     },
                                     style: ElevatedButton.styleFrom(
                                         elevation: 0,
-                                        primary: Colors.blueAccent),
+                                        primary: Colors.blue[700]),
                                     child: isloading
                                         ? const SizedBox(
                                             width: 15,
@@ -287,11 +287,11 @@ class _RegisterPageState extends State<RegisterPage> {
                                     tapTargetSize:
                                         MaterialTapTargetSize.shrinkWrap,
                                     alignment: Alignment.centerLeft),
-                                child: const Text(
+                                child: Text(
                                   "Login",
                                   style: TextStyle(
                                     fontWeight: FontWeight.w500,
-                                    color: Colors.blueAccent,
+                                    color: Colors.blue[600],
                                     fontSize: 12,
                                   ),
                                 ),

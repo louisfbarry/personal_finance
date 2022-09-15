@@ -2,12 +2,15 @@ import 'package:finance/model/firebaseservice.dart';
 import 'package:finance/screens/saving_details.dart';
 import 'package:finance/screens/saving_money_adding.dart';
 import 'package:finance/screens/savingadding.dart';
+import 'package:finance/screens/savingediting.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../model/firebaseservice.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class Saving extends StatefulWidget {
   const Saving({Key? key}) : super(key: key);
@@ -62,21 +65,21 @@ class _SavingState extends State<Saving> {
           "Saving",
           style: TextStyle(fontSize: 15),
         ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              // Navigator.pushNamed(context, "/savingadding");
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const AddSaving(
-                        isEdit: false,
-                      )));
-            },
-            icon: const Icon(Icons.playlist_add),
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     onPressed: () {
+        //       // Navigator.pushNamed(context, "/savingadding");
+        //       Navigator.of(context).push(MaterialPageRoute(
+        //           builder: (context) => const AddSaving(
+        //                 isEdit: false,
+        //               )));
+        //     },
+        //     icon: const Icon(Icons.playlist_add),
+        //   ),
+        // ],
         automaticallyImplyLeading: false,
         elevation: 0.0,
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.blue[700],
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
@@ -90,7 +93,11 @@ class _SavingState extends State<Saving> {
           if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            // #edit
+            // return const Center(child: CircularProgressIndicator());
+            return const SpinKitPulse(
+              color: Colors.grey,
+            );
           } else if (snapshot.hasData) {
             var data = snapshot.data!.docs;
             for (var savingList in data) {
@@ -102,26 +109,28 @@ class _SavingState extends State<Saving> {
                 id: savingList['id'],
               ));
             }
+            return SingleChildScrollView(
+              child: Column(
+                children: (savingData.isEmpty)
+                    ? [
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        Center(
+                            child: Text(
+                          "No saving has been added.",
+                          style: TextStyle(
+                              fontSize: 15,
+                              color: Colors.grey[700],
+                              fontWeight: FontWeight.w500),
+                        ))
+                      ]
+                    : savingData,
+              ),
+            );
           }
-          return SingleChildScrollView(
-            child: Column(
-              children: (savingData.isEmpty)
-                  ? [
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      Center(
-                          child: Text(
-                        "No saving has been added.",
-                        style: TextStyle(
-                            fontSize: 15,
-                            color: Colors.grey[700],
-                            fontWeight: FontWeight.w500),
-                      ))
-                    ]
-                  : savingData,
-            ),
-          );
+          // #edit
+          return Container();
         },
       ),
     );
@@ -227,9 +236,9 @@ class SavingDataCard extends StatelessWidget {
         break;
       case 1:
         // print("Clicked edit");
-        // 1/9
+        // edit
         Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => AddSaving(
+            builder: (context) => EditSaving(
                   isEdit: true,
                   title: title,
                   targetPrice: targetPrice,

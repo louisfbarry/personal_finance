@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class checkScreen extends StatefulWidget {
@@ -57,7 +58,9 @@ class _checkScreenState extends State<checkScreen> {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(
-        child: CircularProgressIndicator(),
+        child: SpinKitPulse(
+          color: Colors.grey,
+        ),
       ),
     );
   }

@@ -37,7 +37,12 @@ class _MyPasscodeState extends State<MyPasscode> {
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 9),
+                      child: Text("Login", style: TextStyle(fontSize: 22, color: Colors.grey[700], fontWeight: FontWeight.bold),),
+                    ),
                     TextFormField(
                       autofocus: true,
                       controller: passwordcontroller,

@@ -43,7 +43,7 @@ class _AddSavingMoneyState extends State<AddSavingMoney> {
           ),
           centerTitle: true,
           elevation: 0.0,
-          backgroundColor: Colors.blueAccent,
+          backgroundColor: Colors.blue[700],
         ),
         body: Form(
           key: _formKey,
@@ -133,7 +133,7 @@ class _AddSavingMoneyState extends State<AddSavingMoney> {
                                 }
                               },
                               style: ElevatedButton.styleFrom(
-                                  elevation: 0, primary: Colors.blueAccent),
+                                  elevation: 0, primary: Colors.blue[600]),
                               child: const Text("Add")))
                     ],
                   ),

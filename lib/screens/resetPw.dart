@@ -74,10 +74,10 @@ class _ResetPasswordState extends State<ResetPassword> {
                       onPressed: () {
                         Navigator.pushReplacementNamed(context, '/login');
                       },
-                      child: const Text(
+                      child: Text(
                         'go back to login',
                         textAlign: TextAlign.left,
-                        style: TextStyle(color: Colors.blue, fontSize: 12),
+                        style: TextStyle(color: Colors.blue[600], fontSize: 12),
                       ),
                     ),
                   ),
@@ -85,7 +85,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          elevation: 0, primary: Colors.blueAccent),
+                          elevation: 0, primary: Colors.blue[700]),
                       onPressed: () async {
                         FocusScope.of(context).unfocus();
                         if (_formKey.currentState!.validate()) {

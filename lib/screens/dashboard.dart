@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 // import 'package:pie_chart/pie_chart.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -36,23 +37,48 @@ class _DashboardState extends State<Dashboard> {
       .collection('saving-data')
       .snapshots();
 
+  var stream4 = FirebaseFirestore.instance
+      .collection('${FirebaseAuth.instance.currentUser!.email}')
+      .doc('Income-catego')
+      .collection('data')
+      .snapshots();
+      
+  var stream5 = FirebaseFirestore.instance
+      .collection('${FirebaseAuth.instance.currentUser!.email}')
+      .doc('Outcome-catego')
+      .collection('data')
+      .snapshots();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      body: StreamBuilder3<QuerySnapshot, QuerySnapshot, QuerySnapshot>(
-        streams: StreamTuple3(stream1, stream2, stream3),
+      body: StreamBuilder5<QuerySnapshot, QuerySnapshot, QuerySnapshot,
+          QuerySnapshot, QuerySnapshot>(
+        streams: StreamTuple5(stream1, stream2, stream3, stream4, stream5),
         builder: (context, snapshots) {
           int incomeTotal = 0;
           int outcomeTotal = 0;
           int savingTotal = 0;
+          int incomecategototal = 0;
+          Map<String, dynamic>? incomecategodata;
+          Map<String, dynamic>? outcomecategodata;
+          List<String> incomeCategoList = [];
+          List<String> incomeCategoImgList = [];
+          List<String> outcomeCategoList = [];
+          List<String> outcomeCategoImgList = [];
           if (snapshots.snapshot1.hasError) {
             return Text('Error: ${snapshots.snapshot1.error}');
           } else if (snapshots.snapshot2.hasError) {
             return Text('Error: ${snapshots.snapshot2.error}');
           } else if (snapshots.snapshot3.hasError) {
             return Text('Error: ${snapshots.snapshot3.error}');
+          } else if (snapshots.snapshot4.hasError) {
+            return Text('Error: ${snapshots.snapshot3.error}');
+          } else if (snapshots.snapshot5.hasError) {
+            return Text('Error: ${snapshots.snapshot3.error}');
           }
+
           if (snapshots.snapshot1.connectionState ==
               "ConnectionState.waiting") {
             return const Center(child: CircularProgressIndicator());
@@ -65,6 +91,15 @@ class _DashboardState extends State<Dashboard> {
               "ConnectionState.waiting") {
             return const Center(child: CircularProgressIndicator());
           }
+          if (snapshots.snapshot4.connectionState ==
+              "ConnectionState.waiting") {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshots.snapshot5.connectionState ==
+              "ConnectionState.waiting") {
+            return const Center(child: CircularProgressIndicator());
+          }
+
           if (snapshots.snapshot1.hasData) {
             // var incomeData = snapshots.snapshot1.data!.docs;
             for (var data in snapshots.snapshot1.data!.docs) {
@@ -87,20 +122,160 @@ class _DashboardState extends State<Dashboard> {
               int addPrice = savingField['addPrice'];
               savingTotal = savingTotal + addPrice;
             }
-            return DashboardUi(
-              income: incomeTotal,
-              outcome: outcomeTotal,
-              saving: savingTotal,
-              incomeVs: incomeTotal - (outcomeTotal + savingTotal),
-              allTotal: incomeTotal + outcomeTotal + savingTotal,
-            );
           }
-          return const Center(child: CircularProgressIndicator());
+
+          if (snapshots.snapshot4.hasData) {
+            incomeCategoList = [];
+            incomeCategoImgList = [];
+            choices = [];
+            incomecategototal = 0;
+            for (var element in snapshots.snapshot4.data!.docs) {
+              incomecategodata = element.data()! as Map<String, dynamic>;
+              incomeCategoList.add(incomecategodata['categoname']);
+              incomeCategoImgList.add(incomecategodata['imagId']);
+            }
+          }
+          print(incomeCategoList);
+          for (var i = 0; i < incomeCategoList.length; i++) {
+            for (var data in snapshots.snapshot1.data!.docs) {
+              if (data['category'] == incomeCategoList[i]) {
+                int amount = data['amount'];
+                incomecategototal = incomecategototal + amount;
+              }
+            }
+            print(incomecategototal);
+            choices.add(Choice(
+                title: incomeCategoList[i],
+                imgname: incomeCategoImgList[i],
+                amount: incomecategototal));
+            incomecategototal = 0;
+          }
+
+          if (snapshots.snapshot5.hasData) {
+            outcomeCategoList = [];
+            outcomeCategoImgList = [];
+            for (var element in snapshots.snapshot5.data!.docs) {
+              outcomecategodata = element.data()! as Map<String, dynamic>;
+              outcomeCategoList.add(outcomecategodata['categoname']);
+              outcomeCategoImgList.add(outcomecategodata['imagId']);
+            }
+            return DashboardUi(
+            income: incomeTotal,
+            outcome: outcomeTotal,
+            saving: savingTotal,
+            incomeVs: incomeTotal - (outcomeTotal + savingTotal),
+            allTotal: incomeTotal + outcomeTotal + savingTotal,
+          );
+          }
+          // return const Center(child: CircularProgressIndicator());
+          // #edit
+          return Center(child: Container());
         },
       ),
     );
   }
 }
+
+// class Dashboard extends StatefulWidget {
+//   const Dashboard({Key? key}) : super(key: key);
+//   @override
+//   State<Dashboard> createState() => _DashboardState();
+// }
+
+// class _DashboardState extends State<Dashboard> {
+//   var stream1 = FirebaseFirestore.instance
+//       .collection("${FirebaseAuth.instance.currentUser!.email}")
+//       .doc("Income")
+//       .collection("income-data")
+//       .snapshots();
+
+//   var stream2 = FirebaseFirestore.instance
+//       .collection("${FirebaseAuth.instance.currentUser!.email}")
+//       .doc("Outcome")
+//       .collection("outcome-data")
+//       .snapshots();
+
+//   var stream3 = FirebaseFirestore.instance
+//       .collection("${FirebaseAuth.instance.currentUser!.email}")
+//       .doc("Saving")
+//       .collection('saving-data')
+//       .snapshots();
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: Colors.grey[100],
+//       body: StreamBuilder3<QuerySnapshot, QuerySnapshot, QuerySnapshot>(
+//         streams: StreamTuple3(stream1, stream2, stream3),
+//         builder: (context, snapshots) {
+//           int incomeTotal = 0;
+//           int outcomeTotal = 0;
+//           int savingTotal = 0;
+//           if (snapshots.snapshot1.hasError) {
+//             return Text('Error: ${snapshots.snapshot1.error}');
+//           } else if (snapshots.snapshot2.hasError) {
+//             return Text('Error: ${snapshots.snapshot2.error}');
+//           } else if (snapshots.snapshot3.hasError) {
+//             return Text('Error: ${snapshots.snapshot3.error}');
+//           }
+//           if (snapshots.snapshot1.connectionState ==
+//               "ConnectionState.waiting") {
+//             // return const Center(child: CircularProgressIndicator()
+//             return const SpinKitPulse(
+//               color: Colors.grey,
+//             );
+//           }
+//           if (snapshots.snapshot2.connectionState ==
+//               "ConnectionState.waiting") {
+//             // return const Center(child: CircularProgressIndicator()
+//             return const SpinKitPulse(
+//               color: Colors.grey,
+//             );
+//           }
+//           if (snapshots.snapshot3.connectionState ==
+//               "ConnectionState.waiting") {
+//                 return const SpinKitPulse(
+//               color: Colors.grey,
+//             );
+//           }
+//           if (snapshots.snapshot1.hasData) {
+//             // var incomeData = snapshots.snapshot1.data!.docs;
+//             for (var data in snapshots.snapshot1.data!.docs) {
+//               var incomeField = data;
+//               int amount = incomeField['amount'];
+//               incomeTotal = incomeTotal + amount;
+//             }
+//           }
+//           if (snapshots.snapshot2.hasData) {
+//             // var incomeData = snapshots.snapshot1.data!.docs;
+//             for (var data in snapshots.snapshot2.data!.docs) {
+//               var outcomeField = data;
+//               int amount = outcomeField['amount'];
+//               outcomeTotal = outcomeTotal + amount;
+//             }
+//           }
+//           if (snapshots.snapshot3.hasData) {
+//             for (var data in snapshots.snapshot3.data!.docs) {
+//               var savingField = data;
+//               int addPrice = savingField['addPrice'];
+//               savingTotal = savingTotal + addPrice;
+//             }
+//             return DashboardUi(
+//               income: incomeTotal,
+//               outcome: outcomeTotal,
+//               saving: savingTotal,
+//               incomeVs: incomeTotal - (outcomeTotal + savingTotal),
+//               allTotal: incomeTotal + outcomeTotal + savingTotal,
+//             );
+//           }
+//           // return const Center(child: CircularProgressIndicator());
+//           // #edit
+//           return Center(child: Container());
+//         },
+//       ),
+//     );
+//   }
+// }
 
 class DashboardUi extends StatefulWidget {
   int income;
@@ -146,8 +321,9 @@ class _DashboardUiState extends State<DashboardUi> {
     return Scaffold(
       // backgroundColor: Colors.grey[100],
       body: (displayName == "")
-          ? const Center(
-              child: CircularProgressIndicator(),
+          ? Center(
+              // child: CircularProgressIndicator(),
+              child: Container(),
             )
           : SafeArea(
               child: SingleChildScrollView(
@@ -448,28 +624,48 @@ class _DashboardUiState extends State<DashboardUi> {
                                 ),
                         ),
                       ),
-                      ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute<void>(
-                                builder: (BuildContext context) =>
-                                    const OutcomeCategoDetail(),
-                              ),
-                            );
-                          },
-                          child: const Text('To outcome Detail')),
-                      ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute<void>(
-                                builder: (BuildContext context) =>
-                                    const CategoDetail(),
-                              ),
-                            );
-                          },
-                          child: const Text('To Income Detail')),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          ElevatedButton(
+                              onPressed: () {
+                                // Navigator.push(
+                                //   context,
+                                //   MaterialPageRoute<void>(
+                                //     builder: (BuildContext context) =>
+                                //         const CategoDetail(),
+                                //   ),
+                                // );
+                              },
+                              child: const Text('To Income Detail')),
+                          ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute<void>(
+                                    builder: (BuildContext context) =>
+                                        const OutcomeCategoDetail(),
+                                  ),
+                                );
+                              },
+                              child: const Text('To outcome Detail')),
+                        ],
+                      ),
+                      Container(
+                        color: Colors.amber,
+                        width: (MediaQuery.of(context).size.width),
+                        height: MediaQuery.of(context).size.height * 0.4,
+                        child: GridView.count(
+                            crossAxisCount: 3,
+                            primary: false,
+                            padding: const EdgeInsets.all(6),
+                            children: List.generate(choices.length, (index) {
+                              return Center(
+                                child: SelectCard(choice: choices[index]),
+                              );
+                            })),
+                      ),
+                     
                     ],
                   ),
                 ),
@@ -493,4 +689,74 @@ class IOCData {
   final String iotype;
   final int iovalue;
   final String iolabel;
+}
+
+class Choice {
+  const Choice({
+    required this.title,
+    required this.imgname,
+    required this.amount,
+  });
+  final String title;
+  final String imgname;
+  final int amount;
+}
+
+List<Choice> choices = [];
+
+
+class SelectCard extends StatelessWidget {
+  const SelectCard({Key? key, required this.choice}) : super(key: key);
+  final Choice choice;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute<void>(
+            builder: (BuildContext context) => const CategoDetail(),
+          ),
+        );
+      },
+      child: SizedBox(
+        width: 3000,
+        height: 300,
+        child: Card(
+            elevation: 3,
+            color: Colors.white,
+            child: Center(
+              child: SizedBox(
+                // height: MediaQuery.of(context).size.height * 0.4,
+                // height : 300,
+                // width: 150,
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(
+                        height: 50,
+                        width: 50,
+                        child: Image(
+                            image: AssetImage(
+                                'images/Income/${choice.imgname}.png')),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 4.0),
+                        child: Text(
+                          choice.title,
+                          style:
+                              const TextStyle(fontFamily: 'Libre', fontSize: 10),
+                        ),
+                      ),
+                      Text(
+                        '${choice.amount}',
+                        style: const TextStyle(fontFamily: 'Libre', fontSize: 10),
+                      ),
+                    ]),
+              ),
+            )),
+      ),
+    );
+  }
 }

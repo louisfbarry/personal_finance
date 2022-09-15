@@ -194,11 +194,11 @@ class _MyLogInPageState extends State<MyLogInPage> {
                                         Navigator.pushReplacementNamed(
                                             context, '/reset');
                                       },
-                                      child: const Text(
+                                      child: Text(
                                         'forget password ? ',
                                         textAlign: TextAlign.left,
                                         style: TextStyle(
-                                            color: Colors.blue, fontSize: 12),
+                                            color: Colors.blue[600], fontSize: 12),
                                       ),
                                     ),
                                   ),
@@ -292,7 +292,7 @@ class _MyLogInPageState extends State<MyLogInPage> {
                                         },
                                         style: ElevatedButton.styleFrom(
                                             elevation: 0,
-                                            primary: Colors.blueAccent),
+                                            primary: Colors.blue[700]),
                                         child: isloading
                                             ? const SizedBox(
                                                 width: 15,
@@ -334,11 +334,11 @@ class _MyLogInPageState extends State<MyLogInPage> {
                                         tapTargetSize:
                                             MaterialTapTargetSize.shrinkWrap,
                                         alignment: Alignment.centerLeft),
-                                    child: const Text(
+                                    child: Text(
                                       "Signup",
                                       style: TextStyle(
                                         fontWeight: FontWeight.w500,
-                                        color: Colors.blueAccent,
+                                        color: Colors.blue[600],
                                         fontSize: 12,
                                       ),
                                     ),

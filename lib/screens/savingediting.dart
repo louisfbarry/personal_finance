@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../model/firebaseservice.dart';
 
-class AddSaving extends StatefulWidget {
+class EditSaving extends StatefulWidget {
   final bool isEdit;
   final String? title;
   final int? targetPrice;
   final String? id;
   final int? addPrice;
-  const AddSaving(
+  const EditSaving(
       {Key? key,
       required this.isEdit,
       this.title,
@@ -17,10 +17,10 @@ class AddSaving extends StatefulWidget {
       this.addPrice})
       : super(key: key);
   @override
-  State<AddSaving> createState() => _AddSavingState();
+  State<EditSaving> createState() => _EditSavingState();
 }
 
-class _AddSavingState extends State<AddSaving> {
+class _EditSavingState extends State<EditSaving> {
   bool _submitted = false;
   bool isLoading = false;
   final _formKey = GlobalKey<FormState>();
@@ -50,25 +50,25 @@ class _AddSavingState extends State<AddSaving> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        // backgroundColor: Colors.grey[100],
-        // appBar: AppBar(
-        //   title: widget.isEdit
-        //       ? const Text(
-        //           "Edit Target",
-        //           style: TextStyle(
-        //             fontSize: 15,
-        //           ),
-        //         )
-        //       : const Text(
-        //           "Add Target",
-        //           style: TextStyle(
-        //             fontSize: 15,
-        //           ),
-        //         ),
-        //   centerTitle: true,
-        //   elevation: 0.0,
-        //   backgroundColor: Colors.blueAccent,
-        // ),
+        backgroundColor: Colors.grey[100],
+        appBar: AppBar(
+          title: widget.isEdit
+              ? const Text(
+                  "Edit Target",
+                  style: TextStyle(
+                    fontSize: 15,
+                  ),
+                )
+              : const Text(
+                  "Add Target",
+                  style: TextStyle(
+                    fontSize: 15,
+                  ),
+                ),
+          centerTitle: true,
+          elevation: 0.0,
+          backgroundColor: Colors.blue[700],
+        ),
         body: DefaultTextStyle(
             style: TextStyle(color: Colors.grey[900]),
             child: Form(
@@ -84,19 +84,19 @@ class _AddSavingState extends State<AddSaving> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const SizedBox(
-                            height: 20,
+                            height: 40,
                           ),
-                          // Padding(
-                          //   padding: const EdgeInsets.only(bottom: 5, left: 3),
-                          //   child: Text(
-                          //     "Title",
-                          //     style: TextStyle(
-                          //       color: Colors.grey[800],
-                          //       fontWeight: FontWeight.w500,
-                          //       fontSize: 12,
-                          //     ),
-                          //   ),
-                          // ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 5, left: 3),
+                            child: Text(
+                              "Title",
+                              style: TextStyle(
+                                color: Colors.grey[800],
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
                           TextFormField(
                             // initialValue: "Tv",
                             autovalidateMode: _submitted
@@ -116,18 +116,17 @@ class _AddSavingState extends State<AddSaving> {
                               labelStyle: TextStyle(color: Colors.grey[800]),
                             ),
                           ),
-                          // Padding(
-                          //   padding: const EdgeInsets.only(
-                          //       top: 15, bottom: 5, left: 3),
-                          //   child: Text(
-                          //     "Target Price",
-                          //     style: TextStyle(
-                          //         color: Colors.grey[800],
-                          //         fontWeight: FontWeight.w500,
-                          //         fontSize: 12),
-                          //   ),
-                          // ),
-                          SizedBox(height: 10,),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                top: 15, bottom: 5, left: 3),
+                            child: Text(
+                              "Target Price",
+                              style: TextStyle(
+                                  color: Colors.grey[800],
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 12),
+                            ),
+                          ),
                           TextFormField(
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly
@@ -159,7 +158,7 @@ class _AddSavingState extends State<AddSaving> {
                           ),
                           SizedBox(
                             width: double.infinity,
-                            // height: 30,
+                            height: 40,
                             child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                     elevation: 0, primary: Colors.blue[700]),
@@ -202,7 +201,7 @@ class _AddSavingState extends State<AddSaving> {
                                           color: Colors.white,
                                           strokeWidth: 2,
                                         ))
-                                    : const Text("Add")),
+                                    : const Text("Save")),
                           ),
                         ],
                       ),

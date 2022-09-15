@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:finance/model/firebaseservice.dart';
 import 'package:intl/intl.dart';
@@ -29,7 +30,7 @@ class _SavingHistoryState extends State<SavingHistory> {
             style: TextStyle(fontSize: 15),
           ),
           elevation: 0.0,
-          backgroundColor: Colors.blueAccent,
+          backgroundColor: Colors.blue[700],
         ),
         body: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
@@ -45,7 +46,10 @@ class _SavingHistoryState extends State<SavingHistory> {
             if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
             } else if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+              // return const Center(child: CircularProgressIndicator());
+              return const SpinKitPulse(
+                color: Colors.grey,
+              );
             } else if (snapshot.hasData) {
               var data = snapshot.data!.docs;
               for (var history in data) {
@@ -57,26 +61,27 @@ class _SavingHistoryState extends State<SavingHistory> {
                   // totalAddPrice: totalAddPrice,
                 ));
               }
+              return SingleChildScrollView(
+                child: Column(
+                  children: (savingHistoryData.isEmpty)
+                      ? [
+                          const SizedBox(
+                            height: 30,
+                          ),
+                          Center(
+                              child: Text(
+                            "No price has been added.",
+                            style: TextStyle(
+                                fontSize: 15,
+                                color: Colors.grey[700],
+                                fontWeight: FontWeight.w500),
+                          ))
+                        ]
+                      : savingHistoryData,
+                ),
+              );
             }
-            return SingleChildScrollView(
-              child: Column(
-                children: (savingHistoryData.isEmpty)
-                    ? [
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        Center(
-                            child: Text(
-                          "No price has been added.",
-                          style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.grey[700],
-                              fontWeight: FontWeight.w500),
-                        ))
-                      ]
-                    : savingHistoryData,
-              ),
-            );
+            return Container();
           },
         ));
   }
@@ -137,14 +142,16 @@ class _SavingHistoryCardState extends State<SavingHistoryCard> {
                         onPressed: () async {
                           Navigator.pop(context);
                           await FirebaseFirestore.instance
-                              .collection("${FirebaseAuth.instance.currentUser!.email}")
+                              .collection(
+                                  "${FirebaseAuth.instance.currentUser!.email}")
                               .doc("Saving")
                               .collection("saving-data")
                               .doc(widget.id)
                               .update({"addPrice": totalPrice - deletePrice});
                           getTotalValue();
                           await FirebaseFirestore.instance
-                              .collection("${FirebaseAuth.instance.currentUser!.email}")
+                              .collection(
+                                  "${FirebaseAuth.instance.currentUser!.email}")
                               .doc("Saving")
                               .collection("saving-data")
                               .doc(widget.id)
@@ -222,7 +229,9 @@ class _SavingHistoryCardState extends State<SavingHistoryCard> {
                   },
                   icon: Icon(
                     Icons.delete,
-                    color: Colors.grey[800],
+                    // color: Colors.grey[800],
+                    color: Colors.red[600],
+
                     size: 18,
                   ))
             ],

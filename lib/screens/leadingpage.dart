@@ -90,7 +90,7 @@ class _FrontScreenState extends State<FrontScreen> {
                     height: 45,
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                            elevation: 0, primary: Colors.blueAccent),
+                            elevation: 0, primary: Colors.blue[700]),
                         onPressed: () {
                           Navigator.pushNamed(context, '/login');
                         },
@@ -106,9 +106,9 @@ class _FrontScreenState extends State<FrontScreen> {
                     height: 45,
                     child: OutlinedButton(
                         style: OutlinedButton.styleFrom(
-                            primary: Colors.blueAccent,
-                            side: const BorderSide(
-                                width: 1, color: Colors.blueAccent)),
+                            primary: Colors.blue[700],
+                            side: BorderSide(
+                                width: 1, color: Color(0xFF0288D1))),
                         onPressed: () {
                           Navigator.pushNamed(context, '/register');
                         },

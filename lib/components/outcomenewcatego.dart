@@ -4,6 +4,7 @@ import 'package:finance/model/firebaseservice.dart';
 import 'package:finance/screens/incomecatego_detail.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
 import '../screens/outcomecatego_detail.dart';
@@ -77,7 +78,11 @@ class _OutcomeCategoCreateState extends State<OutcomeCategoCreate> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [CircularProgressIndicator()],
+                    children: const [
+                      SpinKitPulse(
+                        color: Colors.grey,
+                      )
+                    ],
                   );
                 }
                 if (snapshot.hasData) {
@@ -261,8 +266,8 @@ class _CategostyleState extends State<Categostyle> {
                                       width: 40,
                                       height: 40,
                                       child: Image(
-                                        image: AssetImage(
-                                            'images/Oct/$item.png'),
+                                        image:
+                                            AssetImage('images/Oct/$item.png'),
                                       ))))
                               .toList(),
                           onChanged: (newValue) {
@@ -347,8 +352,8 @@ class _CategostyleState extends State<Categostyle> {
                                 horizontal: 4, vertical: 10),
                             child: Text(
                               'Edit',
-                              style: TextStyle(
-                                  fontSize: 18, color: Colors.white),
+                              style:
+                                  TextStyle(fontSize: 18, color: Colors.white),
                             ),
                           ))
                     ]));

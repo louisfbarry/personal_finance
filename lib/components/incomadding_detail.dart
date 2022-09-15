@@ -4,6 +4,7 @@ import 'package:finance/screens/incomecatego_detail.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
 import '../model/firebaseservice.dart';
@@ -44,7 +45,9 @@ class _IncomeAddingDetailState extends State<IncomeAddingDetail> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [CircularProgressIndicator()],
+            children: const [SpinKitPulse(
+              color: Colors.grey,
+            )],
           );
         }
 

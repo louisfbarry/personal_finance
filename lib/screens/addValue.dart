@@ -1,6 +1,7 @@
 import 'package:finance/components/incomadding_detail.dart';
 import 'package:finance/components/outcomeadding_detail.dart';
 import 'package:finance/model/firebaseGet.dart';
+import 'package:finance/screens/savingadding.dart';
 import 'package:flutter/material.dart';
 import '../model/firebaseservice.dart';
 
@@ -55,9 +56,11 @@ class _AddValueState extends State<AddValue> {
           child: TabBarView(children: [
             IncomeAddingDetail(),
             OutcomeAddingDetail(),
-            const Center(
-              child: Text('THird'),
-            ),
+            // const Center(
+            //  child: Text('THird'),
+            // ), 
+            // #edit
+            const AddSaving(isEdit: false,),
           ]),
         ),
       ),

@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -88,142 +89,153 @@ class _CategoDetailState extends State<CategoDetail> {
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
             return const Text('Something went wrong');
-          }
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            // #edit
+            return Scaffold(
+              body: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  SpinKitPulse(
+                    color: Colors.grey,
+                  )
+                ],
+              ),
+            );
+          } else if (snapshot.hasData) {
+            List<DetailStyle> todayDetail = [];
+            List<DetailStyle> yestDetail = [];
+            List<DetailStyle> daybeforeDetail = [];
+            List<DetailStyle> left = [];
 
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [CircularProgressIndicator()],
+            snapshot.data!.docs.map((DocumentSnapshot document) {
+              data = document.data()! as Map<String, dynamic>;
+
+              if (data!['created At'] == today) {
+                todayDetail.add(DetailStyle(
+                  data: data,
+                  getlist: getlist,
+                ));
+              } else if (data!['created At'] == yesterday) {
+                yestDetail.add(DetailStyle(
+                  data: data,
+                  getlist: getlist,
+                ));
+              } else if (data!['created At'] == daybefore) {
+                daybeforeDetail.add(DetailStyle(
+                  data: data,
+                  getlist: getlist,
+                ));
+              } else {
+                left.add(DetailStyle(
+                  data: data,
+                  getlist: getlist,
+                ));
+              }
+            }).toList();
+            return Scaffold(
+              backgroundColor: const Color.fromARGB(255, 238, 250, 255),
+              appBar: AppBar(title: const Text('Income')),
+              // body: finished || isloading
+                  body :
+                  // ? SingleChildScrollView(
+                      SingleChildScrollView(
+
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width - 30,
+                              height: MediaQuery.of(context).size.height * 0.4,
+                              child: Card(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(5),
+                                  child: SfCircularChart(
+                                    legend: Legend(
+                                        isVisible: true,
+                                        position: LegendPosition.bottom),
+                                    tooltipBehavior:
+                                        TooltipBehavior(enable: true),
+                                    series: <CircularSeries>[
+                                      PieSeries<IncomeData, String>(
+                                        dataSource: IncomeChart,
+                                        xValueMapper: (IncomeData data, _) =>
+                                            data.IncomeType,
+                                        yValueMapper: (IncomeData data, _) =>
+                                            data.IncomeValue,
+                                        dataLabelSettings:
+                                            const DataLabelSettings(
+                                                isVisible: true,
+                                                showZeroValue: true,
+                                                overflowMode: OverflowMode.trim,
+                                                showCumulativeValues: true,
+                                                labelPosition:
+                                                    ChartDataLabelPosition
+                                                        .outside),
+                                        enableTooltip: true,
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              )),
+                          const Padding(
+                            padding: EdgeInsets.only(left: 10.0),
+                            child: Text('Today'),
+                          ),
+                          todayDetail.isEmpty
+                              ? const Padding(
+                                  padding: EdgeInsets.only(left: 10.0),
+                                  child: Text('No Income has been added !'),
+                                )
+                              : Card(
+                                  elevation: 1,
+                                  child: Column(children: todayDetail)),
+                          yestDetail.isEmpty
+                              ? const Text('')
+                              : const Padding(
+                                  padding: EdgeInsets.only(left: 10.0),
+                                  child: Text('Yesterday'),
+                                ),
+                          Card(
+                            elevation: 1,
+                            child: Column(
+                              children: yestDetail,
+                            ),
+                          ),
+                          daybeforeDetail.isEmpty
+                              ? const Text('')
+                              : Padding(
+                                  padding: const EdgeInsets.only(left: 10.0),
+                                  child: Text(daybeforesplit()),
+                                ),
+                          Card(
+                            elevation: 1,
+                            child: Column(
+                              children: daybeforeDetail,
+                            ),
+                          ),
+                          left.isEmpty
+                              ? const Text('')
+                              : const Padding(
+                                  padding: EdgeInsets.only(left: 10.0),
+                                  child: Text('Last 7 day'),
+                                ),
+                          Card(
+                            elevation: 2,
+                            child: Column(
+                              children: left,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  // : Center(
+                      // #edit
+                      // child: CircularProgressIndicator(),
+                      // child: Container(),
+                    // ),
             );
           }
-
-          List<DetailStyle> todayDetail = [];
-          List<DetailStyle> yestDetail = [];
-          List<DetailStyle> daybeforeDetail = [];
-          List<DetailStyle> left = [];
-
-          snapshot.data!.docs.map((DocumentSnapshot document) {
-            data = document.data()! as Map<String, dynamic>;
-
-            if (data!['created At'] == today) {
-              todayDetail.add(DetailStyle(
-                data: data,
-                getlist: getlist,
-              ));
-            } else if (data!['created At'] == yesterday) {
-              yestDetail.add(DetailStyle(
-                data: data,
-                getlist: getlist,
-              ));
-            } else if (data!['created At'] == daybefore) {
-              daybeforeDetail.add(DetailStyle(
-                data: data,
-                getlist: getlist,
-              ));
-            } else {
-              left.add(DetailStyle(
-                data: data,
-                getlist: getlist,
-              ));
-            }
-          }).toList();
-          return Scaffold(
-            backgroundColor: const Color.fromARGB(255, 238, 250, 255),
-            appBar: AppBar(title: const Text('Income')),
-            body: finished || isloading
-                ? SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                            width: MediaQuery.of(context).size.width - 30,
-                            height: MediaQuery.of(context).size.height * 0.4,
-                            child: Card(
-                              child: Padding(
-                                padding: const EdgeInsets.all(5),
-                                child: SfCircularChart(
-                                  legend: Legend(
-                                      isVisible: true,
-                                      position: LegendPosition.bottom),
-                                  tooltipBehavior:
-                                      TooltipBehavior(enable: true),
-                                  series: <CircularSeries>[
-                                    PieSeries<IncomeData, String>(
-                                      dataSource: IncomeChart,
-                                      xValueMapper: (IncomeData data, _) =>
-                                          data.IncomeType,
-                                      yValueMapper: (IncomeData data, _) =>
-                                          data.IncomeValue,
-                                      dataLabelSettings:
-                                          const DataLabelSettings(
-                                              isVisible: true,
-                                              showZeroValue: true,
-                                              overflowMode: OverflowMode.trim,
-                                              showCumulativeValues: true,
-                                              labelPosition:
-                                                  ChartDataLabelPosition
-                                                      .outside),
-                                      enableTooltip: true,
-                                    )
-                                  ],
-                                ),
-                              ),
-                            )),
-                        const Padding(
-                          padding: EdgeInsets.only(left: 10.0),
-                          child: Text('Today'),
-                        ),
-                        todayDetail.isEmpty
-                            ? const Padding(
-                                padding: EdgeInsets.only(left: 10.0),
-                                child: Text('No Income has been added !'),
-                              )
-                            : Card(
-                                elevation: 1,
-                                child: Column(children: todayDetail)),
-                        yestDetail.isEmpty
-                            ? const Text('')
-                            : const Padding(
-                                padding: EdgeInsets.only(left: 10.0),
-                                child: Text('Yesterday'),
-                              ),
-                        Card(
-                          elevation: 1,
-                          child: Column(
-                            children: yestDetail,
-                          ),
-                        ),
-                        daybeforeDetail.isEmpty
-                            ? const Text('')
-                            : Padding(
-                                padding: const EdgeInsets.only(left: 10.0),
-                                child: Text(daybeforesplit()),
-                              ),
-                        Card(
-                          elevation: 1,
-                          child: Column(
-                            children: daybeforeDetail,
-                          ),
-                        ),
-                        left.isEmpty
-                            ? const Text('')
-                            : const Padding(
-                                padding: EdgeInsets.only(left: 10.0),
-                                child: Text('Last 7 day'),
-                              ),
-                        Card(
-                          elevation: 2,
-                          child: Column(
-                            children: left,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                : const Center(
-                    child: CircularProgressIndicator(),
-                  ),
-          );
+          return Container();
         },
       ),
     );
