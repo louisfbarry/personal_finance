@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:finance/model/firebaseservice.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-// import 'package:pie_chart/pie_chart.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:multiple_stream_builder/multiple_stream_builder.dart';
@@ -42,7 +42,7 @@ class _DashboardState extends State<Dashboard> {
       .doc('Income-catego')
       .collection('data')
       .snapshots();
-      
+
   var stream5 = FirebaseFirestore.instance
       .collection('${FirebaseAuth.instance.currentUser!.email}')
       .doc('Outcome-catego')
@@ -50,232 +50,148 @@ class _DashboardState extends State<Dashboard> {
       .snapshots();
 
   @override
+  void initState() {
+    API().addCollection();
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       body: StreamBuilder5<QuerySnapshot, QuerySnapshot, QuerySnapshot,
-          QuerySnapshot, QuerySnapshot>(
-        streams: StreamTuple5(stream1, stream2, stream3, stream4, stream5),
-        builder: (context, snapshots) {
-          int incomeTotal = 0;
-          int outcomeTotal = 0;
-          int savingTotal = 0;
-          int incomecategototal = 0;
-          Map<String, dynamic>? incomecategodata;
-          Map<String, dynamic>? outcomecategodata;
-          List<String> incomeCategoList = [];
-          List<String> incomeCategoImgList = [];
-          List<String> outcomeCategoList = [];
-          List<String> outcomeCategoImgList = [];
-          if (snapshots.snapshot1.hasError) {
-            return Text('Error: ${snapshots.snapshot1.error}');
-          } else if (snapshots.snapshot2.hasError) {
-            return Text('Error: ${snapshots.snapshot2.error}');
-          } else if (snapshots.snapshot3.hasError) {
-            return Text('Error: ${snapshots.snapshot3.error}');
-          } else if (snapshots.snapshot4.hasError) {
-            return Text('Error: ${snapshots.snapshot3.error}');
-          } else if (snapshots.snapshot5.hasError) {
-            return Text('Error: ${snapshots.snapshot3.error}');
-          }
+              QuerySnapshot, QuerySnapshot>(
+          streams: StreamTuple5(stream1, stream2, stream3, stream4, stream5),
+          builder: (BuildContext context,
+              SnapshotTuple5<
+                      QuerySnapshot<Object?>,
+                      QuerySnapshot<Object?>,
+                      QuerySnapshot<Object?>,
+                      QuerySnapshot<Object?>,
+                      QuerySnapshot<Object?>>
+                  snapshots) {
+            int incomeTotal = 0;
+            int outcomeTotal = 0;
+            int savingTotal = 0;
+            int incomecategototal = 0;
+            int outcomecategototal = 0;
+            int amount = 0;
+            int outcomeamount = 0;
+            if (snapshots.snapshot1.hasError) {
+              return Text('Error: ${snapshots.snapshot1.error}');
+            } else if (snapshots.snapshot2.hasError) {
+              return Text('Error: ${snapshots.snapshot2.error}');
+            } else if (snapshots.snapshot3.hasError) {
+              return Text('Error: ${snapshots.snapshot3.error}');
+            } else if (snapshots.snapshot4.hasError) {
+              return Text('Error: ${snapshots.snapshot3.error}');
+            } else if (snapshots.snapshot5.hasError) {
+              return Text('Error: ${snapshots.snapshot3.error}');
+            }
 
-          if (snapshots.snapshot1.connectionState ==
-              "ConnectionState.waiting") {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshots.snapshot2.connectionState ==
-              "ConnectionState.waiting") {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshots.snapshot3.connectionState ==
-              "ConnectionState.waiting") {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshots.snapshot4.connectionState ==
-              "ConnectionState.waiting") {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshots.snapshot5.connectionState ==
-              "ConnectionState.waiting") {
-            return const Center(child: CircularProgressIndicator());
-          }
+            if (snapshots.snapshot1.connectionState ==
+                "ConnectionState.waiting") {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshots.snapshot2.connectionState ==
+                "ConnectionState.waiting") {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshots.snapshot3.connectionState ==
+                "ConnectionState.waiting") {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshots.snapshot4.connectionState ==
+                "ConnectionState.waiting") {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshots.snapshot5.connectionState ==
+                "ConnectionState.waiting") {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          if (snapshots.snapshot1.hasData) {
-            // var incomeData = snapshots.snapshot1.data!.docs;
-            for (var data in snapshots.snapshot1.data!.docs) {
-              var incomeField = data;
-              int amount = incomeField['amount'];
-              incomeTotal = incomeTotal + amount;
-            }
-          }
-          if (snapshots.snapshot2.hasData) {
-            // var incomeData = snapshots.snapshot1.data!.docs;
-            for (var data in snapshots.snapshot2.data!.docs) {
-              var outcomeField = data;
-              int amount = outcomeField['amount'];
-              outcomeTotal = outcomeTotal + amount;
-            }
-          }
-          if (snapshots.snapshot3.hasData) {
-            for (var data in snapshots.snapshot3.data!.docs) {
-              var savingField = data;
-              int addPrice = savingField['addPrice'];
-              savingTotal = savingTotal + addPrice;
-            }
-          }
-
-          if (snapshots.snapshot4.hasData) {
-            incomeCategoList = [];
-            incomeCategoImgList = [];
-            choices = [];
-            incomecategototal = 0;
-            for (var element in snapshots.snapshot4.data!.docs) {
-              incomecategodata = element.data()! as Map<String, dynamic>;
-              incomeCategoList.add(incomecategodata['categoname']);
-              incomeCategoImgList.add(incomecategodata['imagId']);
-            }
-          }
-          print(incomeCategoList);
-          for (var i = 0; i < incomeCategoList.length; i++) {
-            for (var data in snapshots.snapshot1.data!.docs) {
-              if (data['category'] == incomeCategoList[i]) {
-                int amount = data['amount'];
-                incomecategototal = incomecategototal + amount;
+            if (snapshots.snapshot1.hasData) {
+              // var incomeData = snapshots.snapshot1.data!.docs;
+              for (var data in snapshots.snapshot1.data!.docs) {
+                var incomeField = data;
+                int amount = incomeField['amount'];
+                incomeTotal = incomeTotal + amount;
               }
             }
-            print(incomecategototal);
-            choices.add(Choice(
-                title: incomeCategoList[i],
-                imgname: incomeCategoImgList[i],
-                amount: incomecategototal));
-            incomecategototal = 0;
-          }
 
-          if (snapshots.snapshot5.hasData) {
-            outcomeCategoList = [];
-            outcomeCategoImgList = [];
-            for (var element in snapshots.snapshot5.data!.docs) {
-              outcomecategodata = element.data()! as Map<String, dynamic>;
-              outcomeCategoList.add(outcomecategodata['categoname']);
-              outcomeCategoImgList.add(outcomecategodata['imagId']);
+            if (snapshots.snapshot2.hasData) {
+              // var incomeData = snapshots.snapshot1.data!.docs;
+              for (var data in snapshots.snapshot2.data!.docs) {
+                var outcomeField = data;
+                int amount = outcomeField['amount'];
+                outcomeTotal = outcomeTotal + amount;
+              }
             }
-            return DashboardUi(
-            income: incomeTotal,
-            outcome: outcomeTotal,
-            saving: savingTotal,
-            incomeVs: incomeTotal - (outcomeTotal + savingTotal),
-            allTotal: incomeTotal + outcomeTotal + savingTotal,
-          );
-          }
-          // return const Center(child: CircularProgressIndicator());
-          // #edit
-          return Center(child: Container());
-        },
-      ),
+            if (snapshots.snapshot3.hasData) {
+              for (var data in snapshots.snapshot3.data!.docs) {
+                var savingField = data;
+                int addPrice = savingField['addPrice'];
+                savingTotal = savingTotal + addPrice;
+              }
+            }
+
+            if (snapshots.snapshot4.hasData) {
+              choices = [];
+              incomecategototal = 0;
+              for (var element in snapshots.snapshot4.data!.docs) {
+                var incomecategodata = element.data() as Map<String, dynamic>;
+                if (snapshots.snapshot1.hasData) {
+                  for (var data in snapshots.snapshot1.data!.docs) {
+                    if (data['category'] == incomecategodata['categoname']) {
+                      amount = data['amount'];
+                      incomecategototal += amount;
+                    }
+                  }
+                }
+                choices.add(Choice(
+                    title: incomecategodata['categoname'],
+                    imgname: incomecategodata['imagId'],
+                    amount: incomecategototal));
+                incomecategototal = 0;
+              }
+            }
+
+            if (snapshots.snapshot5.hasData) {
+              outcomechoices = [];
+              outcomecategototal = 0;
+              for (var element in snapshots.snapshot5.data!.docs) {
+                var outcomecategodata = element.data() as Map<String, dynamic>;
+                if (snapshots.snapshot2.hasData) {
+                  for (var data in snapshots.snapshot2.data!.docs) {
+                    if (data['category'] == outcomecategodata['categoname']) {
+                      outcomeamount = data['amount'];
+                      outcomecategototal += outcomeamount;
+                    }
+                  }
+                }
+                outcomechoices.add(Choice(
+                    title: outcomecategodata['categoname'],
+                    imgname: outcomecategodata['imagId'],
+                    amount: outcomecategototal));
+                outcomecategototal = 0;
+              }
+              return DashboardUi(
+                income: incomeTotal,
+                outcome: outcomeTotal,
+                saving: savingTotal,
+                incomeVs: incomeTotal - (outcomeTotal + savingTotal),
+                allTotal: incomeTotal + outcomeTotal + savingTotal,
+              );
+            }
+
+            // return const Center(child: CircularProgressIndicator());
+            // #edit
+            return Center(child: Container());
+          }),
     );
   }
 }
-
-// class Dashboard extends StatefulWidget {
-//   const Dashboard({Key? key}) : super(key: key);
-//   @override
-//   State<Dashboard> createState() => _DashboardState();
-// }
-
-// class _DashboardState extends State<Dashboard> {
-//   var stream1 = FirebaseFirestore.instance
-//       .collection("${FirebaseAuth.instance.currentUser!.email}")
-//       .doc("Income")
-//       .collection("income-data")
-//       .snapshots();
-
-//   var stream2 = FirebaseFirestore.instance
-//       .collection("${FirebaseAuth.instance.currentUser!.email}")
-//       .doc("Outcome")
-//       .collection("outcome-data")
-//       .snapshots();
-
-//   var stream3 = FirebaseFirestore.instance
-//       .collection("${FirebaseAuth.instance.currentUser!.email}")
-//       .doc("Saving")
-//       .collection('saving-data')
-//       .snapshots();
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: Colors.grey[100],
-//       body: StreamBuilder3<QuerySnapshot, QuerySnapshot, QuerySnapshot>(
-//         streams: StreamTuple3(stream1, stream2, stream3),
-//         builder: (context, snapshots) {
-//           int incomeTotal = 0;
-//           int outcomeTotal = 0;
-//           int savingTotal = 0;
-//           if (snapshots.snapshot1.hasError) {
-//             return Text('Error: ${snapshots.snapshot1.error}');
-//           } else if (snapshots.snapshot2.hasError) {
-//             return Text('Error: ${snapshots.snapshot2.error}');
-//           } else if (snapshots.snapshot3.hasError) {
-//             return Text('Error: ${snapshots.snapshot3.error}');
-//           }
-//           if (snapshots.snapshot1.connectionState ==
-//               "ConnectionState.waiting") {
-//             // return const Center(child: CircularProgressIndicator()
-//             return const SpinKitPulse(
-//               color: Colors.grey,
-//             );
-//           }
-//           if (snapshots.snapshot2.connectionState ==
-//               "ConnectionState.waiting") {
-//             // return const Center(child: CircularProgressIndicator()
-//             return const SpinKitPulse(
-//               color: Colors.grey,
-//             );
-//           }
-//           if (snapshots.snapshot3.connectionState ==
-//               "ConnectionState.waiting") {
-//                 return const SpinKitPulse(
-//               color: Colors.grey,
-//             );
-//           }
-//           if (snapshots.snapshot1.hasData) {
-//             // var incomeData = snapshots.snapshot1.data!.docs;
-//             for (var data in snapshots.snapshot1.data!.docs) {
-//               var incomeField = data;
-//               int amount = incomeField['amount'];
-//               incomeTotal = incomeTotal + amount;
-//             }
-//           }
-//           if (snapshots.snapshot2.hasData) {
-//             // var incomeData = snapshots.snapshot1.data!.docs;
-//             for (var data in snapshots.snapshot2.data!.docs) {
-//               var outcomeField = data;
-//               int amount = outcomeField['amount'];
-//               outcomeTotal = outcomeTotal + amount;
-//             }
-//           }
-//           if (snapshots.snapshot3.hasData) {
-//             for (var data in snapshots.snapshot3.data!.docs) {
-//               var savingField = data;
-//               int addPrice = savingField['addPrice'];
-//               savingTotal = savingTotal + addPrice;
-//             }
-//             return DashboardUi(
-//               income: incomeTotal,
-//               outcome: outcomeTotal,
-//               saving: savingTotal,
-//               incomeVs: incomeTotal - (outcomeTotal + savingTotal),
-//               allTotal: incomeTotal + outcomeTotal + savingTotal,
-//             );
-//           }
-//           // return const Center(child: CircularProgressIndicator());
-//           // #edit
-//           return Center(child: Container());
-//         },
-//       ),
-//     );
-//   }
-// }
 
 class DashboardUi extends StatefulWidget {
   int income;
@@ -299,7 +215,8 @@ class DashboardUi extends StatefulWidget {
 class _DashboardUiState extends State<DashboardUi> {
   String displayName = "";
 
-  int selectedChart = 1;
+  int selectedChart = 2;
+  bool choose = true;
 
   Future getDisplayName() async {
     final prefs = await SharedPreferences.getInstance();
@@ -337,9 +254,7 @@ class _DashboardUiState extends State<DashboardUi> {
                         width: MediaQuery.of(context).size.width,
                         child: Card(
                           elevation: 0.0,
-                          // color: Colors.grey[800],
                           color: Colors.blue[700],
-
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Row(
@@ -372,12 +287,130 @@ class _DashboardUiState extends State<DashboardUi> {
                         ),
                       ),
                       const SizedBox(
-                        height: 10,
+                        height: 5,
                       ),
-                      // Text("income - ${widget.income}"),
-                      // Text("outcome - ${widget.outcome}"),
-                      // Text("saving - ${widget.saving}"),
-                      // Text("all Total - ${widget.allTotal}"),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(2.0),
+                              child: Card(
+                                child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: Colors.white,
+                                    ),
+                                    width: MediaQuery.of(context).size.width *
+                                        0.28,
+                                    height: 100,
+                                    child: Center(
+                                      child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            Text(
+                                              '${NumberFormat.decimalPattern().format(widget.income)} MMK',
+                                              style: const TextStyle(
+                                                  fontFamily: 'Libre',
+                                                  fontSize: 13,
+                                                  color: Colors.black),
+                                            ),
+                                            const SizedBox(
+                                              height: 5,
+                                            ),
+                                            const Text(
+                                              'Incomes',
+                                              style: TextStyle(
+                                                  fontFamily: 'Libre',
+                                                  fontSize: 13,
+                                                  color: Colors.black),
+                                            ),
+                                          ]),
+                                    )),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(2.0),
+                              child: Card(
+                                child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: Colors.white,
+                                    ),
+                                    width: MediaQuery.of(context).size.width *
+                                        0.28,
+                                    height: 100,
+                                    child: Center(
+                                      child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            Text(
+                                              '${NumberFormat.decimalPattern().format(widget.outcome)} MMK',
+                                              style: const TextStyle(
+                                                  fontFamily: 'Libre',
+                                                  fontSize: 13,
+                                                  color: Colors.black),
+                                            ),
+                                            const SizedBox(
+                                              height: 5,
+                                            ),
+                                            const Text(
+                                              'Expenses',
+                                              style: TextStyle(
+                                                  fontFamily: 'Libre',
+                                                  fontSize: 12,
+                                                  color: Colors.black),
+                                            ),
+                                          ]),
+                                    )),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(2.0),
+                              child: Card(
+                                child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: Colors.white,
+                                    ),
+                                    width: MediaQuery.of(context).size.width *
+                                        0.28,
+                                    height: 100,
+                                    child: Center(
+                                      child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            Text(
+                                              '${NumberFormat.decimalPattern().format(widget.saving)} MMK',
+                                              style: const TextStyle(
+                                                  fontFamily: 'Libre',
+                                                  fontSize: 13,
+                                                  color: Colors.black),
+                                            ),
+                                            const SizedBox(
+                                              height: 5,
+                                            ),
+                                            const Text(
+                                              'Saving',
+                                              style: TextStyle(
+                                                  fontFamily: 'Libre',
+                                                  fontSize: 12,
+                                                  color: Colors.black),
+                                            ),
+                                          ]),
+                                    )),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
                       SizedBox(
                         width: MediaQuery.of(context).size.width,
                         height: 280,
@@ -425,7 +458,7 @@ class _DashboardUiState extends State<DashboardUi> {
                                                 ))
                                               ],
                                             )),
-                                        Expanded(
+                                            Expanded(
                                             flex: 1,
                                             child: Row(
                                               children: [
@@ -562,7 +595,7 @@ class _DashboardUiState extends State<DashboardUi> {
                                               ),
                                             ),
                                           )
-                                        : SizedBox(
+                                          : SizedBox(
                                             height: 200,
                                             child: Padding(
                                               padding:
@@ -573,6 +606,7 @@ class _DashboardUiState extends State<DashboardUi> {
                                                         enable: true),
                                                 series: <ChartSeries>[
                                                   ColumnSeries<IOCData, String>(
+                                                    color: Colors.teal,
                                                     dataSource: [
                                                       IOCData(
                                                           "income",
@@ -624,48 +658,110 @@ class _DashboardUiState extends State<DashboardUi> {
                                 ),
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          ElevatedButton(
-                              onPressed: () {
-                                // Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute<void>(
-                                //     builder: (BuildContext context) =>
-                                //         const CategoDetail(),
-                                //   ),
-                                // );
-                              },
-                              child: const Text('To Income Detail')),
-                          ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute<void>(
-                                    builder: (BuildContext context) =>
-                                        const OutcomeCategoDetail(),
-                                  ),
-                                );
-                              },
-                              child: const Text('To outcome Detail')),
-                        ],
-                      ),
                       Container(
-                        color: Colors.amber,
-                        width: (MediaQuery.of(context).size.width),
-                        height: MediaQuery.of(context).size.height * 0.4,
-                        child: GridView.count(
-                            crossAxisCount: 3,
-                            primary: false,
-                            padding: const EdgeInsets.all(6),
-                            children: List.generate(choices.length, (index) {
-                              return Center(
-                                child: SelectCard(choice: choices[index]),
-                              );
-                            })),
+                        width: MediaQuery.of(context).size.width -20,
+                        decoration: BoxDecoration(
+                          border: Border.all(width: 1, color: Colors.grey),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              GestureDetector(
+                                  onTap: (choose == false)
+                                      ? () {
+                                          setState(() {
+                                            choose = !choose;
+                                          });
+                                        }
+                                      : () {},
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: choose
+                                          ? Colors.blue[700]
+                                          : Colors.grey[100],
+                                    ),
+                                    width: MediaQuery.of(context).size.width *
+                                        0.45,
+                                    height: 30,
+                                    child: Center(
+                                      child: Text(
+                                        'Income',
+                                        style: TextStyle(
+                                            fontFamily: 'Libre',
+                                            fontSize: 13,
+                                            color: choose
+                                                ? Colors.white
+                                                : Colors.black,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  )),
+                                  GestureDetector(
+                                  onTap: (choose == true)
+                                      ? () {
+                                          setState(() {
+                                            choose = !choose;
+                                          });
+                                        }
+                                      : () {},
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: choose
+                                          ? Colors.grey[100]
+                                          : Colors.blue[700],
+                                    ),
+                                    width: MediaQuery.of(context).size.width *
+                                        0.45,
+                                    height: 30,
+                                    child: Center(
+                                      child: Text(
+                                        'Expenses',
+                                        style: TextStyle(
+                                            fontFamily: 'Libre',
+                                            fontSize: 10,
+                                            color: choose
+                                                ? Colors.black
+                                                : Colors.white,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  )),
+                            ]),
                       ),
-                     
+                      choose
+                          ? Container(
+                              width: (MediaQuery.of(context).size.width),
+                              height: MediaQuery.of(context).size.height * 0.4,
+                              child: GridView.count(
+                                  crossAxisCount: 3,
+                                  primary: false,
+                                  children:
+                                      List.generate(choices.length, (index) {
+                                    return Center(
+                                      child: SelectCard(
+                                        choice: choices[index],
+                                        choose: true,
+                                      ),
+                                    );
+                                  })))
+                          : Container(
+                              width: (MediaQuery.of(context).size.width),
+                              height: MediaQuery.of(context).size.height * 0.4,
+                              child: GridView.count(
+                                  crossAxisCount: 3,
+                                  primary: false,
+                                  children: List.generate(outcomechoices.length,
+                                      (index) {
+                                    return Center(
+                                      child: SelectCard(
+                                        choice: outcomechoices[index],
+                                        choose: false,
+                                      ),
+                                    );
+                                  })))
                     ],
                   ),
                 ),
@@ -703,23 +799,35 @@ class Choice {
 }
 
 List<Choice> choices = [];
-
+List<Choice> outcomechoices = [];
 
 class SelectCard extends StatelessWidget {
-  const SelectCard({Key? key, required this.choice}) : super(key: key);
+  const SelectCard({Key? key, required this.choice, required this.choose})
+      : super(key: key);
   final Choice choice;
+  final bool choose;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute<void>(
-            builder: (BuildContext context) => const CategoDetail(),
-          ),
-        );
-      },
+      onTap: choose
+          ? () {
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) => const IncomeCategodetail(),
+                ),
+              );
+            }
+          : () {
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) =>
+                      const OutcomeCategoDetail(),
+                ),
+              );
+            },
       child: SizedBox(
         width: 3000,
         height: 300,
@@ -727,34 +835,28 @@ class SelectCard extends StatelessWidget {
             elevation: 3,
             color: Colors.white,
             child: Center(
-              child: SizedBox(
-                // height: MediaQuery.of(context).size.height * 0.4,
-                // height : 300,
-                // width: 150,
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(
-                        height: 50,
-                        width: 50,
-                        child: Image(
-                            image: AssetImage(
-                                'images/Income/${choice.imgname}.png')),
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(
+                      height: 50,
+                      width: 50,
+                      child: Image(
+                          image: AssetImage('images/${choice.imgname}.png')),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 4.0),
+                      child: Text(
+                        choice.title,
+                        style:
+                            const TextStyle(fontFamily: 'Libre', fontSize: 10),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 4.0),
-                        child: Text(
-                          choice.title,
-                          style:
-                              const TextStyle(fontFamily: 'Libre', fontSize: 10),
-                        ),
-                      ),
-                      Text(
-                        '${choice.amount}',
-                        style: const TextStyle(fontFamily: 'Libre', fontSize: 10),
-                      ),
-                    ]),
-              ),
+                    ),
+                    Text(
+                      '${NumberFormat.decimalPattern().format(choice.amount)} MMK',
+                      style: const TextStyle(fontFamily: 'Libre', fontSize: 8),
+                    ),
+                  ]),
             )),
       ),
     );

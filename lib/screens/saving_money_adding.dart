@@ -2,7 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../model/firebaseservice.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AddSavingMoney extends StatefulWidget {
   final String title;
@@ -27,6 +29,23 @@ class _AddSavingMoneyState extends State<AddSavingMoney> {
 
   bool _submitted = false;
   final _formKey = GlobalKey<FormState>();
+  int? languageCode;
+
+  checkLang() async {
+    final prefs = await SharedPreferences.getInstance();
+    final int? lang = prefs.getInt('language');
+    setState(() {
+      languageCode = lang;
+    });
+    print(languageCode);
+  }
+
+  @override
+  void initState() {
+    checkLang();
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,13 +54,15 @@ class _AddSavingMoneyState extends State<AddSavingMoney> {
       child: Scaffold(
         backgroundColor: Colors.grey[100],
         appBar: AppBar(
+          
           title: Text(
+            (languageCode == 2) ? "${widget.title} အတွက်ပိုက်ဆံထည့်ရန်" : 
             "Add money for ${widget.title}",
             style: const TextStyle(
               fontSize: 15,
             ),
           ),
-          centerTitle: true,
+          // centerTitle: true,
           elevation: 0.0,
           backgroundColor: Colors.blue[700],
         ),
@@ -121,7 +142,8 @@ class _AddSavingMoneyState extends State<AddSavingMoney> {
                                       int.parse(amountController.text),
                                       widget.id);
                                   FirebaseFirestore.instance
-                                      .collection("${FirebaseAuth.instance.currentUser!.email}")
+                                      .collection(
+                                          "${FirebaseAuth.instance.currentUser!.email}")
                                       .doc("Saving")
                                       .collection("saving-data")
                                       .doc(widget.id)
@@ -134,7 +156,9 @@ class _AddSavingMoneyState extends State<AddSavingMoney> {
                               },
                               style: ElevatedButton.styleFrom(
                                   elevation: 0, primary: Colors.blue[600]),
-                              child: const Text("Add")))
+                              child: Text(
+                                AppLocalizations.of(context)!.add,
+                              )))
                     ],
                   ),
                 ],

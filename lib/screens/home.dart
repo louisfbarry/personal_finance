@@ -1,6 +1,5 @@
 import 'package:finance/model/firebaseservice.dart';
 import 'package:finance/screens/addValue.dart';
-import 'package:finance/screens/budget.dart';
 import 'package:finance/screens/dashboard.dart';
 import 'package:finance/screens/saving.dart';
 import 'package:finance/screens/setting.dart';
@@ -8,6 +7,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:finance/provider/locale_provider.dart';
+import 'package:provider/provider.dart';
 
 class Mainpage extends StatefulWidget {
   const Mainpage({Key? key}) : super(key: key);
@@ -23,7 +25,6 @@ class _MainpageState extends State<Mainpage> {
     Dashboard(),
     Saving(),
     AddValue(),
-    const Budget(),
     Setting()
   ];
   void loginCheck() {
@@ -38,8 +39,22 @@ class _MainpageState extends State<Mainpage> {
     });
   }
 
+  checkLang() async {
+    final prefs = await SharedPreferences.getInstance();
+    final int? lang = prefs.getInt('language');
+    if (lang == 2) {
+      final provider = Provider.of<LocaleProvider>(context, listen: false);
+      provider.setLocale(Locale('my'));
+    } else {
+      final provider = Provider.of<LocaleProvider>(context, listen: false);
+      provider.setLocale(Locale('en'));
+    }
+  }
+
+
   @override
   void initState() {
+    checkLang();
     loginCheck();
     API().addCollection();
     // TODO: implement initState
@@ -119,11 +134,6 @@ class _MainpageState extends State<Mainpage> {
                   selectedIcon: Icon(FontAwesomeIcons.circlePlus,
                       color: Colors.blueAccent),
                   label: "Add Value"),
-              NavigationDestination(
-                  icon: Icon(FontAwesomeIcons.chartSimple),
-                  selectedIcon: Icon(FontAwesomeIcons.chartSimple,
-                      color: Colors.blueAccent),
-                  label: "Budget"),
               NavigationDestination(
                   icon: Icon(FontAwesomeIcons.gear),
                   selectedIcon:

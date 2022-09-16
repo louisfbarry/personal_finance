@@ -1,0 +1,32 @@
+{
+    "test": "English test",
+    "@test":{
+        "description":"The test"
+    },
+
+    "passcodeLogin": "Login with password",
+    "security": "Security",
+    "language": "Language",
+    "resetApp": "Reset App",
+    "logout": "Logout",
+    "changeName": "Change Name",
+    "changePass": "Change Password",
+
+    "income" : "Income",
+    "outcome" : "Outcome",
+
+    "saving" : "Saving",
+    "addTargetMoney" : "Add Money",
+    "editSaving" : "Edit",
+    "deleteSaving": "Delete",
+    "savingDetails" : "Saving Details",
+    "targetName" : "Target name : ",
+    "targetPrice" : "Target price : ",
+    "reamaining" : "Reamaining : ",
+    "editTarget" : "Edit Target",
+    "savingHistory" : "Saving History",
+    "add" : "Add",
+    "dywtrp" : "Do you want to reset app ?",
+    "dywtlo" : "Do you want to logout ?",
+    "dywtd" : "Do you want to delete ?"
+}

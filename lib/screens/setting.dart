@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:finance/screens/dashboard.dart';
+import 'package:finance/screens/language.dart';
 import 'package:finance/screens/security.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../components/snackbar.dart';
 import '../model/firebaseservice.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Setting extends StatefulWidget {
   const Setting({Key? key}) : super(key: key);
@@ -77,7 +80,7 @@ class _SettingState extends State<Setting> {
                           Navigator.pop(context);
                         },
                         child: const Text(
-                          "cancel",
+                          "Cancel",
                           style: TextStyle(fontSize: 12),
                         )),
                     TextButton(
@@ -120,7 +123,7 @@ class _SettingState extends State<Setting> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Security",
+                    AppLocalizations.of(context)!.security,
                     style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[800],
@@ -306,8 +309,8 @@ class _SettingState extends State<Setting> {
                               const SizedBox(
                                 width: 10,
                               ),
-                              const Text(
-                                "Password Login",
+                              Text(
+                                AppLocalizations.of(context)!.passcodeLogin,
                                 style: TextStyle(fontSize: 13),
                               )
                             ],
@@ -337,7 +340,7 @@ class _SettingState extends State<Setting> {
                         _securityDialog(context);
                       },
                       child: settingButton(
-                          "Security",
+                          AppLocalizations.of(context)!.security,
                           const Icon(
                             Icons.lock,
                             color: Colors.green,
@@ -349,10 +352,11 @@ class _SettingState extends State<Setting> {
                     ),
                     InkWell(
                       onTap: () {
-                        print("Language");
+                        // print("Language");
+                        Navigator.pushNamed(context, '/language');
                       },
                       child: settingButton(
-                          "Language",
+                          AppLocalizations.of(context)!.language,
                           const Icon(
                             Icons.language,
                             color: Colors.blue,
@@ -365,7 +369,11 @@ class _SettingState extends State<Setting> {
                     InkWell(
                       onTap: () {
                         _showDialog(
-                            context, "Do you want to reset app ?", "reset",
+                            context, AppLocalizations.of(context)!.dywtrp, 
+
+                            // AppLocalizations.of(context)!.reset,
+                            "Reset",
+
                             () async {
                           // saving delete path
                           var savingDeletePath = FirebaseFirestore.instance
@@ -455,6 +463,13 @@ class _SettingState extends State<Setting> {
                                 })
                               });
 
+                          API().addCollection();
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute<void>(
+                          //     builder: (BuildContext context) =>
+                          //         const Dashboard()));
+
                           Navigator.pop(context);
                           // Navigator.pushNamed(context, "/main");
                           showSnackbar(context, "Successfully reset app", 2,
@@ -463,7 +478,7 @@ class _SettingState extends State<Setting> {
                           //last
                         });
                       },
-                      child: settingButton("Reset App",
+                      child: settingButton(AppLocalizations.of(context)!.resetApp,
                           const Icon(Icons.restart_alt, color: Colors.orange)),
                     ),
                     Divider(
@@ -473,10 +488,11 @@ class _SettingState extends State<Setting> {
                     InkWell(
                         onTap: () {
                           _showDialog(
-                              context, "Do you want to logout ?", "logout",
+                              context, AppLocalizations.of(context)!.dywtlo, "Logout",
                               () async {
                             final prefs = await SharedPreferences.getInstance();
                             final success = await prefs.remove('passwordLogin');
+                            final Language = await prefs.remove('language');
                             // ignore: use_build_context_synchronously
                             Navigator.pop(context);
                             print("logout - ${success}");
@@ -484,7 +500,7 @@ class _SettingState extends State<Setting> {
                           });
                         },
                         child: settingButton(
-                            "Logout",
+                            AppLocalizations.of(context)!.logout,
                             const Icon(
                               Icons.logout,
                               color: Colors.red,

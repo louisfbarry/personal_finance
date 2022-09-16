@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:finance/model/firebaseservice.dart';
+import 'package:multiple_stream_builder/multiple_stream_builder.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../model/firebaseGet.dart';
@@ -17,7 +18,7 @@ import '../model/firebaseGet.dart';
 List<String> outcomelist = [];
 List<String> outcomeImglist = [];
 List<OutcomeData> OutcomeChart = [];
-int total = 0;
+int outcometotal = 0;
 bool outcomefinished = false;
 bool outcomeisloading = false;
 
@@ -36,7 +37,6 @@ class _OutcomeCategoDetailState extends State<OutcomeCategoDetail> {
   String daybefore = DateFormat("EEEEE, dd, MM, yyyy")
       .format(DateTime.now().subtract(const Duration(days: 2)));
 
-  Map<String, dynamic>? data;
   String daybeforesplit() {
     List<String> parts = daybefore.split(',');
     return '${parts[0]}(${parts[1]}/${parts[2]} ) ';
@@ -47,6 +47,8 @@ class _OutcomeCategoDetailState extends State<OutcomeCategoDetail> {
     return '${parts[0]}(${parts[1]},${parts[2]} ) ';
   }
 
+  Map<String, dynamic>? data;
+
   getlist() async {
     await outcomeCategoList().then((value) {
       outcomelist = value;
@@ -56,17 +58,13 @@ class _OutcomeCategoDetailState extends State<OutcomeCategoDetail> {
     });
 
     for (var i = 0; i < outcomelist.length; i++) {
-      total = 0;
+      outcometotal = 0;
       await outcomecategovalue(outcomelist[i]).then((value) {
-        total = value;
+        outcometotal = value;
       });
-      print('${outcomelist[i]}>>>>>$total');
-      OutcomeChart.add(OutcomeData(outcomelist[i], total));
+      print('${outcomelist[i]}>>>>>$outcometotal');
+      OutcomeChart.add(OutcomeData(outcomelist[i], outcometotal));
     }
-
-    setState(() {
-      outcomefinished = true;
-    });
   }
 
   @override
@@ -76,159 +74,211 @@ class _OutcomeCategoDetailState extends State<OutcomeCategoDetail> {
   }
 
   @override
-  void initState() {
-    OutcomeChart = [];
-    getlist();
-    // TODO: implement initState
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    var stream1 = FirebaseFirestore.instance
+        .collection('${FirebaseAuth.instance.currentUser!.email}')
+        .doc('Outcome-catego')
+        .collection('data')
+        .snapshots();
+    var stream2 = FirebaseFirestore.instance
+        .collection("${FirebaseAuth.instance.currentUser!.email}")
+        .doc("Outcome")
+        .collection("outcome-data")
+        .snapshots();
+    List<DetailStyle> todayDetail = [];
+    List<DetailStyle> yestDetail = [];
+    List<DetailStyle> daybeforeDetail = [];
+    List<DetailStyle> left = [];
+
     return SizedBox(
-      child: StreamBuilder<QuerySnapshot>(
-        stream: firestore
-            .collection('${FirebaseAuth.instance.currentUser!.email}')
-            .doc('Outcome')
-            .collection('outcome-data')
-            .orderBy('created At', descending: false)
-            .snapshots(),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.hasError) {
-            return const Text('Something went wrong');
+      child: StreamBuilder2<QuerySnapshot, QuerySnapshot>(
+        streams: StreamTuple2(
+          stream1,
+          stream2,
+        ),
+        builder: (BuildContext context, snapshots) {
+          if (snapshots.snapshot1.hasError) {
+            return Text('Error: ${snapshots.snapshot1.error}');
+          } else if (snapshots.snapshot2.hasError) {
+            return Text('Error: ${snapshots.snapshot2.error}');
           }
 
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [CircularProgressIndicator()],
-            );
+          if (snapshots.snapshot1.connectionState ==
+              "ConnectionState.waiting") {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshots.snapshot2.connectionState ==
+              "ConnectionState.waiting") {
+            return const Center(child: CircularProgressIndicator());
           }
 
-          List<DetailStyle> todayDetail = [];
-          List<DetailStyle> yestDetail = [];
-          List<DetailStyle> daybeforeDetail = [];
-          List<DetailStyle> left = [];
+          todayDetail = [];
+          yestDetail = [];
+          daybeforeDetail = [];
+          left = [];
 
-          snapshot.data!.docs.map((DocumentSnapshot document) {
-            data = document.data()! as Map<String, dynamic>;
-            if (data!['created At'] == today) {
-              todayDetail.add(DetailStyle(
-                data: data,
-                getlist: getlist,
-              ));
-            } else if (data!['created At'] == yesterday) {
-              yestDetail.add(DetailStyle(data: data, getlist: getlist));
-            } else if (data!['created At'] == daybefore) {
-              daybeforeDetail.add(DetailStyle(data: data, getlist: getlist));
-            } else {
-              left.add(DetailStyle(data: data, getlist: getlist));
+          if (snapshots.snapshot1.hasData) {
+            outcomelist = [];
+            for (var data in snapshots.snapshot1.data!.docs) {
+              outcomelist.add(data['categoname']);
+              outcomeImglist.add(data['imagId']);
             }
-          }).toList();
+          }
+
+          if (snapshots.snapshot2.hasData) {
+            OutcomeChart = [];
+
+            for (var i = 0; i < outcomelist.length; i++) {
+              print(outcomelist[i]);
+              outcometotal = 0;
+
+              for (var doc in snapshots.snapshot2.data!.docs) {
+                if (doc['category'] == outcomelist[i]) {
+                  int amount = doc['amount'];
+                  outcometotal = outcometotal + amount;
+                  // print(outcometotal);
+                }
+              }
+              OutcomeChart.add(OutcomeData(outcomelist[i], outcometotal));
+              print('${outcomelist[i]}>>>>$outcometotal');
+            }
+            snapshots.snapshot2.data!.docs.map((DocumentSnapshot document) {
+              data = document.data() as Map<String, dynamic>;
+              if (data!['created At'] == today) {
+                todayDetail.add(DetailStyle(
+                  data: data,
+                  getlist: getlist,
+                ));
+              } else if (data!['created At'] == yesterday) {
+                yestDetail.add(DetailStyle(
+                  data: data,
+                  getlist: getlist,
+                ));
+              } else if (data!['created At'] == daybefore) {
+                daybeforeDetail.add(DetailStyle(
+                  data: data,
+                  getlist: getlist,
+                ));
+              } else {
+                left.add(DetailStyle(
+                  data: data,
+                  getlist: getlist,
+                ));
+              }
+            }).toList();
+          }
+
+          // snapshot.data!.docs.map((DocumentSnapshot document) {
+          //   data = document.data()! as Map<String, dynamic>;
+          //   if (data!['created At'] == today) {
+          //     todayDetail.add(DetailStyle(
+          //       data: data,
+          //       getlist: getlist,
+          //     ));
+          //   } else if (data!['created At'] == yesterday) {
+          //     yestDetail.add(DetailStyle(data: data, getlist: getlist));
+          //   } else if (data!['created At'] == daybefore) {
+          //     daybeforeDetail.add(DetailStyle(data: data, getlist: getlist));
+          //   } else {
+          //     left.add(DetailStyle(data: data, getlist: getlist));
+          //   }
+          // }).toList();
 
           return Scaffold(
               backgroundColor: const Color.fromARGB(255, 238, 250, 255),
-              appBar: AppBar(title: const Text('Outcome')),
-              body: outcomefinished || outcomeisloading
-                  ? SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width - 30,
-                            height: MediaQuery.of(context).size.height * 0.4,
-                            child: Card(
-                              child: Padding(
-                                padding: const EdgeInsets.all(5),
-                                child: SfCircularChart(
-                                  legend: Legend(
-                                      isVisible: true,
-                                      position: LegendPosition.bottom),
-                                  tooltipBehavior:
-                                      TooltipBehavior(enable: true),
-                                  series: <CircularSeries>[
-                                    PieSeries<OutcomeData, String>(
-                                      dataSource: OutcomeChart,
-                                      // dataSource: [
-                                      //   OutcomeData("Salary", salaryTotal.toInt()),
-                                      //   OutcomeData("Investment", investTotal.toInt()),
-                                      //   OutcomeData(
-                                      //       "Uncategorized", uncategoTotal.toInt())
-                                      // ],
-                                      xValueMapper: (OutcomeData data, _) =>
-                                          data.OutcomeType,
-                                      yValueMapper: (OutcomeData data, _) =>
-                                          data.OutcomeValue,
-                                      dataLabelSettings:
-                                          const DataLabelSettings(
-                                              isVisible: true,
-                                              showZeroValue: true,
-                                              overflowMode: OverflowMode.trim,
-                                              showCumulativeValues: true,
-                                              labelPosition:
-                                                  ChartDataLabelPosition
-                                                      .outside),
-                                      enableTooltip: true,
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
+              appBar: AppBar(title: const Text('Expenses')),
+              body: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width - 30,
+                      height: MediaQuery.of(context).size.height * 0.4,
+                      child: Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: SfCircularChart(
+                            legend: Legend(
+                                isVisible: true,
+                                position: LegendPosition.bottom),
+                            tooltipBehavior: TooltipBehavior(enable: true),
+                            series: <CircularSeries>[
+                              PieSeries<OutcomeData, String>(
+                                dataSource: OutcomeChart,
+                                // dataSource: [
+                                //   OutcomeData("Salary", salaryoutcometotal.toInt()),
+                                //   OutcomeData("Investment", investoutcometotal.toInt()),
+                                //   OutcomeData(
+                                //       "Uncategorized", uncategooutcometotal.toInt())
+                                // ],
+                                xValueMapper: (OutcomeData data, _) =>
+                                    data.OutcomeType,
+                                yValueMapper: (OutcomeData data, _) =>
+                                    data.OutcomeValue,
+                                dataLabelSettings: const DataLabelSettings(
+                                    isVisible: true,
+                                    showZeroValue: true,
+                                    overflowMode: OverflowMode.trim,
+                                    showCumulativeValues: true,
+                                    labelPosition:
+                                        ChartDataLabelPosition.outside),
+                                enableTooltip: true,
+                              )
+                            ],
                           ),
-                          const Padding(
-                            padding: EdgeInsets.only(left: 10.0),
-                            child: Text('Today'),
-                          ),
-                          todayDetail.isEmpty
-                              ? const Padding(
-                                  padding: EdgeInsets.only(left: 10.0),
-                                  child: Text('No Outcome has been added !'),
-                                )
-                              : Card(
-                                  elevation: 1,
-                                  child: Column(children: todayDetail)),
-                          yestDetail.isEmpty
-                              ? const Text('')
-                              : const Padding(
-                                  padding: EdgeInsets.only(left: 10.0),
-                                  child: Text('Yesterday'),
-                                ),
-                          Card(
-                            elevation: 1,
-                            child: Column(
-                              children: yestDetail,
-                            ),
-                          ),
-                          daybeforeDetail.isEmpty
-                              ? const Text('')
-                              : Padding(
-                                  padding: const EdgeInsets.only(left: 10.0),
-                                  child: Text(daybeforesplit()),
-                                ),
-                          Card(
-                            elevation: 1,
-                            child: Column(
-                              children: daybeforeDetail,
-                            ),
-                          ),
-                          left.isEmpty
-                              ? const Text('')
-                              : const Padding(
-                                  padding: EdgeInsets.only(left: 10.0),
-                                  child: Text('Last 7 day'),
-                                ),
-                          Card(
-                            elevation: 2,
-                            child: Column(
-                              children: left,
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
-                    )
-                  : const Center(
-                      child: CircularProgressIndicator(),
-                    ));
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 10.0),
+                      child: Text('Today'),
+                    ),
+                    todayDetail.isEmpty
+                        ? const Padding(
+                            padding: EdgeInsets.only(left: 10.0),
+                            child: Text('No Expenses has been added !'),
+                          )
+                        : Card(
+                            elevation: 1, child: Column(children: todayDetail)),
+                    yestDetail.isEmpty
+                        ? const Text('')
+                        : const Padding(
+                            padding: EdgeInsets.only(left: 10.0),
+                            child: Text('Yesterday'),
+                          ),
+                    Card(
+                      elevation: 1,
+                      child: Column(
+                        children: yestDetail,
+                      ),
+                    ),
+                    daybeforeDetail.isEmpty
+                        ? const Text('')
+                        : Padding(
+                            padding: const EdgeInsets.only(left: 10.0),
+                            child: Text(daybeforesplit()),
+                          ),
+                    Card(
+                      elevation: 1,
+                      child: Column(
+                        children: daybeforeDetail,
+                      ),
+                    ),
+                    left.isEmpty
+                        ? const Text('')
+                        : const Padding(
+                            padding: EdgeInsets.only(left: 10.0),
+                            child: Text('Last 7 day'),
+                          ),
+                    Card(
+                      elevation: 2,
+                      child: Column(
+                        children: left,
+                      ),
+                    ),
+                  ],
+                ),
+              ));
         },
       ),
     );
@@ -339,7 +389,7 @@ class _DetailStyleState extends State<DetailStyle> {
                                               width: 25,
                                               child: Image(
                                                   image: AssetImage(
-                                                      'images/Oct/${outcomeImglist[outcomelist.indexOf(item)]}.png')),
+                                                      'images/${outcomeImglist[outcomelist.indexOf(item)]}.png')),
                                             ),
                                             const SizedBox(
                                               width: 10,
@@ -457,7 +507,7 @@ class _DetailStyleState extends State<DetailStyle> {
                             ),
                           ),
                           Text('Created At : ${widget.data!['created At']}'),
-                          Row(
+Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               ElevatedButton(
@@ -510,8 +560,7 @@ class _DetailStyleState extends State<DetailStyle> {
                           SizedBox(
                             height: 25,
                             width: 25,
-                            child:
-                                Image(image: AssetImage('images/Oct/$img.png')),
+                            child: Image(image: AssetImage('images/$img.png')),
                           ),
                           const SizedBox(
                             width: 10,
@@ -543,3 +592,16 @@ class _DetailStyleState extends State<DetailStyle> {
     );
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

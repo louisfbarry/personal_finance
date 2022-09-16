@@ -2,6 +2,8 @@ import 'package:finance/components/snackbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 class Security extends StatefulWidget {
   const Security({Key? key}) : super(key: key);
@@ -23,12 +25,12 @@ class _SecurityState extends State<Security> {
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         centerTitle: true,
-        title: const Text(
-          "Security",
+        title: Text(
+          AppLocalizations.of(context)!.security,
           style: TextStyle(fontSize: 15),
         ),
         elevation: 0.0,
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.blue[700],
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -66,7 +68,7 @@ class _SecurityState extends State<Security> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Change Name",
+                                AppLocalizations.of(context)!.changeName,
                                 style: TextStyle(
                                     fontSize: 14,
                                     color: Colors.grey[800],
@@ -169,7 +171,7 @@ class _SecurityState extends State<Security> {
                                                 strokeWidth: 1,
                                               ))
                                           : const Text(
-                                              "Enter",
+                                              "Save",
                                               style: TextStyle(fontSize: 12),
                                             )),
                                 ],
@@ -184,7 +186,7 @@ class _SecurityState extends State<Security> {
               );
             },
             child: securityButton(
-                "Change Name", const Icon(Icons.person, color: Colors.amber)),
+                AppLocalizations.of(context)!.changeName, const Icon(Icons.person, color: Colors.amber)),
           ),
           Divider(
             color: Colors.grey[300],
@@ -222,7 +224,7 @@ class _SecurityState extends State<Security> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Change Password",
+                                AppLocalizations.of(context)!.changePass,
                                 style: TextStyle(
                                     fontSize: 14,
                                     color: Colors.grey[800],
@@ -348,7 +350,7 @@ class _SecurityState extends State<Security> {
                                                 strokeWidth: 1,
                                               ))
                                           : const Text(
-                                              "Enter",
+                                              "Save",
                                               style: TextStyle(fontSize: 12),
                                             )),
                                 ],
@@ -363,7 +365,7 @@ class _SecurityState extends State<Security> {
               );
             },
             child: securityButton(
-                "Change Password",
+                AppLocalizations.of(context)!.changePass,
                 const Icon(
                   Icons.password,
                   color: Colors.red,

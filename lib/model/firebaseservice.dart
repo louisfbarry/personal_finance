@@ -30,6 +30,8 @@ class API {
     user.doc('Saving').set({'Created At': Cdate});
     user.doc('Income-catego').set({'Created At': Cdate});
     user.doc('Outcome-catego').set({'Created At': Cdate});
+    user.doc('Income').collection('income-data').doc();
+    user.doc('Outcome').collection('outcome-data').doc();
     user
         .doc('Income-catego')
         .collection('data')

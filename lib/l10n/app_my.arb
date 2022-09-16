@@ -1,0 +1,29 @@
+{
+    "test": "မြန်မာ စမ်းသပ်",
+
+    "passcodeLogin": "စကားဝှက်ဖြစ်ဝင်ခြင်း",
+    "security": "လုံခြုံရေး",
+    "language": "ဘာသာစကား",
+    "resetApp": "အသစ်ပြန်စမည်",
+    "logout": "ထွက်မည်",
+    "changeName": "နာမည်ပြောင်းမည်",
+    "changePass": "စကားဝှက်ပြောင်းမည်",
+
+    "income": "ဝင်‌‌ငွေ",
+    "outcome": "ထွက်ငွေ",
+
+    "saving": "စုငွေ",
+    "addTargetMoney" : "ပိုက်ဆံထည့်မည်",
+    "editSaving" : "ပြင်မည်",
+    "deleteSaving" : "ဖျက်မည်",
+    "savingDetails" : "စုငွေအသေးစိတ်",
+    "targetName" : "Target နာမည် : ",
+    "targetPrice" : "Target တန်ဖိုး : ",
+    "reamaining" : "ကျန်ရှိငွေ : ",
+    "editTarget" : "Target ပြင်မည်",
+    "savingHistory" : "စုငွေ History",
+    "add" : "ထည့်မည်",
+    "dywtrp" : "‌ဒေတာအားလုံးကိုဖျက်လိုပါသလား ?",
+    "dywtlo" : "logout ထွက်လိုပါသလား ?",
+    "dywtd" : "ဖျက်လိုပါသလား ?"
+}

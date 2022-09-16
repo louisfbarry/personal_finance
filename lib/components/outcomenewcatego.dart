@@ -9,7 +9,6 @@ import 'package:form_field_validator/form_field_validator.dart';
 
 import '../screens/outcomecatego_detail.dart';
 
-GlobalKey<FormState> formKey = GlobalKey<FormState>();
 List<Categostyle> outcomecategostylelist = [];
 List<String> outcomeImg = [
   'arrived',
@@ -43,6 +42,7 @@ class OutcomeCategoCreate extends StatefulWidget {
 }
 
 class _OutcomeCategoCreateState extends State<OutcomeCategoCreate> {
+  static GlobalKey<FormState> formKey = GlobalKey<FormState>();
   TextEditingController newcatego = TextEditingController();
   CollectionReference user =
       firestore.collection('${FirebaseAuth.instance.currentUser!.email}');
@@ -64,157 +64,171 @@ class _OutcomeCategoCreateState extends State<OutcomeCategoCreate> {
         onTap: () => FocusScope.of(context).unfocus(),
         child: Padding(
           padding: const EdgeInsets.all(10.0),
-          child: StreamBuilder(
-              stream: firestore
-                  .collection('${FirebaseAuth.instance.currentUser!.email}')
-                  .doc('Outcome-catego')
-                  .collection('data')
-                  .snapshots(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.hasError) {
-                  return const Text('Something went wrong');
-                }
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      SpinKitPulse(
-                        color: Colors.grey,
-                      )
-                    ],
-                  );
-                }
-                if (snapshot.hasData) {
-                  outcomeCategoList = [];
-                  outcomeCategoImgList = [];
-                  outcomecategostylelist = [];
-                  for (var element in snapshot.data!.docs) {
-                    data = element.data()! as Map<String, dynamic>;
-                    outcomecategostylelist.add(Categostyle(
-                        categoname: data!['categoname'],
-                        imgname: data!['imagId']));
-                    // incomeCategoList.add(data!['categoname']);
-                    // incomeCategoImgList.add(data!['imagId']);
-                  }
-                }
-
-                return SingleChildScrollView(
-                  child: Form(
-                    key: formKey,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(children: [
-                        Row(children: [
-                          SizedBox(
-                            width: 80,
-                            height: 50,
-                            child: DropdownButtonFormField(
-                              value: outcomedropdown,
-                              isExpanded: true,
-                              items: outcomeImg
-                                  .map((item) => DropdownMenuItem<String>(
-                                      value: item,
-                                      child: SizedBox(
-                                          width: 40,
-                                          height: 40,
-                                          child: Image(
-                                            image: AssetImage(
-                                                'images/Oct/$item.png'),
-                                          ))))
-                                  .toList(),
-                              onChanged: (newValue) {
-                                setState(() {
-                                  outcomedropdown = newValue.toString();
-                                });
-                              },
-                              decoration: InputDecoration(
-                                  enabledBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          width: 1, color: Colors.black),
-                                      borderRadius: BorderRadius.circular(5)),
-                                  focusedBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          width: 2, color: Colors.black),
-                                      borderRadius: BorderRadius.circular(5))),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          SizedBox(
-                            width: 150,
-                            height: 50,
-                            child: TextFormField(
-                              controller: newcatego,
-                              validator: RequiredValidator(
-                                  errorText: 'Pls enter your category name'),
-                              decoration: InputDecoration(
-                                errorBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      width: 1, color: Colors.redAccent),
-                                  borderRadius: BorderRadius.circular(5.0),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      width: 1, color: Colors.black),
-                                  borderRadius: BorderRadius.circular(5.0),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(
-                                        width: 2, color: Colors.black),
-                                    borderRadius: BorderRadius.circular(5)),
-                                focusedErrorBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(
-                                        width: 1, color: Colors.redAccent),
-                                    borderRadius: BorderRadius.circular(5)),
-                                hintText: 'Create category',
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          ElevatedButton(
-                              onPressed: () async {
-                                user
-                                    .doc('Outcome-catego')
-                                    .collection('data')
-                                    .doc(newcatego.text)
-                                    .set({
-                                  'categoname': newcatego.text,
-                                  'imagId': outcomedropdown
-                                });
-                                Navigator.pop(context);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                primary: Colors.blue[700],
-                                // padding: const EdgeInsets.all(10),
-                              ),
-                              child: const Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 7, vertical: 13),
-                                child: Text(
-                                  'Set',
-                                  style: TextStyle(
-                                      fontSize: 18, color: Colors.white),
-                                ),
-                              ))
-                        ]),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Card(
-                          child: Container(
-                            width: MediaQuery.of(context).size.width - 20,
-                            child: Column(children: outcomecategostylelist),
-                          ),
-                        )
-                      ]),
+          child: Column(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  child: const SizedBox(
+                    width: 30,
+                    child: Divider(
+                      color: Colors.black,
+                      thickness: 2,
                     ),
                   ),
-                );
-              }),
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              Form(
+                key: formKey,
+                child: Row(children: [
+                  SizedBox(
+                    width: 80,
+                    height: 50,
+                    child: DropdownButtonFormField(
+                      value: outcomedropdown,
+                      isExpanded: true,
+                      items: outcomeImg
+                          .map((item) => DropdownMenuItem<String>(
+                              value: item,
+                              child: SizedBox(
+                                  width: 40,
+                                  height: 40,
+                                  child: Image(
+                                    image: AssetImage('images/$item.png'),
+                                  ))))
+                          .toList(),
+                      onChanged: (newValue) {
+                        setState(() {
+                          outcomedropdown = newValue.toString();
+                        });
+                      },
+                      decoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  width: 1, color: Colors.black),
+                              borderRadius: BorderRadius.circular(5)),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  width: 2, color: Colors.black),
+                              borderRadius: BorderRadius.circular(5))),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  SizedBox(
+                    width: 150,
+                    height: 50,
+                    child: TextFormField(
+                      controller: newcatego,
+                      validator: RequiredValidator(
+                          errorText: 'Pls enter your category name'),
+                      decoration: InputDecoration(
+                        errorBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(
+                              width: 1, color: Colors.redAccent),
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide:
+                              const BorderSide(width: 1, color: Colors.black),
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                const BorderSide(width: 2, color: Colors.black),
+                            borderRadius: BorderRadius.circular(5)),
+                        focusedErrorBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                                width: 1, color: Colors.redAccent),
+                            borderRadius: BorderRadius.circular(5)),
+                        hintText: 'Create category',
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  ElevatedButton(
+                      onPressed: () async {
+                        user
+                            .doc('Outcome-catego')
+                            .collection('data')
+                            .doc(newcatego.text)
+                            .set({
+                          'categoname': newcatego.text,
+                          'imagId': outcomedropdown
+                        });
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.blue[700],
+                        // padding: const EdgeInsets.all(10),
+                      ),
+                      child: const Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 7, vertical: 13),
+                        child: Text(
+                          'Set',
+                          style: TextStyle(fontSize: 18, color: Colors.white),
+                        ),
+                      ))
+                ]),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              StreamBuilder(
+                  stream: firestore
+                      .collection('${FirebaseAuth.instance.currentUser!.email}')
+                      .doc('Outcome-catego')
+                      .collection('data')
+                      .snapshots(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (snapshot.hasError) {
+                      return const Text('Something went wrong');
+                    }
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          SpinKitPulse(
+                            color: Colors.grey,
+                          )
+                        ],
+                      );
+                    }
+                    if (snapshot.hasData) {
+                      outcomeCategoList = [];
+                      outcomeCategoImgList = [];
+                      outcomecategostylelist = [];
+                      for (var element in snapshot.data!.docs) {
+                        data = element.data() as Map<String, dynamic>;
+                        outcomecategostylelist.add(Categostyle(
+                            categoname: data!['categoname'],
+                            imgname: data!['imagId']));
+                        // incomeCategoList.add(data!['categoname']);
+                        // incomeCategoImgList.add(data!['imagId']);
+                      }
+                    }
+
+                    return Card(
+                      child: Container(
+                        width: MediaQuery.of(context).size.width - 20,
+                        child: SingleChildScrollView(
+                            child: Column(children: outcomecategostylelist)),
+                      ),
+                    );
+                  }),
+            ],
+          ),
         ));
   }
 }
@@ -266,8 +280,7 @@ class _CategostyleState extends State<Categostyle> {
                                       width: 40,
                                       height: 40,
                                       child: Image(
-                                        image:
-                                            AssetImage('images/Oct/$item.png'),
+                                        image: AssetImage('images/$item.png'),
                                       ))))
                               .toList(),
                           onChanged: (newValue) {
@@ -435,8 +448,7 @@ class _CategostyleState extends State<Categostyle> {
               SizedBox(
                 height: 30,
                 width: 30,
-                child: Image(
-                    image: AssetImage('images/Oct/${widget.imgname}.png')),
+                child: Image(image: AssetImage('images/${widget.imgname}.png')),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),

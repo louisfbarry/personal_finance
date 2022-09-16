@@ -43,6 +43,8 @@ class _MyLogInPageState extends State<MyLogInPage> {
       prefs.setString('password', passwordcontroller.text);
       prefs.setString('displayName', "${currentUser.displayName}");
       prefs.setString('email', usernamecontroller.text);
+      // #edit
+      prefs.setInt('language', 1);
       setState(() {
         isloading = false;
 
@@ -55,7 +57,10 @@ class _MyLogInPageState extends State<MyLogInPage> {
       });
     } else {
       showSnackbar(context, 'Email has not been verified', 2, Colors.red[300]);
-      isloading = false;
+      setState(() {
+        isloading = false;
+      });
+      
     }
   }
 
@@ -198,7 +203,8 @@ class _MyLogInPageState extends State<MyLogInPage> {
                                         'forget password ? ',
                                         textAlign: TextAlign.left,
                                         style: TextStyle(
-                                            color: Colors.blue[600], fontSize: 12),
+                                            color: Colors.blue[600],
+                                            fontSize: 12),
                                       ),
                                     ),
                                   ),

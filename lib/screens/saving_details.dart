@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SavingDetails extends StatefulWidget {
   String id;
@@ -28,8 +29,8 @@ class _SavingDetailsState extends State<SavingDetails> {
       
       appBar: AppBar(
         centerTitle: true,
-        title: const Text(
-          "Saving Details",
+        title: Text(
+          AppLocalizations.of(context)!.savingDetails,
           style: TextStyle(fontSize: 15),
         ),
         elevation: 0.0,
@@ -179,7 +180,7 @@ class DetailsUi extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Target name : ",
+                      AppLocalizations.of(context)!.targetName,
                       style: TextStyle(
                           color: Colors.grey[700],
                           fontSize: 12,
@@ -207,7 +208,7 @@ class DetailsUi extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Target price : ",
+                      AppLocalizations.of(context)!.targetPrice,
                       style: TextStyle(
                           color: Colors.grey[700],
                           fontSize: 12,
@@ -235,7 +236,7 @@ class DetailsUi extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Reamaining : ",
+                      AppLocalizations.of(context)!.reamaining,
                       style: TextStyle(
                           color: Colors.red[300],
                           fontSize: 12,

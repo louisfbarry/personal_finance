@@ -6,18 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:form_field_validator/form_field_validator.dart';
-
 import '../model/firebaseservice.dart';
-
 class IncomeAddingDetail extends StatefulWidget {
   IncomeAddingDetail({
     Key? key,
   }) : super(key: key);
-
   @override
   State<IncomeAddingDetail> createState() => _IncomeAddingDetailState();
 }
-
 class _IncomeAddingDetailState extends State<IncomeAddingDetail> {
   // List<String>? getlist;
   Map<String, dynamic>? data;
@@ -28,7 +24,6 @@ class _IncomeAddingDetailState extends State<IncomeAddingDetail> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController amountcontroller = TextEditingController();
   TextEditingController notecontroller = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
@@ -41,27 +36,26 @@ class _IncomeAddingDetailState extends State<IncomeAddingDetail> {
         if (snapshot.hasError) {
           return const Text('Something went wrong');
         }
-
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [SpinKitPulse(
-              color: Colors.grey,
-            )],
+            children: const [
+              SpinKitPulse(
+                color: Colors.grey,
+              )
+            ],
           );
         }
-
         if (snapshot.hasData) {
           incomeCategoList = [];
           incomeCategoImgList = [];
           // print(snapshot.data!.docs);
           for (var element in snapshot.data!.docs) {
-            data = element.data()! as Map<String, dynamic>;
+            data = element.data() as Map<String, dynamic>;
             incomeCategoList.add(data!['categoname']);
             incomeCategoImgList.add(data!['imagId']);
           }
         }
-
         return SingleChildScrollView(
           child: Form(
             key: _formKey,
@@ -89,7 +83,7 @@ class _IncomeAddingDetailState extends State<IncomeAddingDetail> {
                                             width: 25,
                                             child: Image(
                                                 image: AssetImage(
-                                                    'images/Income/${incomeCategoImgList[incomeCategoList.indexOf(item)]}.png')),
+                                                    'images/${incomeCategoImgList[incomeCategoList.indexOf(item)]}.png')),
                                           ),
                                           const SizedBox(
                                             width: 10,
@@ -134,9 +128,9 @@ class _IncomeAddingDetailState extends State<IncomeAddingDetail> {
                                       height:
                                           MediaQuery.of(context).size.height *
                                               0.8,
-                                      decoration: const BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.only(
+                                      decoration: BoxDecoration(
+                                          color: Colors.grey[100],
+                                          borderRadius: const BorderRadius.only(
                                             topLeft: Radius.circular(20),
                                             topRight: Radius.circular(20),
                                           )),
@@ -219,13 +213,14 @@ class _IncomeAddingDetailState extends State<IncomeAddingDetail> {
                       width: MediaQuery.of(context).size.width - 20,
                       height: 40,
                       child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              elevation: 0, primary: Colors.blue[700]),
                           onPressed: () {
                             setState(() {
                               submitted = true;
                             });
                             print(
                                 '$dropdownValue and ${int.parse(amountcontroller.text)}');
-
                             if (_formKey.currentState!.validate()) {
                               API().incomeadding(
                                   dropdownValue,
@@ -236,7 +231,7 @@ class _IncomeAddingDetailState extends State<IncomeAddingDetail> {
                                 context,
                                 MaterialPageRoute<void>(
                                   builder: (BuildContext context) =>
-                                      CategoDetail(),
+                                      IncomeCategodetail(),
                                 ),
                               );
                             } else {

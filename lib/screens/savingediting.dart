@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../model/firebaseservice.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EditSaving extends StatefulWidget {
   final bool isEdit;
@@ -52,16 +53,11 @@ class _EditSavingState extends State<EditSaving> {
       child: Scaffold(
         backgroundColor: Colors.grey[100],
         appBar: AppBar(
-          title: widget.isEdit
-              ? const Text(
-                  "Edit Target",
-                  style: TextStyle(
-                    fontSize: 15,
-                  ),
-                )
-              : const Text(
-                  "Add Target",
-                  style: TextStyle(
+          title: 
+               Text(
+                  // "Edit Target",
+                  AppLocalizations.of(context)!.editTarget,
+                  style: const TextStyle(
                     fontSize: 15,
                   ),
                 ),

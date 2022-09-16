@@ -11,6 +11,7 @@ import '../model/firebaseservice.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Saving extends StatefulWidget {
   const Saving({Key? key}) : super(key: key);
@@ -61,9 +62,9 @@ class _SavingState extends State<Saving> {
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         centerTitle: true,
-        title: const Text(
-          "Saving",
-          style: TextStyle(fontSize: 15),
+        title: Text(
+          AppLocalizations.of(context)!.saving,
+          style: const TextStyle(fontSize: 15),
         ),
         // actions: [
         //   IconButton(
@@ -166,7 +167,7 @@ class SavingDataCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Do you want to delete ?",
+                  AppLocalizations.of(context)!.dywtd,
                   style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey[800],
@@ -180,7 +181,7 @@ class SavingDataCard extends StatelessWidget {
                           Navigator.pop(context);
                         },
                         child: const Text(
-                          "cancel",
+                          "Cancel",
                           style: TextStyle(fontSize: 12),
                         )),
                     TextButton(
@@ -209,7 +210,7 @@ class SavingDataCard extends StatelessWidget {
                           Navigator.pop(context);
                         },
                         child: const Text(
-                          "delete",
+                          "Delete",
                           style: TextStyle(fontSize: 12),
                         )),
                   ],
@@ -318,25 +319,25 @@ class SavingDataCard extends StatelessWidget {
                         onSelected: (item) =>
                             onSelected(context, item, title, targetPrice),
                         itemBuilder: (context) => [
-                          const PopupMenuItem<int>(
+                          PopupMenuItem<int>(
                               value: 0,
                               child: Text(
-                                "Add Money",
-                                style: TextStyle(
+                                AppLocalizations.of(context)!.addTargetMoney,
+                                style: const TextStyle(
                                     fontSize: 12, fontWeight: FontWeight.w500),
                               )),
-                          const PopupMenuItem<int>(
+                          PopupMenuItem<int>(
                               value: 1,
                               child: Text(
-                                "Edit",
-                                style: TextStyle(
+                                AppLocalizations.of(context)!.editSaving,
+                                style: const TextStyle(
                                     fontSize: 12, fontWeight: FontWeight.w500),
                               )),
-                          const PopupMenuItem<int>(
+                          PopupMenuItem<int>(
                               value: 2,
                               child: Text(
-                                "Delete",
-                                style: TextStyle(
+                                AppLocalizations.of(context)!.deleteSaving,
+                                style: const TextStyle(
                                     fontSize: 12, fontWeight: FontWeight.w500),
                               )),
                         ],

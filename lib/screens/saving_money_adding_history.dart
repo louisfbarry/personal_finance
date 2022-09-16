@@ -5,6 +5,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:finance/model/firebaseservice.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // 1/9
 
@@ -25,8 +26,8 @@ class _SavingHistoryState extends State<SavingHistory> {
         backgroundColor: Colors.grey[100],
         appBar: AppBar(
           centerTitle: true,
-          title: const Text(
-            "Saving History",
+          title: Text(
+            AppLocalizations.of(context)!.savingHistory,
             style: TextStyle(fontSize: 15),
           ),
           elevation: 0.0,
@@ -121,7 +122,8 @@ class _SavingHistoryCardState extends State<SavingHistoryCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Do you want to delete ?",
+                  // "Do you want to delete ?",
+                  AppLocalizations.of(context)!.dywtd,
                   style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey[800],
@@ -135,7 +137,7 @@ class _SavingHistoryCardState extends State<SavingHistoryCard> {
                           Navigator.pop(context);
                         },
                         child: const Text(
-                          "cancel",
+                          "Cancel",
                           style: TextStyle(fontSize: 12),
                         )),
                     TextButton(
@@ -160,7 +162,7 @@ class _SavingHistoryCardState extends State<SavingHistoryCard> {
                               .delete();
                         },
                         child: const Text(
-                          "delete",
+                          "Delete",
                           style: TextStyle(fontSize: 12),
                         )),
                   ],

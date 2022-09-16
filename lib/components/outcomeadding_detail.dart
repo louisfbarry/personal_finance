@@ -58,7 +58,7 @@ class _OutcomeAddingDetailState extends State<OutcomeAddingDetail> {
             outcomeCategoList = [];
             outcomeCategoImgList = [];
             for (var element in snapshot.data!.docs) {
-              data = element.data()! as Map<String, dynamic>;
+              data = element.data() as Map<String, dynamic>;
               outcomeCategoList.add(data!['categoname']);
               outcomeCategoImgList.add(data!['imagId']);
             }
@@ -90,7 +90,7 @@ class _OutcomeAddingDetailState extends State<OutcomeAddingDetail> {
                                               width: 25,
                                               child: Image(
                                                   image: AssetImage(
-                                                      'images/Oct/${outcomeCategoImgList[outcomeCategoList.indexOf(item)]}.png')),
+                                                      'images/${outcomeCategoImgList[outcomeCategoList.indexOf(item)]}.png')),
                                             ),
                                             const SizedBox(
                                               width: 10,
@@ -219,6 +219,8 @@ class _OutcomeAddingDetailState extends State<OutcomeAddingDetail> {
                         width: MediaQuery.of(context).size.width - 20,
                         height: 40,
                         child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                elevation: 0, primary: Colors.blue[700]),
                             onPressed: () {
                               setState(() {
                                 submitted = true;
