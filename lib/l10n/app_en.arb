@@ -4,16 +4,21 @@
         "description":"The test"
     },
 
+    "setting" : "Setting",
     "passcodeLogin": "Login with password",
     "security": "Security",
     "language": "Language",
-    "resetApp": "Reset App",
+    "resetApp": "Delete all data",
     "logout": "Logout",
     "changeName": "Change Name",
     "changePass": "Change Password",
+    "oldPassword" : "Old password",
+    "newName" : "New name",
+    "newPassword" : "New password",
 
     "income" : "Income",
     "outcome" : "Outcome",
+    "totalBalance" : "Total balance",
 
     "saving" : "Saving",
     "addTargetMoney" : "Add Money",
@@ -26,7 +31,7 @@
     "editTarget" : "Edit Target",
     "savingHistory" : "Saving History",
     "add" : "Add",
-    "dywtrp" : "Do you want to reset app ?",
+    "dywtrp" : "Do you want to delete all data ?",
     "dywtlo" : "Do you want to logout ?",
     "dywtd" : "Do you want to delete ?"
 }

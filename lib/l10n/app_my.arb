@@ -1,16 +1,21 @@
 {
     "test": "မြန်မာ စမ်းသပ်",
 
+    "setting" : "ဆက်တင်",
     "passcodeLogin": "စကားဝှက်ဖြစ်ဝင်ခြင်း",
     "security": "လုံခြုံရေး",
     "language": "ဘာသာစကား",
-    "resetApp": "အသစ်ပြန်စမည်",
+    "resetApp": "ဒေတာအားလုံးဖျက်မည်",
     "logout": "ထွက်မည်",
     "changeName": "နာမည်ပြောင်းမည်",
     "changePass": "စကားဝှက်ပြောင်းမည်",
+    "oldPassword" : "စကားဝှက်အ‌ဟောင်း",
+    "newName": "နာမည်အသစ်",
+    "newPassword" : "စကားဝှက်အသစ်",
 
     "income": "ဝင်‌‌ငွေ",
     "outcome": "ထွက်ငွေ",
+    "totalBalance" : "လက်ကျန်ငွေ",
 
     "saving": "စုငွေ",
     "addTargetMoney" : "ပိုက်ဆံထည့်မည်",

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finance/model/firebaseservice.dart';
+import 'package:finance/screens/saving.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -11,6 +12,7 @@ import 'package:intl/intl.dart';
 
 import 'incomecatego_detail.dart';
 import 'outcomecatego_detail.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -215,8 +217,10 @@ class DashboardUi extends StatefulWidget {
 class _DashboardUiState extends State<DashboardUi> {
   String displayName = "";
 
-  int selectedChart = 2;
-  bool choose = true;
+  int selectedChart = 1;
+  // bool choose = true;
+  final PageController pagecontroller = PageController();
+  int pageindex = 0;
 
   Future getDisplayName() async {
     final prefs = await SharedPreferences.getInstance();
@@ -236,7 +240,8 @@ class _DashboardUiState extends State<DashboardUi> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Colors.grey[100],
+      // backgroundColor: Colors.transparent,
+      backgroundColor: Colors.grey[100],
       body: (displayName == "")
           ? Center(
               // child: CircularProgressIndicator(),
@@ -244,495 +249,620 @@ class _DashboardUiState extends State<DashboardUi> {
             )
           : SafeArea(
               child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 60,
-                        width: MediaQuery.of(context).size.width,
-                        child: Card(
-                          elevation: 0.0,
-                          color: Colors.blue[700],
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  displayName,
-                                  style: TextStyle(
-                                      color: Colors.grey[200],
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Text(
-                                  // "${widget.income - (widget.outcome + widget.saving)}",
-                                  // "${widget.incomeVs}",
-                                  NumberFormat.decimalPattern()
-                                      .format(widget.incomeVs),
-                                  style: TextStyle(
-                                      color: Colors.grey[100],
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                )
-                              ],
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Stack(
+                        clipBehavior: Clip.none,
+                        alignment: Alignment.center,
+                        children: [
+                          Container(
+                              color: Colors.grey[100],
+                              child: ClipRRect(
+                                  borderRadius: const BorderRadius.only(
+                                    bottomLeft: Radius.circular(13.0),
+                                    bottomRight: Radius.circular(13.0),
+                                  ),
+                                  child: Image.asset(
+                                    'images/gradient.png',
+                                    width: double.infinity,
+                                    height: 230,
+                                    fit: BoxFit.cover,
+                                  ))),
+                          Positioned(
+                            top: 30,
+                            left: 30,
+                            child: Text(
+                              AppLocalizations.of(context)!.totalBalance,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.white),
                             ),
                           ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(2.0),
-                              child: Card(
-                                child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      color: Colors.white,
-                                    ),
-                                    width: MediaQuery.of(context).size.width *
-                                        0.28,
-                                    height: 100,
-                                    child: Center(
-                                      child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: <Widget>[
-                                            Text(
-                                              '${NumberFormat.decimalPattern().format(widget.income)} MMK',
-                                              style: const TextStyle(
-                                                  fontFamily: 'Libre',
-                                                  fontSize: 13,
-                                                  color: Colors.black),
-                                            ),
-                                            const SizedBox(
-                                              height: 5,
-                                            ),
-                                            const Text(
-                                              'Incomes',
-                                              style: TextStyle(
-                                                  fontFamily: 'Libre',
-                                                  fontSize: 13,
-                                                  color: Colors.black),
-                                            ),
-                                          ]),
-                                    )),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(2.0),
-                              child: Card(
-                                child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      color: Colors.white,
-                                    ),
-                                    width: MediaQuery.of(context).size.width *
-                                        0.28,
-                                    height: 100,
-                                    child: Center(
-                                      child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: <Widget>[
-                                            Text(
-                                              '${NumberFormat.decimalPattern().format(widget.outcome)} MMK',
-                                              style: const TextStyle(
-                                                  fontFamily: 'Libre',
-                                                  fontSize: 13,
-                                                  color: Colors.black),
-                                            ),
-                                            const SizedBox(
-                                              height: 5,
-                                            ),
-                                            const Text(
-                                              'Expenses',
-                                              style: TextStyle(
-                                                  fontFamily: 'Libre',
-                                                  fontSize: 12,
-                                                  color: Colors.black),
-                                            ),
-                                          ]),
-                                    )),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(2.0),
-                              child: Card(
-                                child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      color: Colors.white,
-                                    ),
-                                    width: MediaQuery.of(context).size.width *
-                                        0.28,
-                                    height: 100,
-                                    child: Center(
-                                      child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: <Widget>[
-                                            Text(
-                                              '${NumberFormat.decimalPattern().format(widget.saving)} MMK',
-                                              style: const TextStyle(
-                                                  fontFamily: 'Libre',
-                                                  fontSize: 13,
-                                                  color: Colors.black),
-                                            ),
-                                            const SizedBox(
-                                              height: 5,
-                                            ),
-                                            const Text(
-                                              'Saving',
-                                              style: TextStyle(
-                                                  fontFamily: 'Libre',
-                                                  fontSize: 12,
-                                                  color: Colors.black),
-                                            ),
-                                          ]),
-                                    )),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        height: 280,
-                        child: Card(
-                          color: Colors.grey[100],
-                          elevation: 3,
-                          child: (widget.income == 0 &&
-                                  widget.outcome == 0 &&
-                                  widget.saving == 0)
-                              ? Center(
-                                  child: Text(
-                                    "No Data",
+                          Positioned(
+                            top: 30,
+                            right: 30,
+                            child: (widget.incomeVs < 0)
+                                ? Text(
+                                    "${NumberFormat.decimalPattern().format(widget.incomeVs)} MMK",
                                     style: TextStyle(
-                                        color: Colors.grey[700],
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.bold),
+                                        fontWeight: FontWeight.w500,
+                                        // color: Colors.red[300]
+                                        color: Colors.deepOrangeAccent[100]),
+                                  )
+                                : Text(
+                                    "${NumberFormat.decimalPattern().format(widget.incomeVs)} MMK",
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.white),
                                   ),
-                                )
-                              : Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                            flex: 1,
-                                            child: Row(
-                                              children: [
-                                                Transform.scale(
-                                                  scale: 0.8,
-                                                  child: Radio(
-                                                      value: 1,
-                                                      groupValue: selectedChart,
-                                                      onChanged: (value) =>
-                                                          setState(() {
-                                                            selectedChart = 1;
-                                                          })),
-                                                ),
-                                                const Expanded(
-                                                    child: Text(
-                                                  "Pie Chart",
-                                                  style: TextStyle(
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.w500),
-                                                ))
-                                              ],
-                                            )),
-                                            Expanded(
-                                            flex: 1,
-                                            child: Row(
-                                              children: [
-                                                Transform.scale(
-                                                  scale: 0.8,
-                                                  child: Radio(
-                                                      value: 2,
-                                                      groupValue: selectedChart,
-                                                      onChanged: (value) =>
-                                                          setState(() {
-                                                            selectedChart = 2;
-                                                          })),
-                                                ),
-                                                const Expanded(
-                                                    child: Text(
-                                                  "Column Chart",
-                                                  style: TextStyle(
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.w500),
-                                                ))
-                                              ],
-                                            ))
-                                      ],
-                                    ),
-                                    (selectedChart == 1)
-                                        ? SizedBox(
-                                            height: 200,
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(5.0),
-                                              child: SfCircularChart(
-                                                legend: Legend(
-                                                    isVisible: true,
-                                                    position:
-                                                        LegendPosition.bottom),
-                                                tooltipBehavior:
-                                                    TooltipBehavior(
-                                                        enable: true),
-                                                // series: <CircularSeries>[
-                                                //   PieSeries<IOData, String>(
-                                                //     dataSource: [
-                                                //       IOData("income",
-                                                //           widget.income
-                                                //           ),
-                                                //       IOData("outcome",
-                                                //           widget.outcome),
-                                                //       IOData("saving",
-                                                //           widget.saving)
-                                                //     ],
-
-                                                //     xValueMapper:
-                                                //         (IOData data, _) =>
-                                                //             data.iotype,
-                                                //     yValueMapper:
-                                                //         (IOData data, _) =>
-                                                //             data.iovalue,
-                                                //     dataLabelSettings:
-                                                //         const DataLabelSettings(
-                                                //             isVisible: true,
-                                                //             showZeroValue: true,
-                                                //             overflowMode:
-                                                //                 OverflowMode
-                                                //                     .trim,
-                                                //             showCumulativeValues:
-                                                //                 true,
-                                                //             labelPosition:
-                                                //                 ChartDataLabelPosition
-                                                //                     .outside),
-                                                //     enableTooltip: true,
-                                                //   )
-                                                // ],
-                                                series: <CircularSeries>[
-                                                  PieSeries<IOData, String>(
-                                                    dataSource: [
-                                                      IOData(
-                                                          "Income",
-                                                          double.parse(((widget
-                                                                          .income /
-                                                                      widget
-                                                                          .allTotal) *
-                                                                  100)
-                                                              .toStringAsFixed(
-                                                                  2)),
-                                                          "${double.parse(((widget.income / widget.allTotal) * 100).toStringAsFixed(2))}%"),
-                                                      IOData(
-                                                          "Outcome",
-                                                          double.parse(((widget
-                                                                          .outcome /
-                                                                      widget
-                                                                          .allTotal) *
-                                                                  100)
-                                                              .toStringAsFixed(
-                                                                  2)),
-                                                          "${double.parse(((widget.outcome / widget.allTotal) * 100).toStringAsFixed(2))}%"),
-                                                      IOData(
-                                                          "Saving",
-                                                          double.parse(((widget
-                                                                          .saving /
-                                                                      widget
-                                                                          .allTotal) *
-                                                                  100)
-                                                              .toStringAsFixed(
-                                                                  2)),
-                                                          "${double.parse(((widget.saving / widget.allTotal) * 100).toStringAsFixed(2))}%")
-                                                    ],
-                                                    xValueMapper:
-                                                        (IOData data, _) =>
-                                                            data.iotype,
-                                                    yValueMapper:
-                                                        (IOData data, _) =>
-                                                            data.iovalue,
-                                                    dataLabelMapper:
-                                                        (IOData data, _) =>
-                                                            data.iolabel,
-                                                    dataLabelSettings:
-                                                        const DataLabelSettings(
-                                                      isVisible: true,
-                                                      showZeroValue: true,
-                                                      // overflowMode:
-                                                      //     OverflowMode
-                                                      //         .trim,
-                                                      overflowMode:
-                                                          OverflowMode.shift,
-                                                      showCumulativeValues:
-                                                          true,
-                                                      // labelPosition:
-                                                      //     ChartDataLabelPosition
-                                                      //         .outside
-                                                    ),
-                                                    enableTooltip: true,
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                          )
-                                          : SizedBox(
-                                            height: 200,
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(5.0),
-                                              child: SfCartesianChart(
-                                                tooltipBehavior:
-                                                    TooltipBehavior(
-                                                        enable: true),
-                                                series: <ChartSeries>[
-                                                  ColumnSeries<IOCData, String>(
-                                                    color: Colors.teal,
-                                                    dataSource: [
-                                                      IOCData(
-                                                          "income",
-                                                          widget.income,
-                                                          NumberFormat
-                                                                  .decimalPattern()
-                                                              .format(widget
-                                                                  .income)),
-                                                      IOCData(
-                                                          "outcome",
-                                                          widget.outcome,
-                                                          NumberFormat
-                                                                  .decimalPattern()
-                                                              .format(widget
-                                                                  .outcome)),
-                                                      IOCData(
-                                                          "saving",
-                                                          widget.saving,
-                                                          NumberFormat
-                                                                  .decimalPattern()
-                                                              .format(widget
-                                                                  .saving))
-                                                    ],
-                                                    name: "data",
-                                                    xValueMapper:
-                                                        (IOCData data, _) =>
-                                                            data.iotype,
-                                                    yValueMapper:
-                                                        (IOCData data, _) =>
-                                                            data.iovalue,
-                                                    dataLabelMapper:
-                                                        (IOCData data, _) =>
-                                                            data.iolabel,
-                                                    enableTooltip: true,
-                                                    dataLabelSettings:
-                                                        const DataLabelSettings(
-                                                            isVisible: true,
-                                                            labelAlignment:
-                                                                ChartDataLabelAlignment
-                                                                    .outer),
-                                                  ),
-                                                ],
-                                                primaryXAxis: CategoryAxis(),
-                                              ),
-                                            ),
+                          ),
+                          Positioned(
+                            bottom: -120,
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 15),
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width - 20,
+                                height: 280,
+                                child: Card(
+                                  // color: Colors.grey[100],
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                  ),
+                                  elevation: 3,
+                                  child: (widget.income == 0 &&
+                                          widget.outcome == 0 &&
+                                          widget.saving == 0)
+                                      ? Center(
+                                          child: Text(
+                                            "No Data",
+                                            style: TextStyle(
+                                                color: Colors.grey[700],
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold),
                                           ),
-                                    // : Text("hi")
+                                        )
+                                      : Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                    flex: 1,
+                                                    child: GestureDetector(
+                                                      onTap: () {
+                                                    setState(() {
+                                                      selectedChart = 1;
+                                                    });
+                                                  },
+                                                      child: Row(
+                                                        children: [
+                                                          Transform.scale(
+                                                            scale: 0.8,
+                                                            child: Radio(
+                                                                value: 1,
+                                                                groupValue:
+                                                                    selectedChart,
+                                                                onChanged:
+                                                                    (value) =>
+                                                                        setState(
+                                                                            () {
+                                                                          selectedChart =
+                                                                              1;
+                                                                        })),
+                                                          ),
+                                                          const Expanded(
+                                                              child: Text(
+                                                            "Pie Chart",
+                                                            style: TextStyle(
+                                                                fontSize: 12,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500),
+                                                          ))
+                                                        ],
+                                                      ),
+                                                    )),
+                                                Expanded(
+                                                    flex: 1,
+                                                    child: GestureDetector(
+                                                      onTap: () {
+                                                    setState(() {
+                                                      selectedChart = 2;
+                                                    });
+                                                  },
+                                                      child: Row(
+                                                        children: [
+                                                          Transform.scale(
+                                                            scale: 0.8,
+                                                            child: Radio(
+                                                                value: 2,
+                                                                groupValue:
+                                                                    selectedChart,
+                                                                onChanged:
+                                                                    (value) =>
+                                                                        setState(
+                                                                            () {
+                                                                          selectedChart =
+                                                                              2;
+                                                                        })),
+                                                          ),
+                                                          const Expanded(
+                                                              child: Text(
+                                                            "Column Chart",
+                                                            style: TextStyle(
+                                                                fontSize: 12,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500),
+                                                          ))
+                                                        ],
+                                                      ),
+                                                    ))
+                                              ],
+                                            ),
+                                            (selectedChart == 1)
+                                                ? SizedBox(
+                                                    height: 200,
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              5.0),
+                                                      child: SfCircularChart(
+                                                        legend: Legend(
+                                                            isVisible: true,
+                                                            position:
+                                                                LegendPosition
+                                                                    .bottom),
+                                                        tooltipBehavior:
+                                                            TooltipBehavior(
+                                                                enable: true),
+                                                        // series: <CircularSeries>[
+                                                        //   PieSeries<IOData, String>(
+                                                        //     dataSource: [
+                                                        //       IOData("income",
+                                                        //           widget.income
+                                                        //           ),
+                                                        //       IOData("outcome",
+                                                        //           widget.outcome),
+                                                        //       IOData("saving",
+                                                        //           widget.saving)
+                                                        //     ],
+
+                                                        //     xValueMapper:
+                                                        //         (IOData data, _) =>
+                                                        //             data.iotype,
+                                                        //     yValueMapper:
+                                                        //         (IOData data, _) =>
+                                                        //             data.iovalue,
+                                                        //     dataLabelSettings:
+                                                        //         const DataLabelSettings(
+                                                        //             isVisible: true,
+                                                        //             showZeroValue: true,
+                                                        //             overflowMode:
+                                                        //                 OverflowMode
+                                                        //                     .trim,
+                                                        //             showCumulativeValues:
+                                                        //                 true,
+                                                        //             labelPosition:
+                                                        //                 ChartDataLabelPosition
+                                                        //                     .outside),
+                                                        //     enableTooltip: true,
+                                                        //   )
+                                                        // ],
+                                                        series: <
+                                                            CircularSeries>[
+                                                          PieSeries<IOData,
+                                                              String>(
+                                                            dataSource: [
+                                                              IOData(
+                                                                  AppLocalizations.of(
+                                                                          context)!
+                                                                      .income,
+                                                                  double.parse(
+                                                                      ((widget.income / widget.allTotal) *
+                                                                              100)
+                                                                          .toStringAsFixed(
+                                                                              2)),
+                                                                  "${double.parse(((widget.income / widget.allTotal) * 100).toStringAsFixed(2))}%"),
+                                                              IOData(
+                                                                  AppLocalizations.of(
+                                                                          context)!
+                                                                      .outcome,
+                                                                  double.parse(
+                                                                      ((widget.outcome / widget.allTotal) *
+                                                                              100)
+                                                                          .toStringAsFixed(
+                                                                              2)),
+                                                                  "${double.parse(((widget.outcome / widget.allTotal) * 100).toStringAsFixed(2))}%"),
+                                                              IOData(
+                                                                  AppLocalizations.of(
+                                                                          context)!
+                                                                      .saving,
+                                                                  double.parse(
+                                                                      ((widget.saving / widget.allTotal) *
+                                                                              100)
+                                                                          .toStringAsFixed(
+                                                                              2)),
+                                                                  "${double.parse(((widget.saving / widget.allTotal) * 100).toStringAsFixed(2))}%")
+                                                            ],
+                                                            xValueMapper:
+                                                                (IOData data,
+                                                                        _) =>
+                                                                    data.iotype,
+                                                            yValueMapper:
+                                                                (IOData data,
+                                                                        _) =>
+                                                                    data.iovalue,
+                                                            dataLabelMapper:
+                                                                (IOData data,
+                                                                        _) =>
+                                                                    data.iolabel,
+                                                            dataLabelSettings:
+                                                                const DataLabelSettings(
+                                                              isVisible: true,
+                                                              showZeroValue:
+                                                                  true,
+                                                              // overflowMode:
+                                                              //     OverflowMode
+                                                              //         .trim,
+                                                              overflowMode:
+                                                                  OverflowMode
+                                                                      .shift,
+                                                              showCumulativeValues:
+                                                                  true,
+                                                              // labelPosition:
+                                                              //     ChartDataLabelPosition
+                                                              //         .outside
+                                                            ),
+                                                            enableTooltip: true,
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  )
+                                                : SizedBox(
+                                                    height: 200,
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              5.0),
+                                                      child: SfCartesianChart(
+                                                        tooltipBehavior:
+                                                            TooltipBehavior(
+                                                                enable: true),
+                                                        series: <ChartSeries>[
+                                                          ColumnSeries<IOCData,
+                                                              String>(
+                                                            color: Colors.teal,
+                                                            dataSource: [
+                                                              IOCData(
+                                                                  AppLocalizations.of(
+                                                                          context)!
+                                                                      .income,
+                                                                  widget.income,
+                                                                  NumberFormat
+                                                                          .decimalPattern()
+                                                                      .format(widget
+                                                                          .income)),
+                                                              IOCData(
+                                                                  AppLocalizations.of(
+                                                                          context)!
+                                                                      .outcome,
+                                                                  widget
+                                                                      .outcome,
+                                                                  NumberFormat
+                                                                          .decimalPattern()
+                                                                      .format(widget
+                                                                          .outcome)),
+                                                              IOCData(
+                                                                  AppLocalizations.of(
+                                                                          context)!
+                                                                      .saving,
+                                                                  widget.saving,
+                                                                  NumberFormat
+                                                                          .decimalPattern()
+                                                                      .format(widget
+                                                                          .saving))
+                                                            ],
+                                                            name: "data",
+                                                            xValueMapper:
+                                                                (IOCData data,
+                                                                        _) =>
+                                                                    data.iotype,
+                                                            yValueMapper:
+                                                                (IOCData data,
+                                                                        _) =>
+                                                                    data.iovalue,
+                                                            dataLabelMapper:
+                                                                (IOCData data,
+                                                                        _) =>
+                                                                    data.iolabel,
+                                                            enableTooltip: true,
+                                                            dataLabelSettings:
+                                                                const DataLabelSettings(
+                                                                    isVisible:
+                                                                        true,
+                                                                    labelAlignment:
+                                                                        ChartDataLabelAlignment
+                                                                            .outer),
+                                                          ),
+                                                        ],
+                                                        primaryXAxis:
+                                                            CategoryAxis(),
+                                                      ),
+                                                    ),
+                                                  ),
+                                            // : Text("hi")
+                                          ],
+                                        ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ]),
+                    const SizedBox(
+                      height: 130,
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: 180,
+                      color: Colors.white,
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8),
+                                      child: Text(
+                                        AppLocalizations.of(context)!.income,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.grey[800]),
+                                      ),
+                                    ),
+                                    Text(
+                                      NumberFormat.decimalPattern()
+                                          .format(widget.income),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          // color: Colors.white
+                                          color: Colors.grey[800]),
+                                    ),
                                   ],
                                 ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        AppLocalizations.of(context)!.outcome,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            // color: Colors.white
+                                            color: Colors.grey[800]),
+                                      ),
+                                      Text(
+                                        NumberFormat.decimalPattern()
+                                            .format(widget.outcome),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            // color: Colors.white
+                                            color: Colors.grey[800]),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        AppLocalizations.of(context)!.saving,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            // color: Colors.grey[830],
+                                            // color: Colors.white
+                                            color: Colors.grey[800]),
+                                      ),
+                                      Text(
+                                        NumberFormat.decimalPattern()
+                                            .format(widget.saving),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            // color: Colors.grey[830]
+                                            // color: Colors.white
+                                            color: Colors.grey[800]),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const Divider(
+                                  color: Colors.grey,
+                                  thickness: 1,
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        AppLocalizations.of(context)!
+                                            .totalBalance,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            // color: Colors.white
+                                            color: Colors.grey[800]),
+                                      ),
+                                      (widget.incomeVs < 0)
+                                          ? Text(
+                                              NumberFormat.decimalPattern()
+                                                  .format(widget.incomeVs),
+                                              style: const TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.red),
+                                            )
+                                          : Text(
+                                              NumberFormat.decimalPattern()
+                                                  .format(widget.incomeVs),
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  // color: Colors.white
+                                                  color: Colors.grey[800]),
+                                            ),
+                                    ],
+                                  ),
+                                ),
+                              ]),
                         ),
                       ),
-                      Container(
-                        width: MediaQuery.of(context).size.width -20,
-                        decoration: BoxDecoration(
-                          border: Border.all(width: 1, color: Colors.grey),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              GestureDetector(
-                                  onTap: (choose == false)
-                                      ? () {
-                                          setState(() {
-                                            choose = !choose;
-                                          });
-                                        }
-                                      : () {},
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      color: choose
-                                          ? Colors.blue[700]
-                                          : Colors.grey[100],
-                                    ),
-                                    width: MediaQuery.of(context).size.width *
-                                        0.45,
-                                    height: 30,
-                                    child: Center(
-                                      child: Text(
-                                        'Income',
-                                        style: TextStyle(
-                                            fontFamily: 'Libre',
-                                            fontSize: 13,
-                                            color: choose
-                                                ? Colors.white
-                                                : Colors.black,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                  )),
-                                  GestureDetector(
-                                  onTap: (choose == true)
-                                      ? () {
-                                          setState(() {
-                                            choose = !choose;
-                                          });
-                                        }
-                                      : () {},
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      color: choose
-                                          ? Colors.grey[100]
-                                          : Colors.blue[700],
-                                    ),
-                                    width: MediaQuery.of(context).size.width *
-                                        0.45,
-                                    height: 30,
-                                    child: Center(
-                                      child: Text(
-                                        'Expenses',
-                                        style: TextStyle(
-                                            fontFamily: 'Libre',
-                                            fontSize: 10,
-                                            color: choose
-                                                ? Colors.black
-                                                : Colors.white,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                  )),
-                            ]),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width - 20,
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 1, color: Colors.grey),
+                        borderRadius: BorderRadius.circular(5),
+                        color: Colors.white,
                       ),
-                      choose
-                          ? Container(
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    pageindex = 0;
+                                  });
+                                  // print(pageindex);
+                                  pagecontroller.animateToPage(0,
+                                      duration:
+                                          const Duration(milliseconds: 500),
+                                      curve: Curves.easeInOut);
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: pageindex == 0
+                                        ? Colors.blue[700]
+                                        : Colors.white,
+                                  ),
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.31,
+                                  height: 30,
+                                  child: Center(
+                                    child: Text(
+                                      'Income',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          color: pageindex == 0
+                                              ? Colors.white
+                                              : Colors.black,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                )),
+                            GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    pageindex = 1;
+                                  });
+                                  // print(pageindex);
+                                  pagecontroller.animateToPage(1,
+                                      duration:
+                                          const Duration(milliseconds: 500),
+                                      curve: Curves.easeInOut);
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: pageindex == 1
+                                        ? Colors.blue[700]
+                                        : Colors.white,
+                                  ),
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.31,
+                                  height: 30,
+                                  child: Center(
+                                    child: Text(
+                                      'Expenses',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          color: pageindex == 1
+                                              ? Colors.white
+                                              : Colors.black,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                )),
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  pageindex = 2;
+                                });
+                                // print(pageindex);
+                                pagecontroller.animateToPage(2,
+                                    duration: Duration(milliseconds: 500),
+                                    curve: Curves.easeInOut);
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: pageindex == 2
+                                      ? Colors.blue[700]
+                                      : Colors.white,
+                                ),
+                                width: MediaQuery.of(context).size.width * 0.31,
+                                height: 30,
+                                child: Center(
+                                  child: Text(
+                                    'Saving',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        color: pageindex == 2
+                                            ? Colors.white
+                                            : Colors.black,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+                            )
+                          ]),
+                    ),
+                    Container(
+                      color: Colors.grey[100],
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * 0.4,
+                      child: PageView(
+                        controller: pagecontroller,
+                        onPageChanged: (int page) {
+                          setState(() {
+                            pageindex = page;
+                          });
+                          print('$page>>>>>');
+                        },
+                        children: [
+                          Container(
+                              color: Colors.grey[100],
                               width: (MediaQuery.of(context).size.width),
                               height: MediaQuery.of(context).size.height * 0.4,
                               child: GridView.count(
@@ -746,8 +876,9 @@ class _DashboardUiState extends State<DashboardUi> {
                                         choose: true,
                                       ),
                                     );
-                                  })))
-                          : Container(
+                                  }))),
+                          Container(
+                              color: Colors.grey[100],
                               width: (MediaQuery.of(context).size.width),
                               height: MediaQuery.of(context).size.height * 0.4,
                               child: GridView.count(
@@ -761,9 +892,16 @@ class _DashboardUiState extends State<DashboardUi> {
                                         choose: false,
                                       ),
                                     );
-                                  })))
-                    ],
-                  ),
+                                  }))),
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height * 0.4,
+                              child: const Saving())
+                          // Saving()
+                        ],
+                      ),
+                    )
+                  ],
                 ),
               ),
             ),
@@ -848,13 +986,11 @@ class SelectCard extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 4.0),
                       child: Text(
                         choice.title,
-                        style:
-                            const TextStyle(fontFamily: 'Libre', fontSize: 10),
+                       
                       ),
                     ),
                     Text(
                       '${NumberFormat.decimalPattern().format(choice.amount)} MMK',
-                      style: const TextStyle(fontFamily: 'Libre', fontSize: 8),
                     ),
                   ]),
             )),

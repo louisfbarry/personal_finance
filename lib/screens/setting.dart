@@ -211,7 +211,7 @@ class _SettingState extends State<Setting> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Colors.grey[100],
+      backgroundColor: Colors.grey[100],
       // appBar: AppBar(
       //   title: Padding(
       //     padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -239,11 +239,11 @@ class _SettingState extends State<Setting> {
                     Padding(
                       padding: const EdgeInsets.only(left: 20, top: 25),
                       child: Text(
-                        "Setting",
+                        AppLocalizations.of(context)!.setting,
                         style: TextStyle(
-                            fontSize: 22,
+                            fontSize: 23,
                             fontWeight: FontWeight.bold,
-                            color: Colors.grey[800]),
+                            color: Colors.grey[900]),
                       ),
                     ),
                     const SizedBox(
@@ -252,18 +252,23 @@ class _SettingState extends State<Setting> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Card(
-                        elevation: 2,
-                        color: Colors.grey[100],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        // color: Colors.grey[100],
+                        color: Colors.blue[700],
+                        elevation: 0,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 15),
                           child: Row(
                             // mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.person,
-                                size: 30,
-                                color: Colors.brown,
+                                size: 33,
+                                // color: Colors.brown,
+                                color: Colors.grey[200],
                               ),
                               const SizedBox(
                                 width: 10,
@@ -274,14 +279,17 @@ class _SettingState extends State<Setting> {
                                   Text(
                                     userDisplayName,
                                     style: TextStyle(
-                                        fontSize: 13,
+                                        fontSize: 15,
                                         fontWeight: FontWeight.w500,
-                                        color: Colors.grey[800]),
+                                        // color: Colors.grey[900]
+                                        color: Colors.grey[100]),
                                   ),
                                   Text(
                                     userEmail,
                                     style: TextStyle(
-                                        fontSize: 10, color: Colors.grey[700]),
+                                        fontSize: 13,
+                                        //  color: Colors.grey[800]
+                                        color: Colors.grey[200]),
                                   )
                                 ],
                               ),
@@ -311,7 +319,7 @@ class _SettingState extends State<Setting> {
                               ),
                               Text(
                                 AppLocalizations.of(context)!.passcodeLogin,
-                                style: TextStyle(fontSize: 13),
+                                style: TextStyle(fontSize: 15),
                               )
                             ],
                           ),
@@ -331,13 +339,15 @@ class _SettingState extends State<Setting> {
                       ),
                     ),
                     Divider(
-                      color: Colors.grey[300],
+                      color: Colors.grey[400],
                       thickness: 0.5,
                     ),
 
                     InkWell(
                       onTap: () {
-                        _securityDialog(context);
+                        // _securityDialog(context);
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const Security()));
                       },
                       child: settingButton(
                           AppLocalizations.of(context)!.security,
@@ -347,7 +357,7 @@ class _SettingState extends State<Setting> {
                           )),
                     ),
                     Divider(
-                      color: Colors.grey[300],
+                      color: Colors.grey[400],
                       thickness: 0.5,
                     ),
                     InkWell(
@@ -363,18 +373,17 @@ class _SettingState extends State<Setting> {
                           )),
                     ),
                     Divider(
-                      color: Colors.grey[300],
+                      color: Colors.grey[400],
                       thickness: 0.5,
                     ),
                     InkWell(
                       onTap: () {
                         _showDialog(
-                            context, AppLocalizations.of(context)!.dywtrp, 
+                            context,
+                            AppLocalizations.of(context)!.dywtrp,
 
                             // AppLocalizations.of(context)!.reset,
-                            "Reset",
-
-                            () async {
+                            "Reset", () async {
                           // saving delete path
                           var savingDeletePath = FirebaseFirestore.instance
                               .collection(
@@ -478,18 +487,20 @@ class _SettingState extends State<Setting> {
                           //last
                         });
                       },
-                      child: settingButton(AppLocalizations.of(context)!.resetApp,
+                      child: settingButton(
+                          AppLocalizations.of(context)!.resetApp,
                           const Icon(Icons.restart_alt, color: Colors.orange)),
                     ),
                     Divider(
-                      color: Colors.grey[300],
+                      color: Colors.grey[400],
                       thickness: 0.5,
                     ),
                     InkWell(
                         onTap: () {
                           _showDialog(
-                              context, AppLocalizations.of(context)!.dywtlo, "Logout",
-                              () async {
+                              context,
+                              AppLocalizations.of(context)!.dywtlo,
+                              "Logout", () async {
                             final prefs = await SharedPreferences.getInstance();
                             final success = await prefs.remove('passwordLogin');
                             final Language = await prefs.remove('language');
@@ -506,7 +517,7 @@ class _SettingState extends State<Setting> {
                               color: Colors.red,
                             ))),
                     Divider(
-                      color: Colors.grey[300],
+                      color: Colors.grey[400],
                       thickness: 0.5,
                     )
                   ],
@@ -531,7 +542,7 @@ Widget settingButton(text, icon) {
           Text(
             text,
             style: const TextStyle(
-              fontSize: 13,
+              fontSize: 15,
             ),
           ),
         ]),

@@ -1,7 +1,6 @@
 import 'package:finance/model/firebaseservice.dart';
 import 'package:finance/screens/addValue.dart';
 import 'package:finance/screens/dashboard.dart';
-import 'package:finance/screens/saving.dart';
 import 'package:finance/screens/setting.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -21,12 +20,9 @@ class Mainpage extends StatefulWidget {
 class _MainpageState extends State<Mainpage> {
   int currentIndex = 0;
 
-  final screens = [
-    Dashboard(),
-    Saving(),
-    AddValue(),
-    Setting()
-  ];
+  final screens = [const Dashboard(), const Setting()];
+
+  bool ishome = true;
   void loginCheck() {
     FirebaseAuth.instance.authStateChanges().listen((user) {
       if (user == null) {
@@ -43,14 +39,15 @@ class _MainpageState extends State<Mainpage> {
     final prefs = await SharedPreferences.getInstance();
     final int? lang = prefs.getInt('language');
     if (lang == 2) {
+      // ignore: use_build_context_synchronously
       final provider = Provider.of<LocaleProvider>(context, listen: false);
       provider.setLocale(Locale('my'));
     } else {
+      // ignore: use_build_context_synchronously
       final provider = Provider.of<LocaleProvider>(context, listen: false);
       provider.setLocale(Locale('en'));
     }
   }
-
 
   @override
   void initState() {
@@ -63,10 +60,7 @@ class _MainpageState extends State<Mainpage> {
 
   @override
   Widget build(BuildContext context) {
-    // body: IndexedStack(
-    //   index: currentIndex,
-    //   children: screens,
-    // ),
+    //
     return WillPopScope(
       onWillPop: () async {
         SystemNavigator.pop();
@@ -74,105 +68,105 @@ class _MainpageState extends State<Mainpage> {
       },
       child: Scaffold(
         body: screens[currentIndex],
-
-        // BAR 1
-        bottomNavigationBar: NavigationBarTheme(
-          data: NavigationBarThemeData(
-            indicatorColor: Colors.transparent,
-            labelTextStyle: MaterialStateProperty.all(TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
-                color: Colors.grey[900])),
-          ),
-          child: NavigationBar(
-            height: 60,
-            backgroundColor: const Color.fromARGB(255, 238, 250, 255),
-            elevation: 0,
-            labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
-            selectedIndex: currentIndex,
-            onDestinationSelected: (index) {
-              if (index == 2) {
-                showModalBottomSheet(
-                    backgroundColor: Colors.transparent,
-                    barrierColor: Colors.transparent,
-                    context: context,
-                    enableDrag: true,
-                    isScrollControlled: true,
-                    builder: (_) {
-                      return Container(
-                        height: MediaQuery.of(context).size.height * 0.8,
-                        decoration: BoxDecoration(
-                            color: Colors.grey[100],
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(20),
-                              topRight: Radius.circular(20),
-                            )),
-                        child: const AddValue(),
-                      );
-                    });
-              } else {
-                setState(() {
-                  currentIndex = index;
+        floatingActionButton: FloatingActionButton(
+          // elevation: 0,
+          onPressed: () {
+            showModalBottomSheet(
+                backgroundColor: Colors.transparent,
+                barrierColor: Colors.transparent,
+                context: context,
+                enableDrag: true,
+                isScrollControlled: true,
+                builder: (_) {
+                  return Container(
+                    height: MediaQuery.of(context).size.height * 0.8,
+                    decoration: BoxDecoration(
+                        color: Colors.grey[100],
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          topRight: Radius.circular(20),
+                        )),
+                    child: const AddValue(),
+                  );
                 });
-              }
-            },
-            destinations: const [
-              NavigationDestination(
-                  icon: Icon(FontAwesomeIcons.house),
-                  selectedIcon:
-                      Icon(FontAwesomeIcons.house, color: Colors.blueAccent),
-                  label: "Home"),
-              NavigationDestination(
-                  icon: Icon(
-                    FontAwesomeIcons.piggyBank,
-                  ),
-                  selectedIcon: Icon(FontAwesomeIcons.piggyBank,
-                      color: Colors.blueAccent),
-                  label: "Saving"),
-              NavigationDestination(
-                  icon: Icon(FontAwesomeIcons.circlePlus),
-                  selectedIcon: Icon(FontAwesomeIcons.circlePlus,
-                      color: Colors.blueAccent),
-                  label: "Add Value"),
-              NavigationDestination(
-                  icon: Icon(FontAwesomeIcons.gear),
-                  selectedIcon:
-                      Icon(FontAwesomeIcons.gear, color: Colors.blueAccent),
-                  label: "Setting"),
+          },
+          backgroundColor: Colors.blue[700],
+          child: const Icon(Icons.add),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        bottomNavigationBar: BottomAppBar(
+          color: Colors.blue[700],
+          shape: const CircularNotchedRectangle(),
+          notchMargin: 4,
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              SizedBox(
+                height: 60,
+                width: MediaQuery.of(context).size.width * 0.47,
+                child: GestureDetector(
+                    onTap: ishome
+                        ? () {}
+                        : () {
+                            setState(() {
+                              currentIndex = 0;
+                              ishome = true;
+                            });
+                          },
+                    child: ishome
+                        ? Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Icon(
+                                FontAwesomeIcons.house,
+                                color: Colors.black,
+                              ),
+                              Text(
+                                'Home',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                ),
+                              )
+                            ],
+                          )
+                        : const Icon(FontAwesomeIcons.house)),
+              ),
+              SizedBox(
+                height: 60,
+                width: MediaQuery.of(context).size.width * 0.47,
+                child: GestureDetector(
+                    onTap: ishome
+                        ? () {
+                            setState(() {
+                              currentIndex = 1;
+                              ishome = false;
+                            });
+                          }
+                        : () {},
+                    child: ishome
+                        ? const Icon(
+                            FontAwesomeIcons.gear,
+                          )
+                        : Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Icon(
+                                FontAwesomeIcons.gear,
+                                color: Colors.black,
+                              ),
+                              Text(
+                                'Setting',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                ),
+                              )
+                            ],
+                          )),
+              ),
             ],
           ),
         ),
-
-        // // BAR 2
-        // bottomNavigationBar: BottomNavigationBar(
-        //   // backgroundColor: Colors.grey[900],
-        //   // selectedItemColor: Colors.grey[100],
-        //   // unselectedItemColor: Colors.grey[500],
-        //   // showUnselectedLabels: false,
-        //   currentIndex: currentIndex,
-        //   // type: BottomNavigationBarType.fixed,
-        //   onTap: (index) => setState(() {
-        //     currentIndex = index;
-        //   }),
-        //   items: const [
-        //     BottomNavigationBarItem(
-        //         icon: Icon(Icons.home),
-        //         label: "Home",
-        //         backgroundColor: Colors.green),
-        //     BottomNavigationBarItem(
-        //         icon: Icon(Icons.favorite),
-        //         label: "Saving",
-        //         backgroundColor: Colors.blue),
-        //     BottomNavigationBarItem(
-        //         icon: Icon(Icons.chat),
-        //         label: "Budget",
-        //         backgroundColor: Colors.teal),
-        //     BottomNavigationBarItem(
-        //         icon: Icon(Icons.settings),
-        //         label: "Setting",
-        //         backgroundColor: Colors.red),
-        //   ],
-        // ),
       ),
     );
   }

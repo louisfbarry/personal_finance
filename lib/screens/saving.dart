@@ -60,28 +60,28 @@ class _SavingState extends State<Saving> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          AppLocalizations.of(context)!.saving,
-          style: const TextStyle(fontSize: 15),
-        ),
-        // actions: [
-        //   IconButton(
-        //     onPressed: () {
-        //       // Navigator.pushNamed(context, "/savingadding");
-        //       Navigator.of(context).push(MaterialPageRoute(
-        //           builder: (context) => const AddSaving(
-        //                 isEdit: false,
-        //               )));
-        //     },
-        //     icon: const Icon(Icons.playlist_add),
-        //   ),
-        // ],
-        automaticallyImplyLeading: false,
-        elevation: 0.0,
-        backgroundColor: Colors.blue[700],
-      ),
+      // appBar: AppBar(
+      //   centerTitle: true,
+      //   title: Text(
+      //     AppLocalizations.of(context)!.saving,
+      //     style: const TextStyle(fontSize: 15),
+      //   ),
+      //   // actions: [
+      //   //   IconButton(
+      //   //     onPressed: () {
+      //   //       // Navigator.pushNamed(context, "/savingadding");
+      //   //       Navigator.of(context).push(MaterialPageRoute(
+      //   //           builder: (context) => const AddSaving(
+      //   //                 isEdit: false,
+      //   //               )));
+      //   //     },
+      //   //     icon: const Icon(Icons.playlist_add),
+      //   //   ),
+      //   // ],
+      //   automaticallyImplyLeading: false,
+      //   elevation: 0.0,
+      //   backgroundColor: Colors.blue[700],
+      // ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection("${FirebaseAuth.instance.currentUser!.email}")

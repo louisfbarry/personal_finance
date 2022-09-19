@@ -35,8 +35,6 @@ class _IncomeCategoCreateState extends State<IncomeCategoCreate> {
 
   Map<String, dynamic>? data;
   String dropdownValue = 'Salary';
-  List<String> incomeCategoList = [];
-  List<String> incomeCategoImgList = [];
   String incomedropdown = 'money';
 
   @override
@@ -75,7 +73,7 @@ class _IncomeCategoCreateState extends State<IncomeCategoCreate> {
               key: formKey,
               child: Row(children: [
                 SizedBox(
-                  width: 80,
+                  width: 100,
                   height: 50,
                   child: DropdownButtonFormField(
                     value: incomedropdown,
@@ -168,6 +166,9 @@ class _IncomeCategoCreateState extends State<IncomeCategoCreate> {
                     ))
               ]),
             ),
+            SizedBox(
+              height: 20,
+            ),
             StreamBuilder(
               stream: firestore
                   .collection('${FirebaseAuth.instance.currentUser!.email}')
@@ -190,16 +191,12 @@ class _IncomeCategoCreateState extends State<IncomeCategoCreate> {
                   );
                 }
                 if (snapshot.hasData) {
-                  incomeCategoList = [];
-                  incomeCategoImgList = [];
                   categostylelist = [];
                   for (var element in snapshot.data!.docs) {
                     data = element.data() as Map<String, dynamic>;
                     categostylelist.add(Categostyle(
                         categoname: data!['categoname'],
                         imgname: data!['imagId']));
-                    // incomeCategoList.add(data!['categoname']);
-                    // incomeCategoImgList.add(data!['imagId']);
                   }
                 }
 
@@ -249,114 +246,139 @@ class _CategostyleState extends State<Categostyle> {
             builder: (BuildContext context) {
               return StatefulBuilder(builder: (context, setState) {
                 return AlertDialog(
-                    contentPadding: const EdgeInsets.all(6),
+                    contentPadding: const EdgeInsets.all(2),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    content: Row(children: [
-                      SizedBox(
-                        width: 70,
-                        height: 50,
-                        child: DropdownButtonFormField(
-                          value: widget.imgname,
-                          isExpanded: true,
-                          items: incomeImg
-                              .map((item) => DropdownMenuItem<String>(
-                                  value: item,
-                                  child: SizedBox(
-                                      width: 30,
-                                      height: 40,
-                                      child: Image(
-                                        image: AssetImage('images/$item.png'),
-                                      ))))
-                              .toList(),
-                          onChanged: (newValue) {
-                            setState(() {
-                              widget.imgname = newValue.toString();
-                            });
-                          },
-                          decoration: InputDecoration(
-                              enabledBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      width: 1, color: Colors.black),
-                                  borderRadius: BorderRadius.circular(5)),
-                              focusedBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      width: 1, color: Colors.black),
-                                  borderRadius: BorderRadius.circular(5))),
+                    content: Container(
+                      height: 170,
+                      width: MediaQuery.of(context).size.width,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 8.0, right: 8),
+                        child: Column(
+                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Align(
+                              alignment: Alignment.topRight,
+                              child: IconButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  icon: const Icon(Icons.close)),
+                            ),
+                            Row(children: [
+                              SizedBox(
+                                width: 100,
+                                height: 50,
+                                child: DropdownButtonFormField(
+                                  value: widget.imgname,
+                                  isExpanded: true,
+                                  items: incomeImg
+                                      .map((item) => DropdownMenuItem<String>(
+                                          value: item,
+                                          child: SizedBox(
+                                              width: 30,
+                                              height: 40,
+                                              child: Image(
+                                                image: AssetImage(
+                                                    'images/$item.png'),
+                                              ))))
+                                      .toList(),
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      widget.imgname = newValue.toString();
+                                    });
+                                  },
+                                  decoration: InputDecoration(
+                                      enabledBorder: OutlineInputBorder(
+                                          borderSide: const BorderSide(
+                                              width: 1, color: Colors.black),
+                                          borderRadius:
+                                              BorderRadius.circular(5)),
+                                      focusedBorder: OutlineInputBorder(
+                                          borderSide: const BorderSide(
+                                              width: 1, color: Colors.black),
+                                          borderRadius:
+                                              BorderRadius.circular(5))),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              SizedBox(
+                                width: 175,
+                                height: 50,
+                                child: TextFormField(
+                                  controller: newEditcatego,
+                                  validator: RequiredValidator(
+                                      errorText:
+                                          'Pls enter your category name'),
+                                  decoration: InputDecoration(
+                                    errorBorder: OutlineInputBorder(
+                                      borderSide: const BorderSide(
+                                          width: 1, color: Colors.redAccent),
+                                      borderRadius: BorderRadius.circular(5.0),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: const BorderSide(
+                                          width: 1, color: Colors.black),
+                                      borderRadius: BorderRadius.circular(5.0),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                            width: 2, color: Colors.black),
+                                        borderRadius: BorderRadius.circular(5)),
+                                    focusedErrorBorder: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                            width: 1, color: Colors.redAccent),
+                                        borderRadius: BorderRadius.circular(5)),
+                                    hintText: 'Create category',
+                                  ),
+                                ),
+                              ),
+                            ]),
+                            const SizedBox(height: 15),
+                            ElevatedButton(
+                                onPressed: () async {
+                                  print(
+                                      '${newEditcatego.text} <<< and >>> ${widget.imgname}');
+                                  incomecategoDataEdit(
+                                      widget.categoname, newEditcatego.text);
+                                  user
+                                      .doc('Income-catego')
+                                      .collection('data')
+                                      .doc(widget.categoname)
+                                      .delete();
+                                  user
+                                      .doc('Income-catego')
+                                      .collection('data')
+                                      .doc(newEditcatego.text)
+                                      .set({
+                                    'categoname': newEditcatego.text,
+                                    'imagId': widget.imgname
+                                  });
+                                  Navigator.pop(context);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.blue[700],
+                                  // padding: const EdgeInsets.all(10),
+                                ),
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  alignment: Alignment.center,
+                                  child: const Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      'Edit',
+                                      style: TextStyle(
+                                          fontSize: 18, color: Colors.white),
+                                    ),
+                                  ),
+                                ))
+                          ],
                         ),
                       ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      SizedBox(
-                        width: 110,
-                        height: 50,
-                        child: TextFormField(
-                          controller: newEditcatego,
-                          validator: RequiredValidator(
-                              errorText: 'Pls enter your category name'),
-                          decoration: InputDecoration(
-                            errorBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  width: 1, color: Colors.redAccent),
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  width: 1, color: Colors.black),
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                    width: 2, color: Colors.black),
-                                borderRadius: BorderRadius.circular(5)),
-                            focusedErrorBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                    width: 1, color: Colors.redAccent),
-                                borderRadius: BorderRadius.circular(5)),
-                            hintText: 'Create category',
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      ElevatedButton(
-                          onPressed: () async {
-                            print(
-                                '${newEditcatego.text} <<< and >>> ${widget.imgname}');
-                            incomecategoDataEdit(
-                                widget.categoname, newEditcatego.text);
-                            user
-                                .doc('Income-catego')
-                                .collection('data')
-                                .doc(widget.categoname)
-                                .delete();
-                            user
-                                .doc('Income-catego')
-                                .collection('data')
-                                .doc(newEditcatego.text)
-                                .set({
-                              'categoname': newEditcatego.text,
-                              'imagId': widget.imgname
-                            });
-                            Navigator.pop(context);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.blue[700],
-                            // padding: const EdgeInsets.all(10),
-                          ),
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 4, vertical: 13),
-                            child: Text(
-                              'Edit',
-                              style:
-                                  TextStyle(fontSize: 18, color: Colors.white),
-                            ),
-                          ))
-                    ]));
+                    ));
               });
             });
         break;
@@ -426,7 +448,7 @@ class _CategostyleState extends State<Categostyle> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(8),
         child:
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           Row(

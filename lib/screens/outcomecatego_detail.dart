@@ -327,7 +327,8 @@ class _DetailStyleState extends State<DetailStyle> {
 
   @override
   void initState() {
-    amountcontroller = TextEditingController(text: '${widget.data!['amount']}');
+    amountcontroller = TextEditingController(
+        text: NumberFormat.decimalPattern().format(widget.data!['amount']));
     notecontroller = TextEditingController(text: '${widget.data!['note']}');
     dropdownValue = widget.data!['category'];
     getimg();
@@ -348,7 +349,7 @@ class _DetailStyleState extends State<DetailStyle> {
                 child: Container(
                   height: MediaQuery.of(context).size.height * 0.6,
                   decoration: const BoxDecoration(
-                      color: Color.fromARGB(240, 245, 252, 228),
+                      color: Colors.white,
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(20),
                         topRight: Radius.circular(20),
@@ -375,7 +376,7 @@ class _DetailStyleState extends State<DetailStyle> {
                             child: Text('Category'),
                           ),
                           Container(
-                            width: MediaQuery.of(context).size.width * 0.8,
+                            width: MediaQuery.of(context).size.width,
                             child: DropdownButtonFormField(
                               value: dropdownValue,
                               isExpanded: true,
@@ -419,12 +420,12 @@ class _DetailStyleState extends State<DetailStyle> {
                             ),
                           ),
                           const Padding(
-                            padding: EdgeInsets.only(bottom: 5.0),
+                            padding: EdgeInsets.symmetric(vertical: 5.0),
                             child: Text('Amount'),
                           ),
                           SizedBox(
                             height: 60,
-                            width: 300,
+                            width: MediaQuery.of(context).size.width,
                             child: TextFormField(
                               controller: amountcontroller,
                               inputFormatters: [
@@ -450,8 +451,7 @@ class _DetailStyleState extends State<DetailStyle> {
                                 focusedBorder: OutlineInputBorder(
                                     borderSide: const BorderSide(
                                         width: 2,
-                                        color:
-                                            Color.fromARGB(157, 9, 237, 176)),
+                                        color: Color.fromARGB(157, 0, 0, 0)),
                                     borderRadius: BorderRadius.circular(10)),
                                 focusedErrorBorder: OutlineInputBorder(
                                     borderSide: const BorderSide(
@@ -470,7 +470,7 @@ class _DetailStyleState extends State<DetailStyle> {
                           ),
                           SizedBox(
                             height: 60,
-                            width: 300,
+                            width: MediaQuery.of(context).size.width,
                             child: TextFormField(
                               controller: notecontroller,
                               autovalidateMode: submitted
@@ -492,8 +492,7 @@ class _DetailStyleState extends State<DetailStyle> {
                                 focusedBorder: OutlineInputBorder(
                                     borderSide: const BorderSide(
                                         width: 2,
-                                        color:
-                                            Color.fromARGB(157, 9, 237, 176)),
+                                        color: Color.fromARGB(157, 0, 0, 0)),
                                     borderRadius: BorderRadius.circular(10)),
                                 focusedErrorBorder: OutlineInputBorder(
                                     borderSide: const BorderSide(
@@ -506,8 +505,12 @@ class _DetailStyleState extends State<DetailStyle> {
                               ),
                             ),
                           ),
-                          Text('Created At : ${widget.data!['created At']}'),
-Row(
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Text(
+                                'Created At : ${widget.data!['created At']}'),
+                          ),
+                          Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               ElevatedButton(
@@ -575,7 +578,7 @@ Row(
                         ],
                       ),
                       Text(
-                        '${widget.data!['amount']} MMK',
+                        '${NumberFormat.decimalPattern().format(widget.data!['amount'])} MMK',
                         style: Theme.of(context)
                             .textTheme
                             .bodyText1!
@@ -592,16 +595,3 @@ Row(
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

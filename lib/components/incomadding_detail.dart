@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import '../model/firebaseservice.dart';
+
 class IncomeAddingDetail extends StatefulWidget {
   IncomeAddingDetail({
     Key? key,
@@ -14,6 +15,7 @@ class IncomeAddingDetail extends StatefulWidget {
   @override
   State<IncomeAddingDetail> createState() => _IncomeAddingDetailState();
 }
+
 class _IncomeAddingDetailState extends State<IncomeAddingDetail> {
   // List<String>? getlist;
   Map<String, dynamic>? data;
@@ -128,13 +130,13 @@ class _IncomeAddingDetailState extends State<IncomeAddingDetail> {
                                       height:
                                           MediaQuery.of(context).size.height *
                                               0.8,
-                                      decoration: BoxDecoration(
-                                          color: Colors.grey[100],
-                                          borderRadius: const BorderRadius.only(
+                                      decoration: const BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.only(
                                             topLeft: Radius.circular(20),
                                             topRight: Radius.circular(20),
                                           )),
-                                      child: IncomeCategoCreate());
+                                      child: const IncomeCategoCreate());
                                 });
                           },
                           child: Container(

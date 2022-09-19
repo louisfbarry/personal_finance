@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-
 class Security extends StatefulWidget {
   const Security({Key? key}) : super(key: key);
   @override
@@ -13,6 +12,7 @@ class Security extends StatefulWidget {
 
 class _SecurityState extends State<Security> {
   TextEditingController nameController = TextEditingController();
+  TextEditingController oldPasswordController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
   bool submitted = false;
@@ -43,8 +43,11 @@ class _SecurityState extends State<Security> {
             onTap: () {
               nameController.clear();
 
+              bool pass2 = true;
               bool loading = false;
               bool submitted = false;
+              TextEditingController nameOldPasswordController =
+                  TextEditingController();
 
               showDialog(
                 context: context,
@@ -61,122 +64,212 @@ class _SecurityState extends State<Security> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        content: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                AppLocalizations.of(context)!.changeName,
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey[800],
-                                    fontWeight: FontWeight.w500),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              TextFormField(
-                                  controller: nameController,
-                                  // autovalidateMode: submitted
-                                  //     ? AutovalidateMode.onUserInteraction
-                                  //     : AutovalidateMode.disabled,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return "Name can't be empty";
-                                    } else {
-                                      return null;
-                                    }
-                                  },
-                                  autofocus: true,
-                                  decoration: const InputDecoration(
-                                    hintText: "Enter your new name",
-                                    hintStyle: TextStyle(fontSize: 12),
-                                    contentPadding: EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 8,
-                                    ),
-                                    isDense: true,
-                                  )),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: const Text(
-                                        "Cancel",
-                                        style: TextStyle(fontSize: 12),
-                                      )),
-                                  TextButton(
-                                      // 1/9
-                                      onPressed: () async {
-                                        setState(() {
-                                          submitted = true;
-                                        });
-                                        var validate =
-                                            _formKey.currentState!.validate();
-                                        // _formKey.currentState!.validate();
-                                        if (validate) {
+                        content: SingleChildScrollView(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  AppLocalizations.of(context)!.changeName,
+                                  style: TextStyle(
+                                      fontSize: 17,
+                                      color: Colors.grey[900],
+                                      fontWeight: FontWeight.w500),
+                                ),
+                                const SizedBox(
+                                  height: 17,
+                                ),
+                                // Padding(
+                                //   padding: const EdgeInsets.only(bottom: 5, left: 5),
+                                //   child: Text(AppLocalizations.of(context)!.oldPassword, style: TextStyle(
+                                //     fontSize: 12,
+                                //     fontWeight: FontWeight.w500,
+                                //     color: Colors.grey[800]
+                                //   ),),
+                                // ),
+                                TextFormField(
+                                    controller: nameOldPasswordController,
+                                    autovalidateMode: (submitted)
+                                        ? AutovalidateMode.always
+                                        : AutovalidateMode.disabled,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return "Password can't be empty";
+                                      } else {
+                                        return null;
+                                      }
+                                    },
+                                    autofocus: true,
+                                    obscureText: pass2,
+                                    decoration: InputDecoration(
+                                      hintText: "Enter your old password",
+                                      hintStyle: const TextStyle(fontSize: 12),
+                                      suffixIcon: IconButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              print(pass2);
+                                              pass2 = !pass2;
+                                            });
+                                          },
+                                          splashRadius: 2,
+                                          icon: (pass2)
+                                              ? Icon(
+                                                  Icons.remove_red_eye,
+                                                  color: Colors.grey[700],
+                                                )
+                                              : Icon(
+                                                  Icons.visibility_off,
+                                                  color: Colors.grey[700],
+                                                )),
+                                      contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 8,
+                                      ),
+                                      isDense: true,
+                                    )),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                // Padding(
+                                //   padding: const EdgeInsets.only(bottom: 5, left: 5),
+                                //   child: Text(AppLocalizations.of(context)!.newName, style: TextStyle(
+                                //     fontSize: 12,
+                                //     fontWeight: FontWeight.w500,
+                                //     color: Colors.grey[800]
+                                //   ),),
+                                // ),
+                                TextFormField(
+                                    controller: nameController,
+                                    // autovalidateMode: submitted
+                                    //     ? AutovalidateMode.onUserInteraction
+                                    //     : AutovalidateMode.disabled,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return "Name can't be empty";
+                                      } else {
+                                        return null;
+                                      }
+                                    },
+                                    autofocus: true,
+                                    decoration: const InputDecoration(
+                                      hintText: "Enter your new name",
+                                      hintStyle: TextStyle(fontSize: 12),
+                                      // contentPadding: EdgeInsets.symmetric(
+                                      //   horizontal: 8,
+                                      //   vertical: 8,
+                                      // ),
+                                      // isDense: true,
+                                    )),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text(
+                                          "Cancel",
+                                          style: TextStyle(fontSize: 12),
+                                        )),
+                                    TextButton(
+                                        // 1/9
+                                        onPressed: () async {
                                           setState(() {
-                                            loading = true;
+                                            submitted = true;
                                           });
-                                          final user = FirebaseAuth
-                                              .instance.currentUser!;
-                                          await user
-                                              .updateDisplayName(
-                                                  nameController.text)
-                                              .then((value) async {
-                                            final prefs =
-                                                await SharedPreferences
-                                                    .getInstance();
-                                            await prefs.setString('displayName',
-                                                nameController.text);
-                                            Navigator.pop(context);
-
+                                          var validate =
+                                              _formKey.currentState!.validate();
+                                          // _formKey.currentState!.validate();
+                                          if (validate) {
                                             setState(() {
-                                              loading = false;
+                                              loading = true;
                                             });
-
-                                            // ignore: use_build_context_synchronously
-                                            showSnackbar(
-                                                context,
-                                                "Name has been successfully changed",
-                                                2,
-                                                Colors.green[300]);
-                                          }).catchError((error) {
-                                            print(error);
-                                            Navigator.pop(context);
-
-                                            setState(() {
-                                              loading = false;
-                                            });
-
-                                            showSnackbar(
-                                                context,
-                                                "Name can't be changed ${error.toString()}",
-                                                5,
-                                                Colors.red[300]);
-                                          });
-                                          await user.reload();
-                                        }
-                                      },
-                                      child: loading
-                                          ? const SizedBox(
-                                              width: 10,
-                                              height: 10,
-                                              child: CircularProgressIndicator(
-                                                strokeWidth: 1,
-                                              ))
-                                          : const Text(
-                                              "Save",
-                                              style: TextStyle(fontSize: 12),
-                                            )),
-                                ],
-                              )
-                            ],
+                        
+                                            final prefs = await SharedPreferences
+                                                .getInstance();
+                        
+                                            String? oldPass =
+                                                await prefs.getString("password");
+                        
+                                            if (nameOldPasswordController.text ==
+                                                oldPass) {
+                                              final user = FirebaseAuth
+                                                  .instance.currentUser!;
+                                              await user
+                                                  .updateDisplayName(
+                                                      nameController.text)
+                                                  .then((value) async {
+                                                final prefs =
+                                                    await SharedPreferences
+                                                        .getInstance();
+                                                await prefs.setString(
+                                                    'displayName',
+                                                    nameController.text);
+                                                // Navigator.pop(context);
+                                                // ignore: use_build_context_synchronously
+                                                Navigator.popAndPushNamed(
+                                                    context, "/main");
+                        
+                                                setState(() {
+                                                  loading = false;
+                                                });
+                        
+                                                // ignore: use_build_context_synchronously
+                                                showSnackbar(
+                                                    context,
+                                                    "Name has been successfully changed",
+                                                    2,
+                                                    Colors.green[300]);
+                                              }).catchError((error) {
+                                                print(error);
+                                                Navigator.pop(context);
+                        
+                                                setState(() {
+                                                  loading = false;
+                                                });
+                        
+                                                showSnackbar(
+                                                    context,
+                                                    "Name can't be changed ${error.toString()}",
+                                                    5,
+                                                    Colors.red[300]);
+                                              });
+                                              await user.reload();
+                                            } else {
+                                              Navigator.pop(context);
+                        
+                                              setState(() {
+                                                loading = false;
+                                              });
+                                              // ignore: use_build_context_synchronously
+                                              showSnackbar(
+                                                  context,
+                                                  "Your old password is invalid !",
+                                                  2,
+                                                  Colors.red[300]);
+                                            }
+                                          }
+                                        },
+                                        child: loading
+                                            ? const SizedBox(
+                                                width: 10,
+                                                height: 10,
+                                                child: CircularProgressIndicator(
+                                                  strokeWidth: 2,
+                                                ))
+                                            : const Text(
+                                                "Save",
+                                                style: TextStyle(fontSize: 12),
+                                              )),
+                                  ],
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -185,8 +278,8 @@ class _SecurityState extends State<Security> {
                 },
               );
             },
-            child: securityButton(
-                AppLocalizations.of(context)!.changeName, const Icon(Icons.person, color: Colors.amber)),
+            child: securityButton(AppLocalizations.of(context)!.changeName,
+                const Icon(Icons.person, color: Colors.amber)),
           ),
           Divider(
             color: Colors.grey[300],
@@ -195,10 +288,12 @@ class _SecurityState extends State<Security> {
           InkWell(
             onTap: () async {
               passwordController.clear();
+              oldPasswordController.clear();
 
               bool loadingP = false;
               bool submittedP = false;
               bool pass = true;
+              bool pass2 = true;
               final prefs = await SharedPreferences.getInstance();
               String userEmail = prefs.getString("email")!;
               String userPassword = prefs.getString("password")!;
@@ -219,143 +314,225 @@ class _SecurityState extends State<Security> {
                         ),
                         content: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                AppLocalizations.of(context)!.changePass,
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey[800],
-                                    fontWeight: FontWeight.w500),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              TextFormField(
-                                  controller: passwordController,
-                                  autovalidateMode: (submittedP)
-                                      ? AutovalidateMode.always
-                                      : AutovalidateMode.disabled,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return "Password can't be empty";
-                                    } else if (value.length < 6) {
-                                      return "Password need 6 character";
-                                    } else {
-                                      return null;
-                                    }
-                                  },
-                                  autofocus: true,
-                                  obscureText: pass,
-                                  decoration: InputDecoration(
-                                    hintText: "Enter your new password",
-                                    hintStyle: const TextStyle(fontSize: 12),
-                                    suffixIcon: IconButton(
+                          child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  AppLocalizations.of(context)!.changePass,
+                                  style: TextStyle(
+                                      fontSize: 17,
+                                      color: Colors.grey[900],
+                                      fontWeight: FontWeight.w500),
+                                ),
+                                const SizedBox(
+                                  height: 17,
+                                ),
+                                // Padding(
+                                //     padding: const EdgeInsets.only(bottom: 5, left: 5),
+                                //     child: Text(AppLocalizations.of(context)!.oldPassword, style: TextStyle(
+                                //       fontSize: 12,
+                                //       fontWeight: FontWeight.w500,
+                                //       color: Colors.grey[800]
+                                //     ),),
+                                //   ),
+                                TextFormField(
+                                    controller: oldPasswordController,
+                                    autovalidateMode: (submittedP)
+                                        ? AutovalidateMode.always
+                                        : AutovalidateMode.disabled,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return "Password can't be empty";
+                                      } else {
+                                        return null;
+                                      }
+                                    },
+                                    autofocus: true,
+                                    obscureText: pass2,
+                                    decoration: InputDecoration(
+                                      hintText: "Enter your old password",
+                                      hintStyle: const TextStyle(fontSize: 12),
+                                      suffixIcon: IconButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              print(pass2);
+                                              pass2 = !pass2;
+                                            });
+                                          },
+                                          splashRadius: 2,
+                                          icon: (pass2)
+                                              ? Icon(
+                                                  Icons.remove_red_eye,
+                                                  color: Colors.grey[700],
+                                                )
+                                              : Icon(
+                                                  Icons.visibility_off,
+                                                  color: Colors.grey[700],
+                                                )),
+                                      contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 8,
+                                      ),
+                                      isDense: true,
+                                    )),
+                                const SizedBox(height: 8),
+                                // Padding(
+                                //     padding: const EdgeInsets.only(bottom: 5, left: 5),
+                                //     child: Text(AppLocalizations.of(context)!.newPassword, style: TextStyle(
+                                //       fontSize: 12,
+                                //       fontWeight: FontWeight.w500,
+                                //       color: Colors.grey[800]
+                                //     ),),
+                                //   ),
+                                TextFormField(
+                                    controller: passwordController,
+                                    autovalidateMode: (submittedP)
+                                        ? AutovalidateMode.always
+                                        : AutovalidateMode.disabled,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return "Password can't be empty";
+                                      } else if (value.length < 6) {
+                                        return "Password need 6 character";
+                                      } else {
+                                        return null;
+                                      }
+                                    },
+                                    obscureText: pass,
+                                    decoration: InputDecoration(
+                                      hintText: "Enter your new password",
+                                      hintStyle: const TextStyle(fontSize: 12),
+                                      suffixIcon: IconButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              print(pass);
+                                              pass = !pass;
+                                            });
+                                          },
+                                          splashRadius: 2,
+                                          icon: (pass)
+                                              ? const Icon(
+                                                  Icons.remove_red_eye,
+                                                  color: Color.fromARGB(
+                                                      163, 20, 20, 20),
+                                                )
+                                              : const Icon(
+                                                  Icons.visibility_off,
+                                                  color: Color.fromARGB(
+                                                      163, 19, 18, 18),
+                                                )),
+                                      contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 8,
+                                      ),
+                                      isDense: true,
+                                    )),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    TextButton(
                                         onPressed: () {
-                                          setState(() {
-                                            print(pass);
-                                            pass = !pass;
-                                          });
+                                          Navigator.pop(context);
                                         },
-                                        splashRadius: 2,
-                                        icon: (pass)
-                                            ? const Icon(
-                                                Icons.remove_red_eye,
-                                                color: Color.fromARGB(
-                                                    163, 20, 20, 20),
-                                              )
-                                            : const Icon(
-                                                Icons.visibility_off,
-                                                color: Color.fromARGB(
-                                                    163, 19, 18, 18),
-                                              )),
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 8,
-                                    ),
-                                    isDense: true,
-                                  )),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: const Text(
-                                        "Cancel",
-                                        style: TextStyle(fontSize: 12),
-                                      )),
-                                  TextButton(
-                                      // 1/9
-                                      onPressed: () async {
-                                        setState(() {
-                                          submittedP = true;
-                                        });
-                                        var validate =
-                                            _formKey.currentState!.validate();
-                                        // _formKey.currentState!.validate();
-                                        if (validate) {
+                                        child: const Text(
+                                          "Cancel",
+                                          style: TextStyle(fontSize: 12),
+                                        )),
+                                    TextButton(
+                                        // 1/9
+                                        onPressed: () async {
                                           setState(() {
-                                            loadingP = true;
+                                            submittedP = true;
                                           });
-
-                                          final user = FirebaseAuth
-                                              .instance.currentUser!;
-                                          await user
-                                              .updatePassword(
-                                                  passwordController.text)
-                                              .then((value) async {
-                                            final prefs =
-                                                await SharedPreferences
-                                                    .getInstance();
-                                            await prefs.setString('password',
-                                                passwordController.text);
-                                            Navigator.pop(context);
-
+                                          var validate =
+                                              _formKey.currentState!.validate();
+                                          // _formKey.currentState!.validate();
+                                          if (validate) {
                                             setState(() {
-                                              loadingP = false;
+                                              loadingP = true;
                                             });
-
-                                            // ignore: use_build_context_synchronously
-                                            showSnackbar(
-                                                context,
-                                                "Password has been successfully changed",
-                                                2,
-                                                Colors.green[300]);
-                                          }).catchError((error) {
-                                            print(error);
-                                            Navigator.pop(context);
-
-                                            setState(() {
-                                              loadingP = false;
-                                            });
-
-                                            showSnackbar(
-                                                context,
-                                                "Password can't be changed ${error.toString()}",
-                                                5,
-                                                Colors.red[300]);
-                                          });
-                                          await user.reload();
-                                        }
-                                      },
-                                      child: loadingP
-                                          ? const SizedBox(
-                                              width: 10,
-                                              height: 10,
-                                              child: CircularProgressIndicator(
-                                                strokeWidth: 1,
-                                              ))
-                                          : const Text(
-                                              "Save",
-                                              style: TextStyle(fontSize: 12),
-                                            )),
-                                ],
-                              )
-                            ],
+                          
+                                            final prefs = await SharedPreferences
+                                                .getInstance();
+                          
+                                            String? oldPass =
+                                                await prefs.getString("password");
+                          
+                                            if (oldPasswordController.text ==
+                                                oldPass) {
+                                              final user = FirebaseAuth
+                                                  .instance.currentUser!;
+                                              await user
+                                                  .updatePassword(
+                                                      passwordController.text)
+                                                  .then((value) async {
+                                                await prefs.setString('password',
+                                                    passwordController.text);
+                                                // Navigator.pop(context);
+                                                // ignore: use_build_context_synchronously
+                                                Navigator.popAndPushNamed(
+                                                    context, "/main");
+                          
+                                                setState(() {
+                                                  loadingP = false;
+                                                });
+                          
+                                                // ignore: use_build_context_synchronously
+                                                showSnackbar(
+                                                    context,
+                                                    "Password has been successfully changed",
+                                                    2,
+                                                    Colors.green[300]);
+                                              }).catchError((error) {
+                                                print(error);
+                                                Navigator.pop(context);
+                          
+                                                setState(() {
+                                                  loadingP = false;
+                                                });
+                          
+                                                showSnackbar(
+                                                    context,
+                                                    "Password can't be changed ${error.toString()}",
+                                                    5,
+                                                    Colors.red[300]);
+                                              });
+                                              await user.reload();
+                                            } else {
+                                              Navigator.pop(context);
+                          
+                                              setState(() {
+                                                loadingP = false;
+                                              });
+                                              // ignore: use_build_context_synchronously
+                                              showSnackbar(
+                                                  context,
+                                                  "Your old password is invalid !",
+                                                  2,
+                                                  Colors.red[300]);
+                                            }
+                                          }
+                                        },
+                                        child: loadingP
+                                            ? const SizedBox(
+                                                width: 10,
+                                                height: 10,
+                                                child: CircularProgressIndicator(
+                                                  strokeWidth: 2,
+                                                ))
+                                            : const Text(
+                                                "Save",
+                                                style: TextStyle(fontSize: 12),
+                                              )),
+                                  ],
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -394,9 +571,7 @@ Widget securityButton(text, icon) {
           ),
           Text(
             text,
-            style: const TextStyle(
-              fontSize: 13,
-            ),
+            style: const TextStyle(),
           ),
         ]),
       ),

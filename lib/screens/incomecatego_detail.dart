@@ -311,7 +311,8 @@ class _DetailStyleState extends State<DetailStyle> {
 
   @override
   void initState() {
-    amountcontroller = TextEditingController(text: '${widget.data!['amount']}');
+    amountcontroller = TextEditingController(
+        text: NumberFormat.decimalPattern().format(widget.data!['amount']));
     notecontroller = TextEditingController(text: '${widget.data!['note']}');
     dropdownValue = widget.data!['category'];
     getimg();
@@ -332,7 +333,7 @@ class _DetailStyleState extends State<DetailStyle> {
                 child: Container(
                   height: MediaQuery.of(context).size.height * 0.7,
                   decoration: const BoxDecoration(
-                      color: Color.fromARGB(240, 245, 252, 228),
+                      color: Colors.white,
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(20),
                         topRight: Radius.circular(20),
@@ -359,7 +360,7 @@ class _DetailStyleState extends State<DetailStyle> {
                             child: Text('Category'),
                           ),
                           Container(
-                            width: MediaQuery.of(context).size.width * 0.8,
+                            width: MediaQuery.of(context).size.width,
                             child: DropdownButtonFormField(
                               value: dropdownValue,
                               isExpanded: true,
@@ -402,12 +403,12 @@ class _DetailStyleState extends State<DetailStyle> {
                             ),
                           ),
                           const Padding(
-                            padding: EdgeInsets.only(bottom: 5.0),
+                            padding: EdgeInsets.symmetric(vertical: 10.0),
                             child: Text('Amount'),
                           ),
                           SizedBox(
                             height: 60,
-                            width: 300,
+                            width: MediaQuery.of(context).size.width,
                             child: TextFormField(
                               controller: amountcontroller,
                               inputFormatters: [
@@ -423,23 +424,21 @@ class _DetailStyleState extends State<DetailStyle> {
                                 errorBorder: OutlineInputBorder(
                                   borderSide: const BorderSide(
                                       width: 1, color: Colors.redAccent),
-                                  borderRadius: BorderRadius.circular(10.0),
+                                  borderRadius: BorderRadius.circular(5.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: const BorderSide(
                                       width: 1, color: Colors.black),
-                                  borderRadius: BorderRadius.circular(10.0),
+                                  borderRadius: BorderRadius.circular(5.0),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                     borderSide: const BorderSide(
-                                        width: 2,
-                                        color:
-                                            Color.fromARGB(157, 9, 237, 176)),
-                                    borderRadius: BorderRadius.circular(10)),
+                                        width: 2, color: Colors.black),
+                                    borderRadius: BorderRadius.circular(5)),
                                 focusedErrorBorder: OutlineInputBorder(
                                     borderSide: const BorderSide(
                                         width: 1, color: Colors.redAccent),
-                                    borderRadius: BorderRadius.circular(10)),
+                                    borderRadius: BorderRadius.circular(5)),
                                 // filled: true,
                                 // fillColor: const Color.fromARGB(157, 9, 237, 176),
 
@@ -453,7 +452,7 @@ class _DetailStyleState extends State<DetailStyle> {
                           ),
                           SizedBox(
                             height: 60,
-                            width: 300,
+                            width: MediaQuery.of(context).size.width,
                             child: TextFormField(
                               controller: notecontroller,
                               autovalidateMode: submitted
@@ -465,23 +464,22 @@ class _DetailStyleState extends State<DetailStyle> {
                                 errorBorder: OutlineInputBorder(
                                   borderSide: const BorderSide(
                                       width: 1, color: Colors.redAccent),
-                                  borderRadius: BorderRadius.circular(10.0),
+                                  borderRadius: BorderRadius.circular(5.0),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: const BorderSide(
                                       width: 1, color: Colors.black),
-                                  borderRadius: BorderRadius.circular(10.0),
+                                  borderRadius: BorderRadius.circular(5.0),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                     borderSide: const BorderSide(
                                         width: 2,
-                                        color:
-                                            Color.fromARGB(157, 9, 237, 176)),
-                                    borderRadius: BorderRadius.circular(10)),
+                                        color: Color.fromARGB(157, 0, 0, 0)),
+                                    borderRadius: BorderRadius.circular(5)),
                                 focusedErrorBorder: OutlineInputBorder(
                                     borderSide: const BorderSide(
                                         width: 1, color: Colors.redAccent),
-                                    borderRadius: BorderRadius.circular(10)),
+                                    borderRadius: BorderRadius.circular(5)),
                                 // filled: true,
                                 // fillColor: const Color.fromARGB(157, 9, 237, 176),
 
@@ -565,11 +563,8 @@ class _DetailStyleState extends State<DetailStyle> {
                         ],
                       ),
                       Text(
-                        '${widget.data!['amount']} MMK',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText1!
-                            .copyWith(color: Colors.black),
+                        '${NumberFormat.decimalPattern().format(widget.data!['amount'])} MMK',
+                        
                       ),
                     ],
                   ),
