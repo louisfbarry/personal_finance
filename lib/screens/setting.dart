@@ -69,7 +69,7 @@ class _SettingState extends State<Setting> {
                   title,
                   style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey[800],
+                      color: Colors.grey[850],
                       fontWeight: FontWeight.w500),
                 ),
                 Row(
@@ -126,7 +126,7 @@ class _SettingState extends State<Setting> {
                     AppLocalizations.of(context)!.security,
                     style: TextStyle(
                         fontSize: 14,
-                        color: Colors.grey[800],
+                        color: Colors.grey[850],
                         fontWeight: FontWeight.w500),
                   ),
                   const SizedBox(
@@ -243,7 +243,7 @@ class _SettingState extends State<Setting> {
                         style: TextStyle(
                             fontSize: 23,
                             fontWeight: FontWeight.bold,
-                            color: Colors.grey[900]),
+                            color: Colors.grey[850]),
                       ),
                     ),
                     const SizedBox(
@@ -319,7 +319,11 @@ class _SettingState extends State<Setting> {
                               ),
                               Text(
                                 AppLocalizations.of(context)!.passcodeLogin,
-                                style: TextStyle(fontSize: 15),
+                                style: TextStyle(
+                                  // fontSize: 15,
+                                  color: Colors.grey[850],
+                                  fontWeight: FontWeight.w500
+                                ),
                               )
                             ],
                           ),
@@ -541,8 +545,10 @@ Widget settingButton(text, icon) {
           ),
           Text(
             text,
-            style: const TextStyle(
-              fontSize: 15,
+            style: TextStyle(
+              // fontSize: 14,
+              color: Colors.grey[850],
+              fontWeight: FontWeight.w500
             ),
           ),
         ]),

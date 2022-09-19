@@ -169,25 +169,25 @@ class _OutcomeAddingDetailState extends State<OutcomeAddingDetail> {
                           keyboardType: TextInputType.number,
                           validator: RequiredValidator(
                               errorText: 'Pls enter your amount'),
-                          decoration: InputDecoration(
-                            errorBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  width: 1, color: Colors.redAccent),
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  width: 1, color: Colors.black),
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                    width: 2, color: Colors.black),
-                                borderRadius: BorderRadius.circular(5)),
-                            focusedErrorBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                    width: 1, color: Colors.redAccent),
-                                borderRadius: BorderRadius.circular(5)),
+                          decoration: const InputDecoration(
+                            // errorBorder: OutlineInputBorder(
+                            //   borderSide: const BorderSide(
+                            //       width: 1, color: Colors.redAccent),
+                            //   borderRadius: BorderRadius.circular(5.0),
+                            // ),
+                            // enabledBorder: OutlineInputBorder(
+                            //   borderSide: const BorderSide(
+                            //       width: 1, color: Colors.black),
+                            //   borderRadius: BorderRadius.circular(5.0),
+                            // ),
+                            // focusedBorder: OutlineInputBorder(
+                            //     borderSide: const BorderSide(
+                            //         width: 2, color: Colors.black),
+                            //     borderRadius: BorderRadius.circular(5)),
+                            // focusedErrorBorder: OutlineInputBorder(
+                            //     borderSide: const BorderSide(
+                            //         width: 1, color: Colors.redAccent),
+                            //     borderRadius: BorderRadius.circular(5)),
                             hintText: 'Enter amount',
                           ),
                         ),
@@ -199,17 +199,17 @@ class _OutcomeAddingDetailState extends State<OutcomeAddingDetail> {
                         child: TextFormField(
                           controller: outcomenotecontroller,
                           maxLines: 7,
-                          decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 30.0, horizontal: 10),
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                    width: 1, color: Colors.black),
-                                borderRadius: BorderRadius.circular(5)),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                    width: 2, color: Colors.black),
-                                borderRadius: BorderRadius.circular(5)),
+                          decoration: const InputDecoration(
+                            // contentPadding: const EdgeInsets.symmetric(
+                            //     vertical: 30.0, horizontal: 10),
+                            // enabledBorder: OutlineInputBorder(
+                            //     borderSide: const BorderSide(
+                            //         width: 1, color: Colors.black),
+                            //     borderRadius: BorderRadius.circular(5)),
+                            // focusedBorder: OutlineInputBorder(
+                            //     borderSide: const BorderSide(
+                            //         width: 2, color: Colors.black),
+                            //     borderRadius: BorderRadius.circular(5)),
                             hintText: 'Note',
                           ),
                         )),

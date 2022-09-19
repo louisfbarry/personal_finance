@@ -74,6 +74,7 @@ class _MainpageState extends State<Mainpage> {
             showModalBottomSheet(
                 backgroundColor: Colors.transparent,
                 barrierColor: Colors.transparent,
+                
                 context: context,
                 enableDrag: true,
                 isScrollControlled: true,
@@ -95,6 +96,7 @@ class _MainpageState extends State<Mainpage> {
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         bottomNavigationBar: BottomAppBar(
+          
           color: Colors.blue[700],
           shape: const CircularNotchedRectangle(),
           notchMargin: 4,
@@ -102,67 +104,123 @@ class _MainpageState extends State<Mainpage> {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              SizedBox(
-                height: 60,
-                width: MediaQuery.of(context).size.width * 0.47,
-                child: GestureDetector(
-                    onTap: ishome
-                        ? () {}
-                        : () {
-                            setState(() {
-                              currentIndex = 0;
-                              ishome = true;
-                            });
-                          },
-                    child: ishome
-                        ? Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Icon(
-                                FontAwesomeIcons.house,
-                                color: Colors.black,
+              GestureDetector(
+                onTap: ishome
+                          ? () {}
+                          : () {
+                              setState(() {
+                                currentIndex = 0;
+                                ishome = true;
+                              });
+                            },
+                child: Container(
+                  color: Colors.transparent,
+                  height: 60,
+                  width: MediaQuery.of(context).size.width * 0.47,
+                  child: ishome
+                      ? Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              FontAwesomeIcons.house,
+                              // color: Colors.black,
+                              color: Colors.grey[100],
+                              size: 20,
+                            ),
+                            const SizedBox(height: 3,),
+                            Text(
+                              'Home',
+                              style: TextStyle(
+                                // color: Colors.black,
+                              color: Colors.grey[100],
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500
+              
                               ),
-                              Text(
-                                'Home',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                ),
-                              )
-                            ],
-                          )
-                        : const Icon(FontAwesomeIcons.house)),
+                            )
+                          ],
+                        )
+                      : Icon(FontAwesomeIcons.house, color: Colors.grey[100],size: 20,),
+                ),
               ),
-              SizedBox(
-                height: 60,
-                width: MediaQuery.of(context).size.width * 0.47,
-                child: GestureDetector(
-                    onTap: ishome
-                        ? () {
-                            setState(() {
-                              currentIndex = 1;
-                              ishome = false;
-                            });
-                          }
-                        : () {},
-                    child: ishome
-                        ? const Icon(
-                            FontAwesomeIcons.gear,
-                          )
-                        : Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Icon(
-                                FontAwesomeIcons.gear,
-                                color: Colors.black,
+              // SizedBox(
+              //   height: 60,
+              //   width: MediaQuery.of(context).size.width * 0.47,
+              //   child: GestureDetector(
+              //       onTap: ishome
+              //           ? () {}
+              //           : () {
+              //               setState(() {
+              //                 currentIndex = 0;
+              //                 ishome = true;
+              //               });
+              //             },
+              //       child: ishome
+              //           ? Column(
+              //               mainAxisAlignment: MainAxisAlignment.center,
+              //               children: [
+              //                 Icon(
+              //                   FontAwesomeIcons.house,
+              //                   // color: Colors.black,
+              //                   color: Colors.grey[100],
+              //                   size: 20,
+              //                 ),
+              //                 const SizedBox(height: 3,),
+              //                 Text(
+              //                   'Home',
+              //                   style: TextStyle(
+              //                     // color: Colors.black,
+              //                   color: Colors.grey[100],
+              //                   fontSize: 12,
+              //                   fontWeight: FontWeight.w500
+
+              //                   ),
+              //                 )
+              //               ],
+              //             )
+              //           : Icon(FontAwesomeIcons.house, color: Colors.grey[100],size: 20,)),
+              // ),
+              GestureDetector(
+                onTap: ishome
+                          ? () {
+                              setState(() {
+                                currentIndex = 1;
+                                ishome = false;
+                              });
+                            }
+                          : () {},
+                child: Container(
+                  color: Colors.transparent,
+                  height: 60,
+                  width: MediaQuery.of(context).size.width * 0.47,
+                  child: ishome
+                      ? Icon(
+                          FontAwesomeIcons.gear,
+                          size: 20,
+                          color: Colors.grey[100],
+                        )
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              FontAwesomeIcons.gear,
+                              // color: Colors.black,
+                                color: Colors.grey[100],
+                                size: 20,
+                            ),
+                            const SizedBox(height: 3,),
+                            Text(
+                              'Setting',
+                              style: TextStyle(
+                                // color: Colors.black,
+                                color: Colors.grey[100],
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500
                               ),
-                              Text(
-                                'Setting',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                ),
-                              )
-                            ],
-                          )),
+                            )
+                          ],
+                        ),
+                ),
               ),
             ],
           ),

@@ -174,7 +174,7 @@ class _MyPasscodeState extends State<MyPasscode> {
                               : const Padding(
                                   padding: EdgeInsets.all(10.0),
                                   child: Text(
-                                    'SignIn',
+                                    'login',
                                   ),
                                 )),
                     ),

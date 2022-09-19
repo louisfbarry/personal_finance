@@ -26,9 +26,11 @@ class _AddValueState extends State<AddValue> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.white,
-          bottom: const TabBar(
-            labelColor: Colors.black,
-            unselectedLabelColor: Colors.black,
+          bottom: TabBar(
+            labelColor: Colors.grey[850],
+            // unselectedLabelColor: Colors.grey[850],
+            unselectedLabelColor: Colors.grey[600],
+            indicatorColor: Colors.blue[700],
             tabs: [
               Tab(
                 text: 'Income',

@@ -1,6 +1,9 @@
 {
     "test": "မြန်မာ စမ်းသပ်",
 
+    "edit": "ပြင်မည်",
+    "delete" : "ဖျက်မည်",
+
     "setting" : "ဆက်တင်",
     "passcodeLogin": "စကားဝှက်ဖြစ်ဝင်ခြင်း",
     "security": "လုံခြုံရေး",
@@ -14,7 +17,13 @@
     "newPassword" : "စကားဝှက်အသစ်",
 
     "income": "ဝင်‌‌ငွေ",
+    "incomeDetails" : "ဝင်‌ငွေအသေးစိတ်",
+
+    "today":"ယနေ့",
+
     "outcome": "ထွက်ငွေ",
+    "outcomeDetails" : "ထွက်ငွေအသေးစိတ်",
+
     "totalBalance" : "လက်ကျန်ငွေ",
 
     "saving": "စုငွေ",

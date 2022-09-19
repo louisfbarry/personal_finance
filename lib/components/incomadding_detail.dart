@@ -7,7 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import '../model/firebaseservice.dart';
-
 class IncomeAddingDetail extends StatefulWidget {
   IncomeAddingDetail({
     Key? key,
@@ -15,7 +14,6 @@ class IncomeAddingDetail extends StatefulWidget {
   @override
   State<IncomeAddingDetail> createState() => _IncomeAddingDetailState();
 }
-
 class _IncomeAddingDetailState extends State<IncomeAddingDetail> {
   // List<String>? getlist;
   Map<String, dynamic>? data;
@@ -103,15 +101,16 @@ class _IncomeAddingDetailState extends State<IncomeAddingDetail> {
                                 dropdownValue = newValue.toString();
                               });
                             },
-                            decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(
-                                        width: 1, color: Colors.black),
-                                    borderRadius: BorderRadius.circular(5)),
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(
-                                        width: 2, color: Colors.black),
-                                    borderRadius: BorderRadius.circular(5))),
+                            // decoration: InputDecoration(
+                            //     enabledBorder: OutlineInputBorder(
+                            //         borderSide: const BorderSide(
+                            //             width: 1, color: Colors.black),
+                            //         borderRadius: BorderRadius.circular(5)),
+                            //     focusedBorder: OutlineInputBorder(
+                            //         borderSide: const BorderSide(
+                            //             width: 2, color: Colors.black),
+                            //         borderRadius: BorderRadius.circular(5))),
+                          
                           ),
                         ),
                         const SizedBox(
@@ -130,13 +129,13 @@ class _IncomeAddingDetailState extends State<IncomeAddingDetail> {
                                       height:
                                           MediaQuery.of(context).size.height *
                                               0.8,
-                                      decoration: const BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.only(
+                                      decoration: BoxDecoration(
+                                          color: Colors.grey[100],
+                                          borderRadius: const BorderRadius.only(
                                             topLeft: Radius.circular(20),
                                             topRight: Radius.circular(20),
                                           )),
-                                      child: const IncomeCategoCreate());
+                                      child: IncomeCategoCreate());
                                 });
                           },
                           child: Container(
@@ -165,27 +164,32 @@ class _IncomeAddingDetailState extends State<IncomeAddingDetail> {
                         keyboardType: TextInputType.number,
                         validator: RequiredValidator(
                             errorText: 'Pls enter your amount'),
+                        // decoration: InputDecoration(
+                        //   errorBorder: OutlineInputBorder(
+                        //     borderSide: const BorderSide(
+                        //         width: 1, color: Colors.redAccent),
+                        //     borderRadius: BorderRadius.circular(5.0),
+                        //   ),
+                        //   enabledBorder: OutlineInputBorder(
+                        //     borderSide:
+                        //         const BorderSide(width: 1, color: Colors.black),
+                        //     borderRadius: BorderRadius.circular(5.0),
+                        //   ),
+                        //   focusedBorder: OutlineInputBorder(
+                        //       borderSide: const BorderSide(
+                        //           width: 2, color: Colors.black),
+                        //       borderRadius: BorderRadius.circular(5)),
+                        //   focusedErrorBorder: OutlineInputBorder(
+                        //       borderSide: const BorderSide(
+                        //           width: 1, color: Colors.redAccent),
+                        //       borderRadius: BorderRadius.circular(5)),
+                        //   hintText: 'Enter amount',
+                        // ),
                         decoration: InputDecoration(
-                          errorBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                                width: 1, color: Colors.redAccent),
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                const BorderSide(width: 1, color: Colors.black),
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  width: 2, color: Colors.black),
-                              borderRadius: BorderRadius.circular(5)),
-                          focusedErrorBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  width: 1, color: Colors.redAccent),
-                              borderRadius: BorderRadius.circular(5)),
-                          hintText: 'Enter amount',
-                        ),
+                              hintText: "Enter amount",
+                              hintStyle: const TextStyle(fontSize: 13),
+                              labelStyle: TextStyle(color: Colors.grey[800]),
+                            ),
                       ),
                     ),
                   ),
@@ -195,19 +199,24 @@ class _IncomeAddingDetailState extends State<IncomeAddingDetail> {
                       child: TextFormField(
                         controller: notecontroller,
                         maxLines: 7,
+                        // decoration: InputDecoration(
+                        //   contentPadding: const EdgeInsets.symmetric(
+                        //       vertical: 30.0, horizontal: 10),
+                        //   enabledBorder: OutlineInputBorder(
+                        //       borderSide: const BorderSide(
+                        //           width: 1, color: Colors.black),
+                        //       borderRadius: BorderRadius.circular(5)),
+                        //   focusedBorder: OutlineInputBorder(
+                        //       borderSide: const BorderSide(
+                        //           width: 2, color: Colors.black),
+                        //       borderRadius: BorderRadius.circular(5)),
+                        //   hintText: 'Note',
+                        // ),
                         decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.symmetric(
-                              vertical: 30.0, horizontal: 10),
-                          enabledBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  width: 1, color: Colors.black),
-                              borderRadius: BorderRadius.circular(5)),
-                          focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  width: 2, color: Colors.black),
-                              borderRadius: BorderRadius.circular(5)),
-                          hintText: 'Note',
-                        ),
+                              hintText: "Note",
+                              hintStyle: const TextStyle(fontSize: 13),
+                              labelStyle: TextStyle(color: Colors.grey[800]),
+                            ),
                       )),
                   Padding(
                     padding: const EdgeInsets.only(top: 20.0),

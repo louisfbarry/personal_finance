@@ -271,31 +271,57 @@ class _DashboardUiState extends State<DashboardUi> {
                                   ))),
                           Positioned(
                             top: 30,
-                            left: 30,
+                            left: 26,
                             child: Text(
                               AppLocalizations.of(context)!.totalBalance,
                               style: const TextStyle(
                                   fontWeight: FontWeight.w500,
+                                  fontSize: 15,
                                   color: Colors.white),
                             ),
                           ),
                           Positioned(
                             top: 30,
-                            right: 30,
+                            right: 26,
                             child: (widget.incomeVs < 0)
-                                ? Text(
+                                ? 
+                                (widget.incomeVs.toString().length > 8) ?
+                                Text(
                                     "${NumberFormat.decimalPattern().format(widget.incomeVs)} MMK",
                                     style: TextStyle(
                                         fontWeight: FontWeight.w500,
-                                        // color: Colors.red[300]
-                                        color: Colors.deepOrangeAccent[100]),
+                                        fontSize: 13,
+                                        color: Colors.red[300]
+                                        // color: Colors.deepOrangeAccent[100]
+                                        ),
                                   )
-                                : Text(
+                                  :
+                                  Text(
+                                    "${NumberFormat.decimalPattern().format(widget.incomeVs)} MMK",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 15,
+                                        color: Colors.red[300]
+                                        // color: Colors.deepOrangeAccent[100]
+                                        ),
+                                  )
+                                : 
+                                (widget.incomeVs.toString().length > 8) ?
+                                Text(
                                     "${NumberFormat.decimalPattern().format(widget.incomeVs)} MMK",
                                     style: const TextStyle(
+                                      fontSize: 13,
                                         fontWeight: FontWeight.w500,
                                         color: Colors.white),
-                                  ),
+                                  )
+                                  :
+                                  Text(
+                                    "${NumberFormat.decimalPattern().format(widget.incomeVs)} MMK",
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.white),
+                                  )
                           ),
                           Positioned(
                             bottom: -120,
@@ -614,6 +640,7 @@ class _DashboardUiState extends State<DashboardUi> {
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                           child: Column(
+                          
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
@@ -771,12 +798,12 @@ class _DashboardUiState extends State<DashboardUi> {
                                   height: 30,
                                   child: Center(
                                     child: Text(
-                                      'Income',
+                                      AppLocalizations.of(context)!.income,
                                       style: TextStyle(
                                           fontSize: 13,
                                           color: pageindex == 0
-                                              ? Colors.white
-                                              : Colors.black,
+                                              ? Colors.grey[100]
+                                              : Colors.grey[800],
                                           fontWeight: FontWeight.bold),
                                     ),
                                   ),
@@ -804,12 +831,12 @@ class _DashboardUiState extends State<DashboardUi> {
                                   height: 30,
                                   child: Center(
                                     child: Text(
-                                      'Expenses',
+                                      AppLocalizations.of(context)!.outcome,
                                       style: TextStyle(
                                           fontSize: 13,
                                           color: pageindex == 1
-                                              ? Colors.white
-                                              : Colors.black,
+                                              ? Colors.grey[100]
+                                              : Colors.grey[800],
                                           fontWeight: FontWeight.bold),
                                     ),
                                   ),
@@ -835,12 +862,12 @@ class _DashboardUiState extends State<DashboardUi> {
                                 height: 30,
                                 child: Center(
                                   child: Text(
-                                    'Saving',
+                                    AppLocalizations.of(context)!.saving,
                                     style: TextStyle(
                                         fontSize: 13,
                                         color: pageindex == 2
-                                            ? Colors.white
-                                            : Colors.black,
+                                            ? Colors.grey[100]
+                                            : Colors.grey[800],
                                         fontWeight: FontWeight.bold),
                                   ),
                                 ),
@@ -969,31 +996,43 @@ class SelectCard extends StatelessWidget {
       child: SizedBox(
         width: 3000,
         height: 300,
-        child: Card(
-            elevation: 3,
-            color: Colors.white,
-            child: Center(
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(
-                      height: 50,
-                      width: 50,
-                      child: Image(
-                          image: AssetImage('images/${choice.imgname}.png')),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 4.0),
-                      child: Text(
-                        choice.title,
-                       
+        child: Padding(
+          padding: const EdgeInsets.only(top: 5, left: 5, right: 5),
+          child: Card(
+              elevation: 2,
+              color: Colors.white,
+              child: Center(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(
+                        height: 50,
+                        width: 50,
+                        child: Image(
+                            image: AssetImage('images/${choice.imgname}.png')),
                       ),
-                    ),
-                    Text(
-                      '${NumberFormat.decimalPattern().format(choice.amount)} MMK',
-                    ),
-                  ]),
-            )),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 4.0, top: 4.0),
+                        child: Text(
+                          choice.title,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey[850]
+                          ),
+                        ),
+                      ),
+                      Text(
+                        '${NumberFormat.decimalPattern().format(choice.amount)} MMK',
+                        style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey[850]
+                          ),
+                      ),
+                    ]),
+              )),
+        ),
       ),
     );
   }

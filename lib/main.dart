@@ -54,18 +54,19 @@ class _MyAppState extends State<MyApp> {
             GlobalWidgetsLocalizations.delegate,
           ],
           theme: ThemeData(
-            inputDecorationTheme: const InputDecorationTheme(
-              contentPadding: EdgeInsets.all(10),
+            inputDecorationTheme: InputDecorationTheme(
+              hintStyle: const TextStyle(fontSize: 13),
+              contentPadding: const EdgeInsets.all(10),
               enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey),
+                borderSide: BorderSide(color: Colors.grey.shade800),
               ),
               focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey),
+                borderSide: BorderSide(color: Colors.grey.shade800),
               ),
-              errorBorder: OutlineInputBorder(
+              errorBorder: const OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.red),
               ),
-              focusedErrorBorder: OutlineInputBorder(
+              focusedErrorBorder: const OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.red),
               ),
             ),

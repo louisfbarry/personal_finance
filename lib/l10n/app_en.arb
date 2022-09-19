@@ -4,6 +4,9 @@
         "description":"The test"
     },
 
+    "edit" : "Edit",
+    "delete" : "Delete",
+
     "setting" : "Setting",
     "passcodeLogin": "Login with password",
     "security": "Security",
@@ -17,7 +20,13 @@
     "newPassword" : "New password",
 
     "income" : "Income",
+    "incomeDetails" : "Income Details",
+
+    "today" : "Today",
+
     "outcome" : "Outcome",
+    "outcomeDetails" : "Outcome Details",
+
     "totalBalance" : "Total balance",
 
     "saving" : "Saving",

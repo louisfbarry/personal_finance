@@ -11,6 +11,7 @@ import 'package:multiple_stream_builder/multiple_stream_builder.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../model/firebaseGet.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 List<String> incomelist = [];
 List<String> incomeImglist = [];
@@ -169,7 +170,16 @@ class _IncomeCategodetailState extends State<IncomeCategodetail> {
 
               return Scaffold(
                   backgroundColor: const Color.fromARGB(255, 238, 250, 255),
-                  appBar: AppBar(title: const Text('Income')),
+                  // appBar: AppBar(title: const Text('Income')),
+                  appBar: AppBar(
+                    centerTitle: true,
+                    title: Text(
+                      AppLocalizations.of(context)!.incomeDetails,
+                      style: TextStyle(fontSize: 15),
+                    ),
+                    elevation: 0.0,
+                    backgroundColor: Colors.blue[700],
+                  ),
                   body: SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -208,15 +218,26 @@ class _IncomeCategodetailState extends State<IncomeCategodetail> {
                                 ),
                               ),
                             )),
-                        const Padding(
-                          padding: EdgeInsets.only(left: 10.0),
-                          child: Text('Today'),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 10),
+                          child: Text(
+                            AppLocalizations.of(context)!.today,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey[800]),
+                          ),
                         ),
                         todayDetail.isEmpty
-                            ? const Padding(
-                                padding: EdgeInsets.only(left: 10.0),
-                                child: Text('No Income has been added !'),
-                              )
+                            ? Center(child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text('No Income has been added !',
+                          style: TextStyle(
+                          // fontWeight: FontWeight.w500,
+                          color: Colors.grey[800]
+                      ),
+                          ),
+                        ))
                             : Card(
                                 elevation: 1,
                                 child: Column(children: todayDetail)),
@@ -311,8 +332,9 @@ class _DetailStyleState extends State<DetailStyle> {
 
   @override
   void initState() {
-    amountcontroller = TextEditingController(
-        text: NumberFormat.decimalPattern().format(widget.data!['amount']));
+    // amountcontroller = TextEditingController(
+    //     text: NumberFormat.decimalPattern().format(widget.data!['amount']));
+    amountcontroller = TextEditingController(text: '${widget.data!['amount']}');
     notecontroller = TextEditingController(text: '${widget.data!['note']}');
     dropdownValue = widget.data!['category'];
     getimg();
@@ -496,6 +518,8 @@ class _DetailStyleState extends State<DetailStyle> {
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    elevation: 0, primary: Colors.blue[700]),
                                   onPressed: () async {
                                     finished = false;
                                     API().incomehistroyupdate(
@@ -510,8 +534,11 @@ class _DetailStyleState extends State<DetailStyle> {
 
                                     Navigator.pop(context);
                                   },
-                                  child: const Text('Edit')),
+                                  child: Text(AppLocalizations.of(context)!.edit)),
                               ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    elevation: 0, primary: Colors.blue[700]),
+                                    
                                   onPressed: () {
                                     finished = false;
                                     API().incomehistroydelete(
@@ -522,7 +549,7 @@ class _DetailStyleState extends State<DetailStyle> {
 
                                     Navigator.pop(context);
                                   },
-                                  child: const Text('delete')),
+                                  child: Text(AppLocalizations.of(context)!.delete)),
                             ],
                           )
                         ],
@@ -564,7 +591,6 @@ class _DetailStyleState extends State<DetailStyle> {
                       ),
                       Text(
                         '${NumberFormat.decimalPattern().format(widget.data!['amount'])} MMK',
-                        
                       ),
                     ],
                   ),

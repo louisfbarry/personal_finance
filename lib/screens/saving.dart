@@ -278,6 +278,7 @@ class SavingDataCard extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           height: 100,
           child: Card(
+            elevation: 2,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -289,6 +290,7 @@ class SavingDataCard extends StatelessWidget {
                     children: [
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
                             title,
