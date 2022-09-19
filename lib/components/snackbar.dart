@@ -7,7 +7,7 @@ showSnackbar(context, message, duration, color) {
       // edit
       content: Text(
         message,
-        style: const TextStyle(fontSize: 12),
+        style: const TextStyle(fontSize: 13),
       ),
       duration: Duration(seconds: duration),
       backgroundColor: color,
